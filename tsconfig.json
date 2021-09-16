@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "noEmit": true,
+    "baseUrl": "src",
+    "paths": {
+      "components/*": [
+        "components/*"
+      ],
+      "middleware/*": [
+        "lib/middleware/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "hooks/*": [
+        "hooks/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "axtral-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "prisma/seed.ts",
+    "src/lib/configReader.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

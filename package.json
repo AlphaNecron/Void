@@ -1,0 +1,149 @@
+{
+  "name": "axtral",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development node server",
+    "build": "npm-run-all build:schema build:next",
+    "build:next": "next build",
+    "build:schema": "prisma generate --schema=prisma/schema.prisma",
+    "start": "node server",
+    "prepare": "husky install",
+    "lint": "next lint --fix"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"commonjs\"} --transpile-only prisma/seed.ts"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^1.6.7",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@iarna/toml": "^2.2.5",
+    "@prisma/client": "^3.0.2",
+    "@reduxjs/toolkit": "^1.6.1",
+    "argon2": "^0.28.2",
+    "cookie": "^0.4.1",
+    "copy-to-clipboard": "^3.3.1",
+    "formik": "^2.2.9",
+    "framer-motion": "^4",
+    "multer": "^1.4.3",
+    "next": "^11.1.2",
+    "prisma": "^3.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-dropzone": "^11.3.4",
+    "react-feather": "^2.0.9",
+    "react-redux": "^7.2.5",
+    "react-responsive": "^9.0.0-beta.4"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "@types/node": "^16.7.13",
+    "@types/react": "^17.0.20",
+    "@typescript-eslint/parser": "^4.31.0",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.2",
+    "husky": "^7.0.2",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.2",
+    "yarn-run-all": "^3.1.1"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "parserPreset": "conventional-changelog-conventionalcommits",
+    "rules": {
+      "body-leading-blank": [
+        1,
+        "always"
+      ],
+      "body-max-line-length": [
+        2,
+        "always",
+        100
+      ],
+      "footer-leading-blank": [
+        1,
+        "always"
+      ],
+      "footer-max-line-length": [
+        2,
+        "always",
+        100
+      ],
+      "header-max-length": [
+        2,
+        "always",
+        100
+      ],
+      "subject-case": [
+        2,
+        "never",
+        [
+          "sentence-case",
+          "start-case",
+          "pascal-case",
+          "upper-case"
+        ]
+      ],
+      "subject-empty": [
+        2,
+        "never"
+      ],
+      "subject-full-stop": [
+        2,
+        "never",
+        "."
+      ],
+      "type-case": [
+        2,
+        "always",
+        "lower-case"
+      ],
+      "type-empty": [
+        2,
+        "never"
+      ],
+      "type-enum": [
+        2,
+        "always",
+        [
+          "build",
+          "chore",
+          "ci",
+          "docs",
+          "feat",
+          "fix",
+          "perf",
+          "refactor",
+          "revert",
+          "style",
+          "test"
+        ]
+      ],
+      "scope-enum": [
+        1,
+        "always",
+        [
+          "prisma",
+          "scripts",
+          "server",
+          "pages",
+          "config",
+          "api",
+          "hooks",
+          "components",
+          "middleware",
+          "redux",
+          "lib",
+          "assets"
+        ]
+      ]
+    }
+  }
+}

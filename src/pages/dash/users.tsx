@@ -1,0 +1,16 @@
+import React from 'react';
+import Layout from 'components/Layout';
+import useLogin from 'lib/hooks/useLogin';
+import UserPage from 'components/pages/Users';
+
+export default function Users() {
+  const { user, isLoading } = useLogin();
+  if (isLoading) return null;
+  return (
+    <Layout user={user} id={3}>
+      <UserPage/>
+    </Layout>
+  );
+}
+
+Users.title = 'Users';
