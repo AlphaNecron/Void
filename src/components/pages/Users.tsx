@@ -12,7 +12,7 @@ import { useStoreSelector } from 'lib/redux/store';
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [busy, setBusy] = useState(false);
-  const { id } = useStoreSelector(s => s.user);
+  const { username } = useStoreSelector(s => s.user);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const schema = yup.object({
@@ -151,7 +151,7 @@ export default function Users() {
               </Td>
               <Td>{usr.embedTitle}</Td>
               <Td>
-                {usr.id === id || (
+                {usr.username === username || (
                   <IconButton aria-label='Delete' size='sm' colorScheme='red' icon={<Trash2 size={16} />} />
                 )}
               </Td>
