@@ -66,13 +66,13 @@ export default function Paste({ content, ext, style = null, ...other }) {
   const lang = languages[Object.keys(languages).find(key => languages[key] === ext)] || 'text';
   const [selectedLanguage, setSelectedLanguage] = useState(lang);
   return (
-    <VStack>
+    <VStack {...other}>
       <Select size='sm' value={selectedLanguage} onChange={selection => setSelectedLanguage(selection.target.value)}>
         {Object.entries(languages).map(([key, value]) => (
           <option key={key} value={value}>{key}</option>
         ))}
       </Select>
-      <Code language={selectedLanguage} customStyle={style} style={theme} showLineNumbers showInlineLineNumbers {...other}>{content}</Code>
+      <Code language={selectedLanguage} style={theme} showLineNumbers showInlineLineNumbers customStyle={{ maxWidth: '80vw', maxHeight: '65vh', fontSize: 13 }}>{content}</Code>
     </VStack>
   );
 }

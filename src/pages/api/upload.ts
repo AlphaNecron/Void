@@ -6,6 +6,7 @@ import generate, { zws, emoji } from '../../lib/generators';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { info } from '../../lib/logger';
+import mimetypes from '../../lib/mimetype';
 
 const uploader = multer({
   storage: multer.memoryStorage(),
@@ -40,12 +41,21 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   }
   }
   const deletionToken = generate(15);
+  function getMimetype(current, ext) {
+    if (current === 'application/octet-stream') {
+      if (mimetypes[`.${ext}`]) {
+        return mimetypes[`.${ext}`];
+      }
+      return current;
+    }
+    return current;
+  }
   const file = await prisma.file.create({
     data: {
       slug,
       origFileName: req.file.originalname,
       fileName: `${rand}.${ext}`,
-      mimetype: req.file.mimetype,
+      mimetype: getMimetype(req.file.mimetype, ext),
       userId: user.id,
       deletionToken
     }

@@ -7,6 +7,7 @@ import Paste from 'components/Paste';
 import getFile from '../../server/static';
 import config from 'lib/config';
 import { DownloadCloud } from 'react-feather';
+import FileViewer from 'components/FileViewer';
 
 export default function Embed({ file, title, color, username, content = '' }) {
   const src = `/raw/${file.fileName}`;
@@ -26,15 +27,15 @@ export default function Embed({ file, title, color, username, content = '' }) {
       <Head>
         {title ? (
           <>
-            <meta property='og:site_name' content='Draconic' />
-            <meta property='og:title' content={title} />
+            <meta property='og:site_name' content='Draconic'/>
+            <meta property='og:title' content={title}/>
           </>
         ) : (
-          <meta property='og:title' content='Draconic' />
+          <meta property='og:title' content='Draconic'/>
         )}
-        <meta property='theme-color' content={color} />
-        <meta property='og:url' content={file.slug} />
-        <meta property='twitter:card' content='summary_large_file' />
+        <meta property='theme-color' content={color}/>
+        <meta property='og:url' content={file.slug}/>
+        <meta property='twitter:card' content='summary_large_file'/>
         <title>{'Uploaded by ' + username}</title>
       </Head>
       <Center>
@@ -51,21 +52,8 @@ export default function Embed({ file, title, color, username, content = '' }) {
           shadow={shadow}
         >
           <Heading mb={1} mx={2} fontSize='md'>{file.origFileName}</Heading>
-          <Center>
-            {type === 'image' ? (
-              <img src={src} alt={src} style={{ maxHeight: '75vh', maxWidth: '80vw' }}/>
-            ) : type === 'video' ? (
-              <video src={src} autoPlay controls style={{ maxHeight: '75vh', maxWidth: '80vw' }}/>
-            ) : type === 'audio' ? (
-              <audio src={src} autoPlay controls style={{ maxHeight: '75vh', maxWidth: '80vw' }}/>
-            ) : type === 'text' ? (
-              <Paste content={content} style={{ maxHeight: '65vh', maxWidth: '80vw', fontSize: 13 }} ext={ext}/>
-            ) : (
-              <Heading fontSize='lg' m={6}>This file can&#39;t be previewed.</Heading>
-            )
-            }
-          </Center>
-          <Button mt={1} leftIcon={<DownloadCloud size={16} />} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
+          <FileViewer ext={ext} content={content} src={src} type={type}/>
+          <Button mt={1} leftIcon={<DownloadCloud size={16}/>} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
         </Box>
       </Center>
     </>
@@ -98,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       id: file.userId
     }
   });
-  if (file.mimetype.startsWith('text')) {
+  if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
     const content = await getFile(config.uploader.directory, file.fileName);
     if (!content) return { notFound: true };
     return {

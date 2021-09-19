@@ -83,14 +83,14 @@ export default function Users() {
         placement='right-start'
       >
         <PopoverTrigger>
-          <Button colorScheme='purple' leftIcon={<Plus size={20} />}>New user</Button>
+          <Button colorScheme='purple' leftIcon={<Plus size={20}/>}>New user</Button>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverHeader fontWeight='bold' border='0'>
             Create a new user
           </PopoverHeader>
-          <PopoverArrow />
-          <PopoverCloseButton />
+          <PopoverArrow/>
+          <PopoverCloseButton/>
           <Formik
             initialValues={{ username: '', password: '', isAdmin: false }}
             validationSchema={schema}
@@ -112,7 +112,7 @@ export default function Users() {
                     {({ field, form }) => (
                       <FormControl isInvalid={form.errors.password && form.touched.password} isRequired>
                         <FormLabel htmlFor='password'>Password</FormLabel>
-                        <PasswordBox {...field} id='password' mb={4} placeholder='Password' />
+                        <PasswordBox {...field} id='password' mb={4} placeholder='Password'/>
                       </FormControl>
                     )}
                   </Field>
@@ -120,7 +120,7 @@ export default function Users() {
                     {({ field }) => (
                       <FormControl isRequired>
                         <FormLabel htmlFor='isAdmin'>Administrator</FormLabel>
-                        <Switch {...field} />
+                        <Switch {...field}/>
                       </FormControl>
                     )}
                   </Field>
@@ -134,7 +134,7 @@ export default function Users() {
                 >
                   <ButtonGroup alignSelf='flex-end' size='sm'>
                     <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
-                    <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Creating' type='submit' leftIcon={<Plus size={16} />}>Create</Button>
+                    <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Creating' type='submit' leftIcon={<Plus size={16}/>}>Create</Button>
                   </ButtonGroup>
                 </PopoverFooter>
               </Form>
