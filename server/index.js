@@ -17,8 +17,7 @@ const dev = process.env.NODE_ENV === 'development';
 
 (async () => {
   try {
-    const config = configReader();
-    await validateConfig(config);
+    const config = await validateConfig(readConfig());
     const data = await prismaRun(config.core.database_url, ['migrate', 'status'], true);
     if (data.includes('Following migration have not yet been applied:')) {
       info('DB', 'Some migrations are not applied, applying them now...');

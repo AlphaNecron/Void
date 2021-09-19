@@ -1,8 +1,8 @@
 const { join } = require('path');
-const { info, error } = require('./logger');
+const { info } = require('./logger');
 const { existsSync, readFileSync } = require('fs');
 
-const e = (val, type, fn, required = true) => ({ val, type, fn, required });
+const e = (val, type, fn) => ({ val, type, fn });
 
 const envValues = [
   e('SECURE', 'boolean', (c, v) => c.core.secure = v),
@@ -12,7 +12,7 @@ const envValues = [
   e('DATABASE_URL', 'string', (c, v) => c.core.database_url = v),
   e('UPLOADER_LENGTH', 'number', (c, v) => c.uploader.length = v),
   e('UPLOADER_DIRECTORY', 'string', (c, v) => c.uploader.directory = v),
-  e('UPLOADER_BLACKLISTED', 'array', (c, v) => c.uploader.blacklisted = v),
+  e('UPLOADER_BLACKLISTED', 'array', (c, v) => v ? c.uploader.disabled_extentions = v : c.uploader.disabled_extentions = []),
 ];
 
 module.exports = () => {
@@ -46,15 +46,15 @@ function tryReadEnv() {
   for (let i = 0, L = envValues.length; i !== L; ++i) {
     const envValue = envValues[i];
     let value = process.env[envValue.val];
-    if (envValue.required && !value) {
-      error('CONFIG', `There is no config file or required environment variables (${envValue.val})... exiting...`);
-      process.exit(1);
+    if (!value) {
+      envValues[i].fn(config, undefined);
+    } else {
+      envValues[i].fn(config, value);
+      if (envValue.type === 'number') value = parseToNumber(value);
+      else if (envValue.type === 'boolean') value = parseToBoolean(value);
+      else if (envValue.type === 'array') value = parseToArray(value);
+      envValues[i].fn(config, value);
     }
-    envValues[i].fn(config, value);
-    if (envValue.type === 'number') value = parseToNumber(value);
-    else if (envValue.type === 'boolean') value = parseToBoolean(value);
-    else if (envValue.type === 'array') value = parseToArray(value);
-    envValues[i].fn(config, value);
   }
   return config;
 }
