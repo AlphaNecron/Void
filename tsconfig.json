@@ -39,9 +39,7 @@
     "draconic-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "prisma/seed.ts",
-    "src/lib/configReader.js",
-    "src/components/Paste.jsx"
+    "prisma/seed.ts"
   ],
   "exclude": [
     "node_modules"
