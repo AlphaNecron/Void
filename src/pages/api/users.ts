@@ -31,7 +31,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         username
       }
     });
-    if (existing) return res.forbid('User already exists');
+    if (existing) return res.forbid('Username is already taken');
     const hashed = await hashPassword(password);
     const newUser = await prisma.user.create({
       data: {

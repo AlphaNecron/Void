@@ -68,7 +68,9 @@ export default function Users() {
       showToast('error', res.error);
     } else {
       showToast('success', `Created user ${res.username}`);
+      updateUsers();
     }
+    setBusy(false);
     actions.setSubmitting(false);
   };
   useEffect(() => { updateUsers(); }, []);
