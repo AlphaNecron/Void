@@ -45,6 +45,17 @@ export default function Users() {
       isClosable: true
     });
   };
+  const handleDelete = async user => {
+    const res = await useFetch('/api/users', 'DELETE', {
+      id: user.id
+    });
+    if (res.error) {
+      showToast('error', `Couldn't delete user ${user.username}`);
+    } else {
+      showToast('success', `Deleted user ${user.username}`);
+      updateUsers();
+    }
+  };
   const handleSubmit = async (values, actions) => {
     const data = {
       username: values.username.trim(),
@@ -152,7 +163,7 @@ export default function Users() {
               <Td>{usr.embedTitle}</Td>
               <Td>
                 {usr.username === username || (
-                  <IconButton aria-label='Delete' size='sm' colorScheme='red' icon={<Trash2 size={16} />} />
+                  <IconButton aria-label='Delete' size='sm' colorScheme='red' onClick={() => handleDelete(usr)} icon={<Trash2 size={16} />} />
                 )}
               </Td>
             </Tr>
