@@ -6,7 +6,7 @@ CREATE TABLE "User" (
     "token" TEXT NOT NULL,
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "embedTitle" TEXT,
-    "embedColor" TEXT NOT NULL DEFAULT E'#4fd1c5',
+    "embedColor" TEXT NOT NULL DEFAULT E'#B794F4',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -15,6 +15,7 @@ CREATE TABLE "User" (
 CREATE TABLE "File" (
     "id" SERIAL NOT NULL,
     "fileName" TEXT NOT NULL,
+    "origFileName" TEXT NOT NULL,
     "mimetype" TEXT NOT NULL DEFAULT E'image/png',
     "slug" TEXT NOT NULL,
     "uploadedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

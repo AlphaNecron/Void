@@ -21,9 +21,7 @@ export default function login() {
   }
 
   useEffect(() => {
-    if (!isLoading && user) {
-      return;
-    }
+    if (!isLoading && user) return;
     load();
   }, []);
 

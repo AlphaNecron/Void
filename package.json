@@ -1,5 +1,5 @@
 {
-  "name": "axtral",
+  "name": "draconic",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -37,7 +37,9 @@
     "react-dropzone": "^11.3.4",
     "react-feather": "^2.0.9",
     "react-redux": "^7.2.5",
-    "react-responsive": "^9.0.0-beta.4"
+    "react-responsive": "^9.0.0-beta.4",
+    "react-syntax-highlighter": "^15.4.4",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",

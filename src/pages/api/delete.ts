@@ -1,6 +1,6 @@
 import prisma from '../../lib/prisma';
 import cfg from '../../lib/config';
-import { NextApiReq, NextApiRes, withAxtral } from '../../lib/middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
 import { rm } from 'fs/promises';
 import { join } from 'path';
 import { info } from '../../lib/logger';
@@ -47,4 +47,4 @@ export const config = {
   },
 };
 
-export default withAxtral(handler);
+export default withDraconic(handler);

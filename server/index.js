@@ -11,7 +11,7 @@ const configReader = require('../src/lib/configReader');
 const mimes = require('../src/lib/mimetype');
 const deployDb = require('../scripts/deployDb');
 
-info('SERVER', 'Starting Axtral server');
+info('SERVER', 'Starting Draconic server');
 
 const dev = process.env.NODE_ENV === 'development';
 
@@ -70,7 +70,9 @@ const dev = process.env.NODE_ENV === 'development';
       } else {
         handle(req, res);
       }
-      res.statusCode === 200 ? info('URL', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
+      if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs'))) {
+        res.statusCode === 200 ? info('URL', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
+      }
     });
     srv.on('error', (e) => {
       error('SERVER', e);
@@ -78,7 +80,6 @@ const dev = process.env.NODE_ENV === 'development';
     });
     srv.on('listening', async () => {
       info('SERVER', `Listening on ${config.core.host}:${config.core.port}`);
-      if (process.platform === 'linux' && dev) execSync(`xdg-open ${config.core.secure ? 'https' : 'http'}://${config.core.host === '0.0.0.0' ? 'localhost' : config.core.host}:${config.core.port}`);
       const users = await prisma.user.findMany();
       if (users.length === 0) {
         await prismaRun(config.core.database_url, ['db', 'seed']);

@@ -1,4 +1,4 @@
-import { NextApiReq, NextApiRes, withAxtral } from 'middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import prisma from 'lib/prisma';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
@@ -12,6 +12,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       select: {
         uploadedAt: true,
         fileName: true,
+        origFileName: true,
         mimetype: true,
         id: true,
         slug: true,
@@ -25,4 +26,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   }
 }
 
-export default withAxtral(handler);
+export default withDraconic(handler);

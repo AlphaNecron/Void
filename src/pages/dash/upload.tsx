@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../../components/Layout';
-import { default as UploadPage } from '../../components/pages/Upload';
+import UploadPage from '../../components/pages/Upload';
 import useLogin from 'lib/hooks/useLogin';
 
 export default function Upload() {

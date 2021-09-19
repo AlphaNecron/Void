@@ -4,7 +4,7 @@ import { useStore } from 'lib/redux/store';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 
-export default function Axtral({ Component, pageProps }) {
+export default function Draconic({ Component, pageProps }) {
   const store = useStore();
   return (
     <Provider store={store}>

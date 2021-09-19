@@ -21,6 +21,7 @@ model User {
 model File {
   id              Int             @id @default(autoincrement())
   fileName        String
+  origFileName    String
   mimetype        String          @default("image/png")
   slug            String          @unique
   uploadedAt      DateTime        @default(now())

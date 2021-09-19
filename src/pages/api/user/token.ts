@@ -1,4 +1,4 @@
-import { NextApiReq, NextApiRes, withAxtral } from 'middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import prisma from 'lib/prisma';
 import { createToken } from 'lib/utils';
 import { info } from 'lib/logger';
@@ -6,7 +6,6 @@ import { info } from 'lib/logger';
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();
   if (!user) return res.forbid('Unauthorized');
-
   if (req.method === 'PATCH') {
     const updated = await prisma.user.update({
       where: {
@@ -24,4 +23,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   }
 }
 
-export default withAxtral(handler);
+export default withDraconic(handler);

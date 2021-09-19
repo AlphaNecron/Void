@@ -3,7 +3,7 @@ import { Select, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCl
 
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
-  const [name, setName] = useState('Astralize CDN');
+  const [name, setName] = useState('Draconic CDN');
   const [generator, setGenerator] = useState('random');
   const generateConfig = () => {
     const config = {
@@ -44,7 +44,7 @@ export default function ShareXDialog({ open, onClose, token }) {
           <Input
             value={name}
             onChange={n => setName(n.target.value)}
-            placeholder='Axtral'
+            placeholder='Draconic'
             size='sm'
           />
           <Text my={2}>URL generator</Text>

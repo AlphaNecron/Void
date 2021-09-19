@@ -36,11 +36,12 @@
   },
   "include": [
     "next-env.d.ts",
-    "axtral-env.d.ts",
+    "draconic-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "prisma/seed.ts",
-    "src/lib/configReader.js"
+    "src/lib/configReader.js",
+    "src/components/Paste.jsx"
   ],
   "exclude": [
     "node_modules"

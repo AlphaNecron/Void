@@ -1,7 +1,7 @@
 import multer from 'multer';
 import prisma from '../../lib/prisma';
 import cfg from '../../lib/config';
-import { NextApiReq, NextApiRes, withAxtral } from '../../lib/middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
 import generate, { zws, emoji } from '../../lib/generators';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
@@ -21,7 +21,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   });
   if (!user) return res.forbid('Unauthorized');
   if (!req.file) return res.error('No file specified');
-  const ext = req.file.originalname.split('.').pop();
+  const ext = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : req.file.originalname;
   if (cfg.uploader.blacklisted.includes(ext)) return res.error('Blacklisted extension received: ' + ext);
   const rand = generate(cfg.uploader.length);
   let slug = '';
@@ -43,6 +43,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const file = await prisma.file.create({
     data: {
       slug,
+      origFileName: req.file.originalname,
       fileName: `${rand}.${ext}`,
       mimetype: req.file.mimetype,
       userId: user.id,
@@ -50,7 +51,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     }
   });
   await writeFile(join(process.cwd(), cfg.uploader.directory, file.fileName), req.file.buffer);
-  info('FILE', `User ${user.username} (${user.id}) uploaded an file ${file.fileName} (${file.id})`);
+  info('FILE', `User ${user.username} (${user.id}) uploaded a file: ${file.fileName} (${file.id})`);
   const baseUrl = `${cfg.core.secure ? 'https' : 'http'}://${req.headers.host}`;
   return res.json({
     url: `${baseUrl}/${file.slug}`,
@@ -71,7 +72,7 @@ function run(middleware: any) {
 
 export default async function handlers(req, res) {
   await run(uploader.single('file'))(req, res);
-  return withAxtral(handler)(req, res);
+  return withDraconic(handler)(req, res);
 };
 
 export const config = {

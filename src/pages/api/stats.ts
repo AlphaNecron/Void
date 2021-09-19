@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { NextApiReq, NextApiRes, withAxtral } from 'middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import prisma from 'lib/prisma';
 import { bytesToHr, sizeOfDir } from 'lib/utils';
 import config from 'lib/config';
@@ -44,7 +44,6 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       views: true
     }
   });
-
   const typesCount = await prisma.file.groupBy({
     by: ['mimetype'],
     _count: {
@@ -60,11 +59,11 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     sizeRaw: size,
     avgSize: bytesToHr(isNaN(size / count) ? 0 : size / count),
     count,
-    countByUser,
+    countByUser: countByUser.sort((x,y) => x.count - y.count),
     userCount,
     viewCount: (viewsCount[0]?._sum?.views ?? 0),
-    countByType
+    countByType: countByType.sort((x,y) => x.count - y.count)
   });
 }
 
-export default withAxtral(handler);
+export default withDraconic(handler);

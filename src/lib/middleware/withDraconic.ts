@@ -39,14 +39,13 @@ export type NextApiRes = NextApiResponse & {
   setCookie: (name: string, value: unknown, options: CookieSerializeOptions) => void;
 }
 
-export const withAxtral = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
+export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
   res.error = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
     res.json({
       error: message
     });
   };
-
   res.forbid = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(403);
@@ -54,7 +53,6 @@ export const withAxtral = (handler: (req: NextApiRequest, res: NextApiResponse) 
       error: '403: ' + message
     });
   };
-
   res.bad = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(401);
@@ -62,16 +60,13 @@ export const withAxtral = (handler: (req: NextApiRequest, res: NextApiResponse) 
       error: '403: ' + message
     });
   };
-
   res.json = (json: any) => {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(json));
   };
-
   req.getCookie = (name: string) => {
     const cookie = req.cookies[name];
     if (!cookie) return null;
-
     const unsigned = unsign64(cookie, config.core.secret);
     return unsigned ? unsigned : null;
   };
@@ -110,9 +105,7 @@ export const withAxtral = (handler: (req: NextApiRequest, res: NextApiResponse) 
       }
     }
   };
-
   res.setCookie = (name: string, value: unknown, options?: CookieSerializeOptions) => setCookie(res, name, value, options || {});
-
   return handler(req, res);
 };
 

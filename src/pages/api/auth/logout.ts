@@ -1,4 +1,4 @@
-import { NextApiReq, NextApiRes, withAxtral } from 'middleware/withAxtral';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import { info } from 'lib/logger';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
@@ -9,4 +9,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   return res.json({ success: true });
 }
 
-export default withAxtral(handler);
+export default withDraconic(handler);
