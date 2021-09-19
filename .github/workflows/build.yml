@@ -1,0 +1,30 @@
+name: 'CI: Build'
+on:
+  push:
+    branches: [ dev, v0 ]
+  pull_request:
+    branches: [ dev ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v2
+      - name: 'setup node 16'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: 'restore deps'
+        id: cache-restore
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
+      - name: create config
+        run: echo -e "[uploader]\nlength = 6\ndirectory = './uploads'" > config.toml
+      - name: install deps
+        if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: build
+        run: yarn build
