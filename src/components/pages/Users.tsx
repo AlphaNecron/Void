@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Thead, Tr, Th, Tbody, Td, Button, Skeleton, Text, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, ButtonGroup, useDisclosure, useToast } from '@chakra-ui/react';
+import { Table, Thead, Tr, Th, Tbody, Td, Switch, IconButton, Button, Skeleton, Text, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, ButtonGroup, useDisclosure, useToast, FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
 import useFetch from 'lib/hooks/useFetch';
 import router from 'next/router';
-import { Plus } from 'react-feather';
-import { Formik, Form } from 'formik';
+import * as yup from 'yup';
+import { X, Plus, User, Trash2 } from 'react-feather';
+import { Formik, Form, Field } from 'formik';
+import IconTextbox from 'components/IconTextbox';
+import PasswordBox from 'components/PasswordBox';
+import { useStoreSelector } from 'lib/redux/store';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [busy, setBusy] = useState(false);
+  const { id } = useStoreSelector(s => s.user);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const schema = yup.object({
+    username: yup
+      .string()
+      .min(3, 'Username is too short')
+      .max(24, 'Username')
+      .required('Username is required'),
+    password: yup
+      .string()
+      .required('Password is required'),
+    isAdmin: yup
+      .boolean()
+  });
   const updateUsers = async () => {
     setBusy(true);
     const res = await useFetch('/api/users');
@@ -19,11 +36,6 @@ export default function Users() {
       router.push('/dash');
     };
     setBusy(false);
-  };
-  const validateField = (value, name) => {
-    if (value.trim() === '') {
-      return `${name} is required`;
-    }
   };
   const showToast = (srv, title) => {
     toast({
@@ -40,11 +52,11 @@ export default function Users() {
       isAdmin: values.isAdmin
     };
     setBusy(true);
-    const res = await useFetch('/api/auth/create', 'POST', data);
+    const res = await useFetch('/api/users', 'POST', data);
     if (res.error) {
       showToast('error', res.error);
     } else {
-      showToast('success', 'Created the user');
+      showToast('success', `Created user ${res.username}`);
     }
     actions.setSubmitting(false);
   };
@@ -67,14 +79,38 @@ export default function Users() {
           <PopoverArrow />
           <PopoverCloseButton />
           <Formik
-            initialValues={{ username: '', password: '' }}
+            initialValues={{ username: '', password: '', isAdmin: false }}
+            validationSchema={schema}
             onSubmit={(values, actions) => { handleSubmit(values, actions); }}
           >
-            {(props) => (
+            {props => (
               <Form>
                 <PopoverBody>
-
-
+                  <Field name='username'>
+                    {({ field, form }) => (
+                      <FormControl isInvalid={form.errors.username && form.touched.username} isRequired mb={4}>
+                        <FormLabel htmlFor='username'>Username</FormLabel>
+                        <IconTextbox icon={User} {...field} id='username' placeholder='Username' />
+                        <FormErrorMessage>{form.errors.username}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name='password'>
+                    {({ field, form }) => (
+                      <FormControl isInvalid={form.errors.password && form.touched.password} isRequired>
+                        <FormLabel htmlFor='password'>Password</FormLabel>
+                        <PasswordBox {...field} id='password' mb={4} placeholder='Password' />
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name='isAdmin'>
+                    {({ field }) => (
+                      <FormControl isRequired>
+                        <FormLabel htmlFor='isAdmin'>Administrator</FormLabel>
+                        <Switch {...field} />
+                      </FormControl>
+                    )}
+                  </Field>
                 </PopoverBody>
                 <PopoverFooter
                   border='0'
@@ -84,8 +120,8 @@ export default function Users() {
                   pb={4}
                 >
                   <ButtonGroup alignSelf='flex-end' size='sm'>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button colorScheme='purple' leftIcon={<Plus size={16} />}>Create</Button>
+                    <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
+                    <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Creating' type='submit' leftIcon={<Plus size={16} />}>Create</Button>
                   </ButtonGroup>
                 </PopoverFooter>
               </Form>
@@ -115,12 +151,14 @@ export default function Users() {
               </Td>
               <Td>{usr.embedTitle}</Td>
               <Td>
-                <Button size='sm' colorScheme='red'>Delete</Button>
+                {usr.id === id || (
+                  <IconButton aria-label='Delete' size='sm' colorScheme='red' icon={<Trash2 size={16} />} />
+                )}
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
-    </Skeleton >
+    </Skeleton>
   );
 }

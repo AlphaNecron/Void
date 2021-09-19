@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { FormControl, Button, Input, FormLabel, Text, FormErrorMessage, Box, Flex, Checkbox, Heading, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { FormControl, Button, FormLabel, Text, FormErrorMessage, Box, Flex, Heading, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import { LogIn, User } from 'react-feather';
+import * as yup from 'yup';
 import { useRouter } from 'next/router';
 import useFetch from 'lib/hooks/useFetch';
 import PasswordBox from 'components/PasswordBox';
@@ -10,14 +11,14 @@ import IconTextbox from 'components/IconTextbox';
 export default function Login() {
   const router = useRouter();
   const toast = useToast();
-  const validateUsername = username => {
-    let error;
-    if (username.trim() === '') {
-      error = 'Username is required';
-    }
-    return error;
-  };
-
+  const schema = yup.object({
+    username: yup
+      .string()
+      .required('Username is required'),
+    password: yup
+      .string()
+      .required('Password is required')
+  });
   useEffect(() => {
     (async () => {
       const a = await fetch('/api/user');
@@ -39,7 +40,6 @@ export default function Login() {
     }
     actions.setSubmitting(false);
   };
-
   const showToast = (srv, content) => {
     toast({
       title: content,
@@ -47,14 +47,6 @@ export default function Login() {
       duration: 5000,
       isClosable: true,
     });
-  };
-
-  const validatePassword = password => {
-    let error;
-    if (password.trim() === '') {
-      error = 'Password is required';
-    }
-    return error;
   };
   const bg = useColorModeValue('gray.100', 'gray.700');
   const shadow = useColorModeValue('outline', 'dark-lg');
@@ -69,27 +61,27 @@ export default function Login() {
         borderRadius={6}
         boxShadow={shadow}
       >
-        <Formik initialValues={{ username: '', password: '' }}
+        <Formik initialValues={{ username: '', password: '' }} validationSchema={schema}
           onSubmit={(values, actions) => onSubmit(actions, values)}
         >
-          {(props) => (
+          {props => (
             <Form>
               <VStack>
                 <Heading fontSize='xl' mb={2} align='center'>Draconic</Heading>
-                <Field name='username' validate={validateUsername}>
+                <Field name='username'>
                   {({ field, form }) => (
                     <FormControl isInvalid={form.errors.username && form.touched.username} isRequired mb={4}>
                       <FormLabel htmlFor='username'>Username</FormLabel>
-                      <IconTextbox icon={User} {...field} id='username' placeholder='Username' />
+                      <IconTextbox icon={User} {...field} id='username' placeholder='Username'/>
                       <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                     </FormControl>
                   )}
                 </Field>
-                <Field name='password' validate={validatePassword}>
+                <Field name='password'>
                   {({ field, form }) => (
                     <FormControl isInvalid={form.errors.password && form.touched.password} isRequired>
                       <FormLabel htmlFor='password'>Password</FormLabel>
-                      <PasswordBox {...field} id='password' mb={4} placeholder='Password' />
+                      <PasswordBox {...field} id='password' mb={4} placeholder='Password'/>
                     </FormControl>
                   )}
                 </Field>

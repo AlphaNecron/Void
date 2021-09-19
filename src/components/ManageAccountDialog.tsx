@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, FormControl, FormErrorMessage, FormLabel, ButtonGroup, useToast, Icon } from '@chakra-ui/react';
 import PasswordBox from './PasswordBox';
+import * as yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import { updateUser } from 'lib/redux/reducers/user';
 import useFetch from 'lib/hooks/useFetch';
@@ -12,16 +13,18 @@ import IconTextbox from './IconTextbox';
 
 export default function ManageAccountDialog({ onClose, open, user }) {
   const ref = useRef();
+  const schema = yup.object({
+    username: yup
+      .string()
+      .min(3, 'Username is too short')
+      .max(24, 'Username is too long')
+      .required('Username is required')
+  });
   const [token, setToken] = useState(user.token);
   const dispatch = useStoreDispatch();
   const router = useRouter();
   const toast = useToast();
   const [busy, setBusy] = useState(false);
-  const validateUsername = username => {
-    if (username.trim() === '') {
-      return 'Username is required';
-    }
-  };
   const regenToken = async () => {
     setBusy(true);
     const res = await useFetch('/api/user/token', 'PATCH');
@@ -60,7 +63,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
       scrollBehavior='inside'
     >
       <ModalOverlay />
-      <Formik
+      <Formik validationSchema={schema}
         initialValues={{ username: user.username, password: '', embedTitle: user.embedTitle, embedColor: user.embedColor }}
         onSubmit={(values, actions) => { handleSubmit(values, actions); }}
       >
@@ -70,7 +73,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
               <ModalHeader>Manage your account</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <Field name='username' validate={validateUsername}>
+                <Field name='username'>
                   {({ field, form }) => (
                     <FormControl isInvalid={form.errors.username}>
                       <FormLabel htmlFor='username'>Username</FormLabel>
@@ -112,8 +115,8 @@ export default function ManageAccountDialog({ onClose, open, user }) {
               </ModalBody>
               <ModalFooter>
                 <ButtonGroup size='sm'>
-                  <Button leftIcon={<Icon as={X}/>} onClick={onClose}>Cancel</Button>
-                  <Button leftIcon={<Icon as={Check}/>} isLoading={props.isSubmitting} loadingText='Saving' type='submit' colorScheme='purple' ref={ref}>Save</Button>
+                  <Button leftIcon={<X size={16}/>} onClick={onClose}>Cancel</Button>
+                  <Button leftIcon={<Check size={16}/>} isLoading={props.isSubmitting} loadingText='Saving' type='submit' colorScheme='purple' ref={ref}>Save</Button>
                 </ButtonGroup>
               </ModalFooter>
             </ModalContent>

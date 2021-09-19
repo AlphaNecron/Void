@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Select, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Text, Input } from '@chakra-ui/react';
+import { X, Download } from 'react-feather';
 
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
@@ -59,8 +60,8 @@ export default function ShareXDialog({ open, onClose, token }) {
           </Select>
         </ModalBody>
         <ModalFooter>
-          <Button size='sm' onClick={onClose} mx={2}>Cancel</Button>
-          <Button size='sm' colorScheme='purple' onClick={generateConfig} ref={ref}>Download</Button>
+          <Button size='sm' onClick={onClose} leftIcon={<X size={16}/>} mx={2}>Cancel</Button>
+          <Button size='sm' colorScheme='purple' leftIcon={<Download size={16}/>} onClick={generateConfig} ref={ref}>Download</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

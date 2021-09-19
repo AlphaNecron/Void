@@ -43,7 +43,8 @@ export default function Layout({ children, id, user }) {
     {
       icon: Users,
       label: 'Users',
-      route: '/dash/users'
+      route: '/dash/users',
+      adminRequired: true
     }
   ];
   return (
@@ -56,16 +57,20 @@ export default function Layout({ children, id, user }) {
             <HStack align='left'>
               {pages.map((page, i) => (
                 <>
-                  <MediaQuery minWidth={640}>
-                    <Link key={i} href={page.route} passHref>
-                      <Button justifyContent='flex-start' colorScheme='purple' isActive={i === id} variant='ghost' leftIcon={<Icon as={page.icon}/>}>{page.label}</Button>
-                    </Link>
-                  </MediaQuery>
-                  <MediaQuery maxWidth={640}>
-                    <Link key={i} href={page.route} passHref>
-                      <IconButton colorScheme='purple' aria-label={page.label} isActive={i === id} variant='ghost' icon={<Icon as={page.icon}/>}>{page.label}</IconButton>
-                    </Link>
-                  </MediaQuery>
+                  {(page.adminRequired && !user.isAdmin) || (
+                    <>
+                      <MediaQuery minWidth={640}>
+                        <Link key={i} href={page.route} passHref>
+                          <Button justifyContent='flex-start' colorScheme='purple' isActive={i === id} variant='ghost' leftIcon={<Icon as={page.icon} />}>{page.label}</Button>
+                        </Link>
+                      </MediaQuery>
+                      <MediaQuery maxWidth={640}>
+                        <Link key={i} href={page.route} passHref>
+                          <IconButton colorScheme='purple' aria-label={page.label} isActive={i === id} variant='ghost' icon={<Icon as={page.icon} />}>{page.label}</IconButton>
+                        </Link>
+                      </MediaQuery>
+                    </>
+                  )}
                 </>
               ))}
               <Spacer/>

@@ -50,14 +50,16 @@ export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse
     res.setHeader('Content-Type', 'application/json');
     res.status(403);
     res.json({
-      error: '403: ' + message
+      code: 403,
+      error: message
     });
   };
   res.bad = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(401);
     res.json({
-      error: '403: ' + message
+      code: 403,
+      error: message
     });
   };
   res.json = (json: any) => {
