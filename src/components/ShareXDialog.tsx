@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Select, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Text, Input } from '@chakra-ui/react';
+import { Select, Button, Modal, ModalOverlay, ModalContent, ModalHeader, Switch, ModalCloseButton, ModalBody, ModalFooter, Heading, Input } from '@chakra-ui/react';
 import { X, Download } from 'react-feather';
 
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
-  const [name, setName] = useState('Draconic CDN');
+  const [name, setName] = useState('Draconic');
   const [generator, setGenerator] = useState('random');
   const [preserveFileName, setPreserveFileName] = useState(false);
   const generateConfig = () => {
@@ -43,14 +43,14 @@ export default function ShareXDialog({ open, onClose, token }) {
         <ModalHeader>ShareX config generator</ModalHeader>
         <ModalCloseButton/>
         <ModalBody>
-          <Text mb={2}>Config name</Text>
+          <Heading mb={1} size='sm'>Config name</Heading>
           <Input
             value={name}
             onChange={n => setName(n.target.value)}
             placeholder='Draconic'
             size='sm'
           />
-          <Text my={2}>URL generator</Text>
+          <Heading mt={2} mb={1} size='sm'>URL generator</Heading>
           <Select
             value={generator}
             onChange={g => setGenerator(g.target.value)}
@@ -60,6 +60,8 @@ export default function ShareXDialog({ open, onClose, token }) {
             <option value='zws'>Invisible</option>
             <option value='emoji'>Emoji</option>
           </Select>
+          <Heading mt={2} mb={1} size='sm'>Preserve file name</Heading>
+          <Switch isChecked={preserveFileName} onChange={p => setPreserveFileName(p.target.checked)}/>
         </ModalBody>
         <ModalFooter>
           <Button size='sm' onClick={onClose} leftIcon={<X size={16}/>} mx={2}>Cancel</Button>
