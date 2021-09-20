@@ -18,7 +18,7 @@ export default function Embed({ file, title, color, username, content = '' }) {
   const type = file.mimetype.split('/').shift();
   const handleDownload = () => {
     const a = document.createElement('a');
-    a.download = file.fileName;
+    a.download = file.origFileName;
     a.href = src;
     a.click();
   };
