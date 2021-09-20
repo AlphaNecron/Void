@@ -1,11 +1,23 @@
 import prisma from 'lib/prisma';
 import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
-import { checkPassword } from 'lib/utils';
+import { checkPassword, createToken, hashPassword } from 'lib/utils';
 import { info } from 'lib/logger';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   if (req.method !== 'POST') return res.status(405).end();
   const { username, password } = req.body as { username: string, password: string };
+  const users = await prisma.user.findMany();
+  if (users.length === 0) {
+    const user = await prisma.user.create({
+      data: {
+        username: 'admin',
+        password: await hashPassword('draconicuser'),
+        token: createToken(),
+        isAdmin: true
+      }
+    });
+    info(`Created default user with username "${user.username}" and password "draconicuser"`);
+  }
   const user = await prisma.user.findFirst({
     where: {
       username 

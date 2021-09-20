@@ -79,10 +79,6 @@ const dev = process.env.NODE_ENV === 'development';
     });
     srv.on('listening', async () => {
       info('SERVER', `Listening on ${config.core.host}:${config.core.port}`);
-      const users = await prisma.user.findMany();
-      if (users.length === 0) {
-        await prismaRun(config.core.database_url, ['db', 'seed']);
-      }
     });
     srv.listen(config.core.port, config.core.host ?? '0.0.0.0');
   } catch (e) {
