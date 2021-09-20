@@ -1,10 +1,11 @@
 import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import prisma from 'lib/prisma';
+import config from 'lib/config';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();
   if (!user) return res.forbid('Unauthorized');
-  const mediaFiles = ['audio', 'video', 'image'];
+  const mediaFiles = ['video', 'image'];
   if (req.method === 'GET') {
     let files = await prisma.file.findMany({
       where: {
@@ -24,8 +25,9 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       ? mediaFiles.includes(file.mimetype.split('/')[0])
       : file.mimetype.startsWith(req.query.filter)));
     files.forEach(file => {
-      file.url = req.headers.host + '/' + file.slug;
-      file.rawUrl = req.headers.host + '/raw/' + file.fileName;
+      const baseUrl = `http${config.core.secure ? 's' : ''}://${req.headers.host}/`;
+      file.url = baseUrl + file.slug;
+      file.rawUrl = baseUrl + 'raw/' + file.fileName;
     });
     return res.json(files);
   } else {

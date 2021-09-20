@@ -10,7 +10,7 @@ export default function Upload() {
   const toast = useToast();
   const [generator, setGenerator] = useState('random');
   const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const showToast = (srv, title, content) => {
     toast({
       title: title,
@@ -24,7 +24,7 @@ export default function Upload() {
     try {
       const body = new FormData();
       body.append('file', file);
-      setLoading(true);
+      setBusy(true);
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: {
@@ -48,7 +48,7 @@ export default function Upload() {
       showToast('error', 'Error while uploading the file', error.message);
     }
     finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
   const fg = useColorModeValue('gray.800', 'white');
@@ -72,7 +72,7 @@ export default function Upload() {
         <VStack>
           <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
           <Button m={2} variant='ghost' minWidth='300' maxWidth='350' minHeight='200'>
-            <Dropzone disabled={loading} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
+            <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <VStack {...getRootProps()}>
                   <input {...getInputProps()}/>
@@ -93,7 +93,7 @@ export default function Upload() {
               <option value='zws'>Invisible</option>
               <option value='emoji'>Emoji</option>
             </Select>
-            <Button size='sm' width='full' isDisabled={loading || !file} isLoading={loading} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
+            <Button size='sm' width='full' isDisabled={busy || !file} isLoading={busy} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
           </HStack>
         </VStack>
       </Box>

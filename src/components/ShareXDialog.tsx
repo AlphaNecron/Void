@@ -6,6 +6,7 @@ export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
   const [name, setName] = useState('Draconic CDN');
   const [generator, setGenerator] = useState('random');
+  const [preserveFileName, setPreserveFileName] = useState(false);
   const generateConfig = () => {
     const config = {
       Version: '13.2.1',
@@ -15,7 +16,8 @@ export default function ShareXDialog({ open, onClose, token }) {
       RequestURL: `${window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '')}/api/upload`,
       Headers: {
         Token: token,
-        Generator: generator
+        Generator: generator,
+        ...(preserveFileName && { PreserveFileName: 'true' })
       },
       URL: '$json:url$',
       ThumbnailURL: '$json:thumbUrl$',

@@ -53,7 +53,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const file = await prisma.file.create({
     data: {
       slug,
-      origFileName: req.file.originalname,
+      origFileName: req.headers.preservefilename ? req.file.originalname : `${rand}.${ext}`,
       fileName: `${rand}.${ext}`,
       mimetype: getMimetype(req.file.mimetype, ext),
       userId: user.id,
@@ -62,7 +62,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   });
   await writeFile(join(process.cwd(), cfg.uploader.directory, file.fileName), req.file.buffer);
   info('FILE', `User ${user.username} (${user.id}) uploaded a file: ${file.fileName} (${file.id})`);
-  const baseUrl = `${cfg.core.secure ? 'https' : 'http'}://${req.headers.host}`;
+  const baseUrl = `http${cfg.core.secure ? 's' : ''}://${req.headers.host}`;
   return res.json({
     url: `${baseUrl}/${file.slug}`,
     deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
