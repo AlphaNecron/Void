@@ -16,7 +16,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         isAdmin: true
       }
     });
-    info(`Created default user with username "${user.username}" and password "draconicuser"`);
+    info('SEED', `Created default user with username "${user.username}" and password "draconicuser"`);
   }
   const user = await prisma.user.findFirst({
     where: {
