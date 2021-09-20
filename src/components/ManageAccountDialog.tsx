@@ -41,7 +41,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
     const res = await useFetch('/api/user', 'PATCH', data);
     if (res.error) {
       toast({
-        title: 'Couldn&#39;t update user info',
+        title: 'Couldn\'t update user info',
         description: res.error,
         duration: 4000,
         status: 'error',
