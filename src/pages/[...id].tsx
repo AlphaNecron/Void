@@ -36,7 +36,7 @@ export default function Embed({ file, title, color, username, content = '' }) {
         <meta property='theme-color' content={color}/>
         <meta property='og:url' content={file.slug}/>
         <meta property='og:image' content={src}/>
-        <meta property='twitter:card' content='summary_large_file'/>
+        <meta property='twitter:card' content='summary_large_image'/>
         <title>{'Uploaded by ' + username}</title>
       </Head>
       <Center>
