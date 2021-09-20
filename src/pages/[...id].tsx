@@ -47,13 +47,12 @@ export default function Embed({ file, title, color, username, content = '' }) {
           bg={bg}
           fg={fg}
           p={1}
-          maxWidth='90vw' maxHeight='85vh'
           borderRadius={5}
           textAlign='center'
           shadow={shadow}
         >
           <Heading mb={1} mx={2} fontSize='md'>{file.origFileName}</Heading>
-          <FileViewer ext={ext} content={content} src={src} type={type}/>
+          <FileViewer ext={ext} content={content} src={src} type={type} style={{ maxWidth: '90vw', maxHeight: '80vh' }}/>
           <Button mt={1} leftIcon={<DownloadCloud size={16}/>} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
         </Box>
       </Center>
