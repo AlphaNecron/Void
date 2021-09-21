@@ -27,7 +27,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     files.forEach(file => {
       const baseUrl = `http${config.core.secure ? 's' : ''}://${req.headers.host}/`;
       file.url = baseUrl + file.slug;
-      file.rawUrl = baseUrl + 'raw/' + file.fileName;
+      file.rawUrl = baseUrl + 'r/' + file.fileName;
     });
     return res.json(files);
   } else {

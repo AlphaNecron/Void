@@ -34,7 +34,7 @@ export default function Files() {
   }, []);
   return (
     <Skeleton isLoaded={!busy}>
-      <SimpleGrid minChildWidth='200px' spacing='10px'>
+      <SimpleGrid minChildWidth='150px' spacing='10px'>
         {files && (files.map((file, i) => (
           <FileCard file={file} m={2} key={i} onClick={() => {}} onDelete={handleDelete}/>
         )))}

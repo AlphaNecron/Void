@@ -1,4 +1,4 @@
-import { Center, Heading, Image } from '@chakra-ui/react';
+import { Center, Heading } from '@chakra-ui/react';
 import React from 'react';
 import Paste from './Paste';
 
@@ -6,7 +6,7 @@ export default function FileViewer({ content = undefined, src = undefined, ext, 
   return (
     <Center>
       {type === 'image' ? (
-        <Image src={src} alt={src} {...other}/>
+        <img src={src} alt={src} {...other}/>
       ) : type === 'video' ? (
         <video src={src} autoPlay={autoPlay} controls={controls} {...other}/>
       ) : type === 'audio' ? (

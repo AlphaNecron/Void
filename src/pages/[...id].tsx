@@ -3,14 +3,14 @@ import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import prisma from 'lib/prisma';
 import { Center, Box, useColorModeValue, Heading, Button } from '@chakra-ui/react';
-import Paste from 'components/Paste';
-import getFile from '../../server/static';
-import config from 'lib/config';
 import { DownloadCloud } from 'react-feather';
 import FileViewer from 'components/FileViewer';
+import config from 'lib/config';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 export default function Embed({ file, title, color, username, content = '' }) {
-  const src = `/raw/${file.fileName}`;
+  const src = `/r/${file.fileName}`;
   const ext = file.fileName.split('.').pop();
   const bg = useColorModeValue('gray.100', 'gray.700');
   const fg = useColorModeValue('gray.800', 'white');
@@ -53,7 +53,7 @@ export default function Embed({ file, title, color, username, content = '' }) {
         >
           <Heading mb={1} mx={2} fontSize='md'>{file.origFileName}</Heading>
           <FileViewer ext={ext} content={content} src={src} type={type} style={{ maxWidth: '90vw', maxHeight: '80vh' }}/>
-          <Button mt={1} leftIcon={<DownloadCloud size={16}/>} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
+          <Button leftIcon={<DownloadCloud size={16}/>} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
         </Box>
       </Center>
     </>
@@ -87,15 +87,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   });
   if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
-    const content = await getFile(config.uploader.directory, file.fileName);
-    if (!content) return { notFound: true };
+    const buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
+    if (!buffer) return { notFound: true };
     return {
       props: {
         file,
         title: user.embedTitle,
         color: user.embedColor,
         username: user.username,
-        content: content.toString()
+        content: buffer.toString()
       }
     };
   };

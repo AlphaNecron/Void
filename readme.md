@@ -61,3 +61,4 @@ server {
 - Better gallery
 - Discord bot
 - Discord integration
+- Album / Bulk upload

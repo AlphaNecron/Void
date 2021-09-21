@@ -1,11 +1,10 @@
 const next = require('next');
 const { createServer } = require('http');
-const { stat, mkdir } = require('fs/promises');
+const { stat, mkdir, readFile } = require('fs/promises');
 const { extname } = require('path');
 const { PrismaClient } = require('@prisma/client');
 const validateConfig = require('./validateConfig');
 const { info, error } = require('../src/lib/logger');
-const getFile = require('./static');
 const prismaRun = require('../scripts/prismaRun');
 const configReader = require('../src/lib/configReader');
 const mimes = require('../src/lib/mimetype');
@@ -39,7 +38,7 @@ const dev = process.env.NODE_ENV === 'development';
       if (req.url.startsWith('/raw')) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
-        const data = await getFile(config.uploader.directory, parts[2]);
+        const data = readFile(join(process.cwd(), config.uploader.directory, parts[2]));
         if (!data) {
           app.render404(req, res);
         } else {

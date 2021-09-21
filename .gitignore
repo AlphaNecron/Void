@@ -38,6 +38,7 @@ package.lock.json
 .vercel
 
 # draconic
-/.vscode
+.vscode/
 config.toml
-/uploads
+uploads/
+.vscode/settings.json
