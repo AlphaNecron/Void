@@ -9,18 +9,18 @@ export default function FileCard({ file, onClick, onDelete, ...other }) {
   const shadow = useColorModeValue('outline', 'dark-lg');
   return (
     <VStack borderRadius={4} minWidth='150px' maxWidth='250px' maxHeight='275px' p={2} shadow={shadow} bg={bg} {...other}>
-      <FileViewer src={file.rawUrl} ext={file.fileName.split('.').pop()} type={file.mimetype.split('/')[0]} autoPlay={false} controls={false} style={{ maxHeight: '200px' }}/>
+      <FileViewer src={file.rawUrl} ext={file.fileName.split('.').pop()} type={file.mimetype.split('/')[0]} autoPlay={false} controls={false} style={{ maxHeight: '180px' }}/>
       <Spacer/>
+      <Tooltip shouldWrapChildren hasArrow label={
+        <>
+          <p>{`File name: ${file.fileName}`}</p>
+          <p>{file.origFileName === file.fileName ? '' : `Original file name: ${file.origFileName}`}</p>
+          <p>{`Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`}</p>
+        </>
+      } bg='gray.600' color='white'>
+        <Heading size='sm' maxWidth='150px' isTruncated>{file.origFileName}</Heading>
+      </Tooltip>
       <HStack horizontalAlign='right'>
-        <Tooltip shouldWrapChildren hasArrow label={
-          <>
-            <p>{`File name: ${file.fileName}`}</p>
-            <p>{file.origFileName === file.fileName ? '' : `Original file name: ${file.origFileName}`}</p>
-            <p>{`Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`}</p>
-          </>
-        } bg='gray.600' color='white'>
-          <Heading size='sm' maxWidth='70px' isTruncated>{file.origFileName}</Heading>
-        </Tooltip>
         <IconButton aria-label='Delete' size='sm' colorScheme='red' variant='ghost' onClick={() => onDelete(file)} icon={<Trash2 size={16}/>}/>
         <Link href={file.url} isExternal>
           <IconButton aria-label='Open in new tab' size='sm' colorScheme='purple' variant='ghost' icon={<ExternalLink size={16}/>}/>
