@@ -9,6 +9,7 @@ const prismaRun = require('../scripts/prismaRun');
 const configReader = require('../src/lib/configReader');
 const mimes = require('../src/lib/mimetype');
 const deployDb = require('../scripts/deployDb');
+const { join } = require('path');
 
 info('SERVER', 'Starting Draconic server');
 
@@ -35,10 +36,10 @@ const dev = process.env.NODE_ENV === 'development';
     const handle = app.getRequestHandler();
     const prisma = new PrismaClient();
     const srv = createServer(async (req, res) => {
-      if (req.url.startsWith('/raw')) {
+      if (req.url.startsWith('/r')) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
-        const data = readFile(join(process.cwd(), config.uploader.directory, parts[2]));
+        const data = await readFile(join(process.cwd(), config.uploader.directory, parts[2]));
         if (!data) {
           app.render404(req, res);
         } else {
