@@ -42,3 +42,4 @@ package.lock.json
 config.toml
 uploads/
 .vscode/settings.json
+**/.fuse_hidden*
