@@ -87,7 +87,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   });
   if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
-    const buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
+    try {
+      const buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
+    }
+    catch {
+      return { notFound: true };
+    }
     if (!buffer) return { notFound: true };
     return {
       props: {
