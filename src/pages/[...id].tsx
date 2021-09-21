@@ -87,8 +87,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   });
   if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
+    let buffer;
     try {
-      const buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
+      buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
     }
     catch {
       return { notFound: true };

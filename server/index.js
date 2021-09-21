@@ -39,8 +39,9 @@ const dev = process.env.NODE_ENV === 'development';
       if (req.url.startsWith('/r')) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
+        let data;
         try {
-          const data = await readFile(join(process.cwd(), config.uploader.directory, parts[2]));
+          data = await readFile(join(process.cwd(), config.uploader.directory, parts[2]));
         }
         catch {
           app.render404(req, res);
