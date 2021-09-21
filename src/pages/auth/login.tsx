@@ -103,3 +103,5 @@ export default function Login() {
     </Flex>
   );
 }
+
+Login.title = 'Login';
