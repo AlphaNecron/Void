@@ -1,15 +1,15 @@
-import React, { useRef, useState } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, FormControl, FormErrorMessage, FormLabel, ButtonGroup, useToast, Icon } from '@chakra-ui/react';
-import PasswordBox from './PasswordBox';
-import * as yup from 'yup';
+import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, Icon, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast } from '@chakra-ui/react';
+import copy from 'copy-to-clipboard';
 import { Field, Form, Formik } from 'formik';
-import { updateUser } from 'lib/redux/reducers/user';
 import useFetch from 'lib/hooks/useFetch';
+import { updateUser } from 'lib/redux/reducers/user';
 import { useStoreDispatch } from 'lib/redux/store';
 import { useRouter } from 'next/router';
-import copy from 'copy-to-clipboard';
-import { X, Check, RefreshCw, Clipboard, User, Key, Hexagon, Feather } from 'react-feather';
+import React, { useRef, useState } from 'react';
+import { Check, Clipboard, Feather, Hexagon, Key, RefreshCw, User, X } from 'react-feather';
+import * as yup from 'yup';
 import IconTextbox from './IconTextbox';
+import PasswordBox from './PasswordBox';
 
 export default function ManageAccountDialog({ onClose, open, user }) {
   const ref = useRef();

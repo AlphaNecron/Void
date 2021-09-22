@@ -1,11 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CookieSerializeOptions } from 'cookie';
-import type { File, User } from '@prisma/client';
-
 import { serialize } from 'cookie';
-import { sign64, unsign64 } from '../utils';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import config from '../config';
 import prisma from '../prisma';
+import { sign64, unsign64 } from '../utils';
+
 
 export interface NextApiFile {
   fieldname: string;
@@ -75,7 +74,7 @@ export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse
   req.cleanCookie = (name: string) => {
     res.setHeader('Set-Cookie', serialize(name, '', {
       path: '/',
-      expires: new Date(1),
+      expires: new Date(),
       maxAge: undefined
     }));
   };
@@ -117,10 +116,8 @@ export const setCookie = (
   value: unknown,
   options: CookieSerializeOptions = {}
 ) => {
-  
   if ('maxAge' in options) {
-    options.expires = new Date(Date.now() + options.maxAge);
-    options.maxAge /= 1000;
+    options.expires = new Date(Date.now() + options.maxAge * 1000);
   }
   const signed = sign64(String(value), config.core.secret);
   res.setHeader('Set-Cookie', serialize(name, signed, options));

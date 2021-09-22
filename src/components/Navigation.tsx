@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
+import React from 'react';
 
 export default function Navigation({children}) {
   return (

@@ -1,9 +1,9 @@
-import prisma from '../../lib/prisma';
-import cfg from '../../lib/config';
-import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
 import { rm } from 'fs/promises';
 import { join } from 'path';
+import cfg from '../../lib/config';
 import { info } from '../../lib/logger';
+import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
+import prisma from '../../lib/prisma';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   if (!req.query.token) return res.forbid('No deletion token provided');

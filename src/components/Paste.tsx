@@ -1,5 +1,4 @@
-import { VStack } from '@chakra-ui/layout';
-import { Select } from '@chakra-ui/select';
+import { Select, VStack } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Prism as Code } from 'react-syntax-highlighter';
 import theme from 'react-syntax-highlighter/dist/cjs/styles/prism/atom-dark';

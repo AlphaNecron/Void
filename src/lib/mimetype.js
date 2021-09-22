@@ -1,4 +1,3 @@
-
 module.exports = {
   '.aac': 'audio/aac',
   '.abw': 'application/x-abiword',

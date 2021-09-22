@@ -1,5 +1,5 @@
-import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 import { info } from 'lib/logger';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();

@@ -1,12 +1,12 @@
-import multer from 'multer';
-import prisma from '../../lib/prisma';
-import cfg from '../../lib/config';
-import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
-import generate, { zws, emoji } from '../../lib/generators';
 import { writeFile } from 'fs/promises';
+import cfg from 'lib/config';
+import generate, { emoji, zws } from 'lib/generators';
+import { info } from 'lib/logger';
+import { NextApiReq, NextApiRes, withDraconic } from 'lib/middleware/withDraconic';
+import mimetypes from 'lib/mimetype';
+import prisma from 'lib/prisma';
+import multer from 'multer';
 import { join } from 'path';
-import { info } from '../../lib/logger';
-import mimetypes from '../../lib/mimetype';
 
 const uploader = multer({
   storage: multer.memoryStorage(),

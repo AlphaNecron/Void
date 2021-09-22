@@ -1,7 +1,7 @@
-import React from 'react';
-import Layout from '../../components/Layout';
-import UploadPage from '../../components/pages/Upload';
+import Layout from 'components/Layout';
+import UploadPage from 'components/pages/Upload';
 import useLogin from 'lib/hooks/useLogin';
+import React from 'react';
 
 export default function Upload() {
   const { user, isLoading } = useLogin();

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import useFetch from 'lib/hooks/useFetch';
 import { SimpleGrid, Skeleton, useToast } from '@chakra-ui/react';
 import FileCard from 'components/FileCard';
+import useFetch from 'lib/hooks/useFetch';
+import React, { useEffect, useState } from 'react';
 
 export default function Files() {
   const [files, setFiles] = useState([]);

@@ -1,7 +1,7 @@
-import { createHmac, timingSafeEqual } from 'crypto';
 import { hash, verify } from 'argon2';
-import { join } from 'path';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { readdir, stat } from 'fs/promises';
+import { join } from 'path';
 import generate from './generators';
 
 export async function hashPassword(s: string): Promise<string> {

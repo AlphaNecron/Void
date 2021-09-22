@@ -1,7 +1,7 @@
+import { info } from 'lib/logger';
 import prisma from 'lib/prisma';
 import { createToken, hashPassword } from 'lib/utils';
 import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
-import { info } from 'lib/logger';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();

@@ -1,8 +1,8 @@
-import { join } from 'path';
-import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
+import config from 'lib/config';
 import prisma from 'lib/prisma';
 import { bytesToHr, sizeOfDir } from 'lib/utils';
-import config from 'lib/config';
+import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
+import { join } from 'path';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();

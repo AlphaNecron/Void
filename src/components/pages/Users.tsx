@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Thead, Tr, Th, Tbody, Td, Switch, IconButton, Button, Skeleton, Text, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverFooter, ButtonGroup, useDisclosure, useToast, FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
-import useFetch from 'lib/hooks/useFetch';
-import router from 'next/router';
-import * as yup from 'yup';
-import { X, Plus, User, Trash2 } from 'react-feather';
-import { Formik, Form, Field } from 'formik';
+import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Switch, Table, Tbody, Td, Text, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
 import IconTextbox from 'components/IconTextbox';
 import PasswordBox from 'components/PasswordBox';
+import { Field, Form, Formik } from 'formik';
+import useFetch from 'lib/hooks/useFetch';
 import { useStoreSelector } from 'lib/redux/store';
+import router from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { Plus, Trash2, User, X } from 'react-feather';
+import * as yup from 'yup';
 
 export default function Users() {
   const [users, setUsers] = useState([]);

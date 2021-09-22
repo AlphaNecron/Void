@@ -1,12 +1,12 @@
+import { Button, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spacer, useColorMode, useDisclosure } from '@chakra-ui/react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { Button, MenuItem, IconButton, Icon, HStack, useColorMode, Spacer, Menu, MenuList, MenuButton, useDisclosure, Skeleton } from '@chakra-ui/react';
-import { Sun, Moon, Upload, Home, File, Users, User, Edit, LogOut, Tool } from 'react-feather';
+import { Edit, File, Home, LogOut, Moon, Sun, Tool, Upload, User, Users } from 'react-feather';
+import MediaQuery from 'react-responsive';
+import ManageAccountDialog from './ManageAccountDialog';
 import Navigation from './Navigation';
 import ShareXDialog from './ShareXDialog';
-import Link from 'next/link';
-import ManageAccountDialog from './ManageAccountDialog';
-import { useRouter } from 'next/router';
-import MediaQuery from 'react-responsive';
 
 export default function Layout({ children, id, user }) {
   const { colorMode, toggleColorMode } = useColorMode();

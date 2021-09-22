@@ -1,5 +1,5 @@
+import { Icon, IconButton, Input, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/react';
 import React from 'react';
-import { InputGroup, Input, InputRightElement, IconButton, InputLeftElement, Icon } from '@chakra-ui/react';
 import { Eye, EyeOff, Lock } from 'react-feather';
 
 export default function PasswordBox(props) {

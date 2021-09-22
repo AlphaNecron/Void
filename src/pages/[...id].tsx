@@ -1,13 +1,12 @@
-import React from 'react';
-import Head from 'next/head';
-import { GetServerSideProps } from 'next';
-import prisma from 'lib/prisma';
-import { Center, Box, useColorModeValue, Heading, Button } from '@chakra-ui/react';
-import { DownloadCloud } from 'react-feather';
+import { Box, Button, Center, Heading, useColorModeValue } from '@chakra-ui/react';
 import FileViewer from 'components/FileViewer';
 import config from 'lib/config';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import prisma from 'lib/prisma';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import fetch from 'node-fetch';
+import React from 'react';
+import { DownloadCloud } from 'react-feather';
 
 export default function Embed({ file, title, color, username, content = '' }) {
   const src = `/r/${file.fileName}`;
@@ -87,21 +86,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   });
   if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
-    let buffer;
-    try {
-      buffer = await readFile(join(process.cwd(), config.uploader.directory, file.fileName));
-    }
-    catch {
-      return { notFound: true };
-    }
-    if (!buffer) return { notFound: true };
+    let content;
+    await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/r/${file.fileName}`).then(res => res.text().then(text => content = text));
+    if (!content) return { notFound: true };
     return {
       props: {
         file,
         title: user.embedTitle,
         color: user.embedColor,
         username: user.username,
-        content: buffer.toString()
+        content
       }
     };
   };

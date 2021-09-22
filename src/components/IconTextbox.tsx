@@ -1,4 +1,4 @@
-import { InputGroup, Input, InputLeftElement, Icon } from '@chakra-ui/react';
+import { Icon, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import React from 'react';
 
 export default function IconTextbox({ icon, ...other }) {

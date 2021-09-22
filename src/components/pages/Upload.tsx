@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useToast, useColorModeValue, Box, Button, Flex, Heading, HStack, Icon, Select, Spacer, VStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { useStoreSelector } from 'lib/redux/store';
+import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Upload as UploadIcon } from 'react-feather';
 
@@ -29,7 +29,8 @@ export default function Upload() {
         method: 'POST',
         headers: {
           'Token': token,
-          'Generator': generator
+          'Generator': generator,
+          'PreserveFileName': 'true'
         },
         body
       });

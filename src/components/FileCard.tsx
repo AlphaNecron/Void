@@ -18,7 +18,7 @@ export default function FileCard({ file, onClick, onDelete, ...other }) {
           <p>{`Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`}</p>
         </>
       } bg='gray.600' color='white'>
-        <Heading size='sm' maxWidth='150px' isTruncated>{file.origFileName}</Heading>
+        <Heading size='sm' maxWidth='140px' isTruncated>{file.origFileName}</Heading>
       </Tooltip>
       <HStack horizontalAlign='right'>
         <IconButton aria-label='Delete' size='sm' colorScheme='red' variant='ghost' onClick={() => onDelete(file)} icon={<Trash2 size={16}/>}/>

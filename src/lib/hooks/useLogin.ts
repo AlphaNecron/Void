@@ -1,7 +1,7 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { updateUser, User } from 'lib/redux/reducers/user';
 import { useStoreDispatch, useStoreSelector } from 'lib/redux/store';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import useFetch from './useFetch';
 
 export default function login() {

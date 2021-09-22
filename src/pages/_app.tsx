@@ -1,8 +1,8 @@
-import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useStore } from 'lib/redux/store';
-import { Provider } from 'react-redux';
 import Head from 'next/head';
+import React from 'react';
+import { Provider } from 'react-redux';
 
 export default function Draconic({ Component, pageProps }) {
   const store = useStore();

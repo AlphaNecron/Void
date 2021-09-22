@@ -1,10 +1,10 @@
 // https://github.com/mikecao/umami/blob/master/redux/store.js
-import { useMemo } from 'react';
 import { Action, CombinedState, configureStore, EnhancedStore } from '@reduxjs/toolkit';
+import { useMemo } from 'react';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import thunk, { ThunkAction } from 'redux-thunk';
 import rootReducer from './reducers';
 import { User } from './reducers/user';
-import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 
 let store: EnhancedStore<CombinedState<{
   user: User;

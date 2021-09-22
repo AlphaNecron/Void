@@ -1,5 +1,5 @@
-import React from 'react';
 import { Stat, StatLabel, StatNumber, useColorModeValue } from '@chakra-ui/react';
+import React from 'react';
 
 export default function StatCard({name, value}) {
   const bg = useColorModeValue('purple.500', 'purple.200');

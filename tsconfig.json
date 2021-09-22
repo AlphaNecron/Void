@@ -38,8 +38,7 @@
     "next-env.d.ts",
     "draconic-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "prisma/seed.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

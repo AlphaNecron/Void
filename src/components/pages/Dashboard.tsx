@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import useFetch from 'lib/hooks/useFetch';
 import { SimpleGrid, Skeleton } from '@chakra-ui/react';
-import StatCard from 'components/StatCard';
 import List from 'components/List';
+import StatCard from 'components/StatCard';
+import useFetch from 'lib/hooks/useFetch';
+import React, { useEffect, useState } from 'react';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);

@@ -1,6 +1,6 @@
+import { Button, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Switch } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { Select, Button, Modal, ModalOverlay, ModalContent, ModalHeader, Switch, ModalCloseButton, ModalBody, ModalFooter, Heading, Input } from '@chakra-ui/react';
-import { X, Download } from 'react-feather';
+import { Download, X } from 'react-feather';
 
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();

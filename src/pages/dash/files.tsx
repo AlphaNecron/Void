@@ -1,7 +1,7 @@
-import React from 'react';
 import Layout from 'components/Layout';
-import useLogin from 'lib/hooks/useLogin';
 import FilesPage from 'components/pages/Files';
+import useLogin from 'lib/hooks/useLogin';
+import React from 'react';
 
 export default function Files() {
   const { user, isLoading } = useLogin();

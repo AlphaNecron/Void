@@ -1,5 +1,5 @@
+import { Table, TableCaption, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
-import { Table, TableCaption, Thead, Th, Tr, Tbody, Td, Button, Text } from '@chakra-ui/react';
 export default function List({ types, users }) {
   return (
     <>
