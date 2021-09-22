@@ -102,9 +102,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const src = `/r/${file.fileName}`;
   const isCode = Object.keys(languages).some(name => languages[name] === ext);
   if (file.mimetype.startsWith('text') || isCode) {
-    let content;
-    await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/r/${file.fileName}`).then(res => res.text().then(text => content = text));
-    if (!content) return { notFound: true };
+    const res = await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/r/${file.fileName}`);
+    if (!res.ok) return { notFound: true };
+    const content = await res.text();
     return {
       props: {
         file,
