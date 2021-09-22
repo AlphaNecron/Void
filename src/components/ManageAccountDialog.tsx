@@ -93,7 +93,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
                 <Field name='embedTitle'>
                   {({ field }) => (
                     <FormControl>
-                      <FormLabel mt={2} htmlFor='embedTitle'>Embed title</FormLabel>
+                      <FormLabel mt={2} htmlFor='embedTitle'>Embed Title</FormLabel>
                       <IconTextbox icon={Feather} {...field} id='embedTitle' placeholder='Embed title' />
                     </FormControl>
                   )}
@@ -101,7 +101,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
                 <Field name='embedColor'>
                   {({ field }) => (
                     <FormControl>
-                      <FormLabel mt={2} htmlFor='embedColor'>Embed color</FormLabel>
+                      <FormLabel mt={2} htmlFor='embedColor'>Embed Color</FormLabel>
                       <IconTextbox icon={Hexagon} {...field} type='color' id='embedColor' placeholder='Embed color' />
                     </FormControl>
                   )}
@@ -109,8 +109,8 @@ export default function ManageAccountDialog({ onClose, open, user }) {
                 <FormLabel mt={2}>Token</FormLabel>
                 <IconTextbox icon={Key} isReadOnly placeholder='Token' value={token} />
                 <ButtonGroup size='sm' mt={2}>
-                  <Button size='sm' leftIcon={<Icon as={Clipboard}/>} onClick={() => copy(token)} colorScheme='yellow'>Copy token</Button>
-                  <Button size='sm' leftIcon={<Icon as={RefreshCw}/>} colorScheme='red' isLoading={busy} loadingText='Regenerating token' onClick={regenToken}>Regenerate token</Button>
+                  <Button size='sm' leftIcon={<Icon as={Clipboard}/>} onClick={() => copy(token)} colorScheme='yellow'>Copy Token</Button>
+                  <Button size='sm' leftIcon={<Icon as={RefreshCw}/>} colorScheme='red' isLoading={busy} loadingText='Regenerating token' onClick={regenToken}>Regenerate Token</Button>
                 </ButtonGroup>
               </ModalBody>
               <ModalFooter>
