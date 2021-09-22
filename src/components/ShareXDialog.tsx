@@ -40,17 +40,17 @@ export default function ShareXDialog({ open, onClose, token }) {
     >
       <ModalOverlay/>
       <ModalContent>
-        <ModalHeader>ShareX config generator</ModalHeader>
+        <ModalHeader>ShareX Config Generator</ModalHeader>
         <ModalCloseButton/>
         <ModalBody>
-          <Heading mb={1} size='sm'>Config name</Heading>
+          <Heading mb={1} size='sm'>Config Name</Heading>
           <Input
             value={name}
             onChange={n => setName(n.target.value)}
             placeholder='Draconic'
             size='sm'
           />
-          <Heading mt={2} mb={1} size='sm'>URL generator</Heading>
+          <Heading mt={2} mb={1} size='sm'>URL Generator</Heading>
           <Select
             value={generator}
             onChange={g => setGenerator(g.target.value)}
@@ -60,7 +60,7 @@ export default function ShareXDialog({ open, onClose, token }) {
             <option value='zws'>Invisible</option>
             <option value='emoji'>Emoji</option>
           </Select>
-          <Heading mt={2} mb={1} size='sm'>Preserve file name</Heading>
+          <Heading mt={2} mb={1} size='sm'>Preserve File Name</Heading>
           <Switch isChecked={preserveFileName} onChange={p => setPreserveFileName(p.target.checked)}/>
         </ModalBody>
         <ModalFooter>
