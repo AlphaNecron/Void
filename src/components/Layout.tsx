@@ -83,10 +83,10 @@ export default function Layout({ children, id, user }) {
                 >{user.username}</MenuButton>
                 <MenuList>
                   <MenuItem icon={<Edit size={16}/>} onClick={onManageOpen}>
-                    Manage account
+                    Manage Account
                   </MenuItem>
                   <MenuItem icon={<Tool size={16}/>} onClick={onShareXOpen}>
-                    ShareX config
+                    ShareX Config
                   </MenuItem>
                   <MenuItem icon={<LogOut size={16}/>} onClick={logout}>
                     Logout
