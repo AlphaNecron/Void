@@ -27,14 +27,6 @@ export default function Embed({ file, title, color, username, content = '', misc
             <meta property='og:site_name' content='Draconic'/>
             <meta property='og:title' content={title}/>
           </>
-        ) : misc.type === 'video' ? (
-          <>
-            <meta property='og:type' content='video.other'/>
-            <meta property='og:video' content={misc.src}/>
-            <meta property='og:video:url' content={misc.src}/>
-            <meta property='og:video:secure_url' content={misc.src}/>
-            <meta property='og:video:type' content={file.mimetype}/>
-          </>
         ) : (
           <meta property='og:title' content='Draconic'/>
         )}
@@ -44,6 +36,14 @@ export default function Embed({ file, title, color, username, content = '', misc
           <>
             <meta property='og:image' content={misc.src}/>
             <meta property='twitter:card' content='summary_large_image'/>
+          </>
+        ) : misc.type === 'video' ? (
+          <>
+            <meta property='og:type' content='video.other'/>
+            <meta property='og:video' content={misc.src}/>
+            <meta property='og:video:url' content={misc.src}/>
+            <meta property='og:video:secure_url' content={misc.src}/>
+            <meta property='og:video:type' content={file.mimetype}/>
           </>
         ) : (
           <meta property='og:image' content='/logo.png'/>
