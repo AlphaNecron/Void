@@ -38,7 +38,7 @@ export default function Embed({ file, title, color, username, content = '', misc
             <meta property='twitter:card' content='summary_large_image'/>
           </>
         ) : (
-          <meta property='og:image' content='logo.png'/>
+          <meta property='og:image' content='/logo.png'/>
         )}
         <title>{'Uploaded by ' + username}</title>
       </Head>
