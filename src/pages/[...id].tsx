@@ -1,6 +1,7 @@
 import { Box, Button, Center, Heading, useColorModeValue } from '@chakra-ui/react';
 import FileViewer from 'components/FileViewer';
 import config from 'lib/config';
+import languages from 'lib/languages';
 import prisma from 'lib/prisma';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -8,17 +9,14 @@ import fetch from 'node-fetch';
 import React from 'react';
 import { DownloadCloud } from 'react-feather';
 
-export default function Embed({ file, title, color, username, content = '' }) {
-  const src = `/r/${file.fileName}`;
-  const ext = file.fileName.split('.').pop();
+export default function Embed({ file, title, color, username, content = '', misc }) {
   const bg = useColorModeValue('gray.100', 'gray.700');
   const fg = useColorModeValue('gray.800', 'white');
   const shadow = useColorModeValue('outline', 'dark-lg');
-  const type = file.mimetype.split('/').shift();
   const handleDownload = () => {
     const a = document.createElement('a');
     a.download = file.origFileName;
-    a.href = src;
+    a.href = misc.src;
     a.click();
   };
   return (
@@ -34,8 +32,14 @@ export default function Embed({ file, title, color, username, content = '' }) {
         )}
         <meta property='theme-color' content={color}/>
         <meta property='og:url' content={file.slug}/>
-        <meta property='og:image' content={src}/>
-        <meta property='twitter:card' content='summary_large_image'/>
+        {misc.type === 'image' ? (
+          <>
+            <meta property='og:image' content={misc.src}/>
+            <meta property='twitter:card' content='summary_large_image'/>
+          </>
+        ) : (
+          <meta property='og:image' content='logo.png'/>
+        )}
         <title>{'Uploaded by ' + username}</title>
       </Head>
       <Center>
@@ -51,7 +55,7 @@ export default function Embed({ file, title, color, username, content = '' }) {
           shadow={shadow}
         >
           <Heading mb={1} mx={2} fontSize='md'>{file.origFileName}</Heading>
-          <FileViewer ext={ext} content={content} src={src} type={type} style={{ maxWidth: '90vw', maxHeight: '80vh' }}/>
+          <FileViewer ext={misc.ext} content={content} src={misc.src} type={misc.type} language={misc.language} style={{ maxWidth: '90vw', maxHeight: '80vh' }}/>
           <Button m={1} leftIcon={<DownloadCloud size={16}/>} colorScheme='purple' size='sm' onClick={handleDownload}>Download</Button>
         </Box>
       </Center>
@@ -85,7 +89,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       id: file.userId
     }
   });
-  if (file.mimetype.startsWith('text') || file.mimetype === 'application/json') {
+  const ext = file.fileName.split('.').pop();
+  const type = file.mimetype.split('/').shift();
+  const src = `/r/${file.fileName}`;
+  const isCode = Object.keys(languages).some(name => languages[name] === ext);
+  if (file.mimetype.startsWith('text') || isCode) {
     let content;
     await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/r/${file.fileName}`).then(res => res.text().then(text => content = text));
     if (!content) return { notFound: true };
@@ -95,6 +103,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         title: user.embedTitle,
         color: user.embedColor,
         username: user.username,
+        misc: {
+          ext,
+          type,
+          language: isCode ? ext : 'text'
+        },
         content
       }
     };
@@ -104,7 +117,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       file,
       title: user.embedTitle,
       color: user.embedColor,
-      username: user.username
+      username: user.username,
+      misc: {
+        ext,
+        type,
+        src
+      }
     }
   };
 };
