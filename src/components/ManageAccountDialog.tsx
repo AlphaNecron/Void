@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, Icon, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast } from '@chakra-ui/react';
+import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { Field, Form, Formik } from 'formik';
 import useFetch from 'lib/hooks/useFetch';
@@ -6,7 +6,7 @@ import { updateUser } from 'lib/redux/reducers/user';
 import { useStoreDispatch } from 'lib/redux/store';
 import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
-import { Check, Clipboard, Feather, Hexagon, Key, RefreshCw, User, X } from 'react-feather';
+import { Check, Copy, Feather, Hexagon, Key, RefreshCw, User, X } from 'react-feather';
 import * as yup from 'yup';
 import IconTextbox from './IconTextbox';
 import PasswordBox from './PasswordBox';
@@ -109,8 +109,8 @@ export default function ManageAccountDialog({ onClose, open, user }) {
                 <FormLabel mt={2}>Token</FormLabel>
                 <IconTextbox icon={Key} isReadOnly placeholder='Token' value={token} />
                 <ButtonGroup size='sm' mt={2}>
-                  <Button size='sm' leftIcon={<Icon as={Clipboard}/>} onClick={() => copy(token)} colorScheme='yellow'>Copy token</Button>
-                  <Button size='sm' leftIcon={<Icon as={RefreshCw}/>} colorScheme='red' isLoading={busy} loadingText='Regenerating token' onClick={regenToken}>Regenerate token</Button>
+                  <Button size='sm' leftIcon={<Copy size={16}/>} onClick={() => copy(token)} colorScheme='yellow'>Copy</Button>
+                  <Button size='sm' leftIcon={<RefreshCw size={16}/>} colorScheme='red' isLoading={busy} loadingText='Regenerating' onClick={regenToken}>Regenerate</Button>
                 </ButtonGroup>
               </ModalBody>
               <ModalFooter>

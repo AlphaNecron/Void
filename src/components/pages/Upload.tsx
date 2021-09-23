@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { useStoreSelector } from 'lib/redux/store';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import { Upload as UploadIcon } from 'react-feather';
 export default function Upload() {
   const { token } = useStoreSelector(state => state.user);
   const toast = useToast();
+  const [preserve, setPreserve] = useState(true);
   const [generator, setGenerator] = useState('random');
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -30,7 +31,7 @@ export default function Upload() {
         headers: {
           'Token': token,
           'Generator': generator,
-          'PreserveFileName': 'true'
+          ...(preserve && {'PreserveFileName': 'true'})
         },
         body
       });
@@ -66,13 +67,12 @@ export default function Upload() {
         align='center'
         p={2}
         borderRadius={4}
-        
         textAlign='left'
         shadow={shadow}
       >
         <VStack>
           <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
-          <Button m={2} variant='ghost' minWidth='300' maxWidth='350' minHeight='200'>
+          <Button m={2} variant='ghost' width='385' height='200'>
             <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <VStack {...getRootProps()}>
@@ -83,18 +83,19 @@ export default function Upload() {
                   ) : (
                     <Text fontSize='xl'>Drag a file here or click to upload one</Text>
                   )}
-                  <Text fontSize='lg' colorScheme='yellow' isTruncated maxWidth='325'>{file && file.name}</Text>
+                  <Text fontSize='lg' colorScheme='yellow' isTruncated maxWidth='350'>{file && file.name}</Text>
                 </VStack>
               )}
             </Dropzone>
           </Button>
-          <HStack justify='stretch' minWidth='300' maxWidth='350'>
-            <Select size='sm' variant='filled' maxWidth='150' value={generator} onChange={selection => setGenerator(selection.target.value)}>
+          <HStack justify='stretch' width='385'>
+            <Checkbox width='160' isChecked={preserve} onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
+            <Select size='sm' variant='filled' width='110' value={generator} onChange={selection => setGenerator(selection.target.value)}>
               <option value='random'>Random</option>
               <option value='zws'>Invisible</option>
               <option value='emoji'>Emoji</option>
             </Select>
-            <Button size='sm' width='full' isDisabled={busy || !file} isLoading={busy} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
+            <Button size='sm' width='100' isDisabled={busy || !file} isLoading={busy} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
           </HStack>
         </VStack>
       </Box>
