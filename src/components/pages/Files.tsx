@@ -50,7 +50,7 @@ export default function Files() {
           </Stack>
         </RadioGroup>
         <InputGroup size='sm'>
-          <Input pr='4.5rem' placeholder='Search something' value={filter} onChange={f => setFilter(f.target.value)}/>
+          <Input variant='filled' pr='4.5rem' placeholder='Search something' value={filter} onChange={f => setFilter(f.target.value)}/>
           <InputRightElement width='4.5rem'>
             <IconButton mr={-8} size='xs' variant='ghost' onClick={() => setFilter('')} aria-label='Clear' icon={<X size={12}/>}/>
           </InputRightElement>
