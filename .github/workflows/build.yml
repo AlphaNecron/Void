@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: 'checkout'
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
       - name: 'setup node 16'
         uses: actions/setup-node@v1
         with:
