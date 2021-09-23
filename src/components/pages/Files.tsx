@@ -38,7 +38,7 @@ export default function Files() {
   }, []);
   return (
     <Skeleton isLoaded={!busy}>
-      <Stack direction='row' alignItems='center' my={2} mx={4} spacing={4}>
+      <Stack direction='row' alignItems='center' m={2} spacing={4}>
         <RadioGroup value={view} onChange={v => setView(v)}>
           <Stack spacing={2} direction='row'>
             <Radio colorScheme='purple' value='grid'>
