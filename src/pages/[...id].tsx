@@ -71,13 +71,14 @@ export default function Embed({ file, title, color, username, content = '', misc
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async context => {
   const slug = context.params.id[0];
   const file = await prisma.file.findFirst({
     where: {
       slug
     },
     select: {
+      id: true,
       fileName: true,
       mimetype: true,
       origFileName: true,
@@ -87,6 +88,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!file) return {
     notFound: true
   };
+  await prisma.file.update({
+    where: {
+      id: file.id,
+    },
+    data: {
+      views: {
+        increment: 1
+      }
+    }
+  });
   const user = await prisma.user.findFirst({
     select: {
       embedTitle: true,
