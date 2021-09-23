@@ -13,6 +13,7 @@ export default function FileList({ files, onDelete, filter }) {
           <Th>Thumbnail</Th>
           <Th>File name</Th>
           <Th>Original file name</Th>
+          <Th>Views</Th>
           <Th>File type</Th>
           <Th>Uploaded at</Th>
           <Th>Actions</Th>
@@ -32,6 +33,7 @@ export default function FileList({ files, onDelete, filter }) {
               </Td>
               <Td>{file.fileName}</Td>
               <Td>{file.origFileName === file.fileName ? '' : file.origFileName}</Td>
+              <Td>{file.views}</Td>
               <Td>{file.mimetype}</Td>
               <Td>{new Date(file.uploadedAt).toLocaleString()}</Td>
               <Td>

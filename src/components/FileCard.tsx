@@ -16,6 +16,7 @@ export default function FileCard({ file, onDelete, ...other }) {
           <p>{`ID: ${file.id}`}</p>
           <p>{`File name: ${file.fileName}`}</p>
           <p>{file.origFileName === file.fileName ? '' : `Original file name: ${file.origFileName}`}</p>
+          <p>{`Views: ${file.views}`}</p>
           <p>{`Type: ${file.mimetype}`}</p>
           <p>{`Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`}</p>
         </>

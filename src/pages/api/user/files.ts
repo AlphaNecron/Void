@@ -17,6 +17,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         uploadedAt: true,
         mimetype: true,
         slug: true,
+        views: true,
         deletionToken: true
       }
     });
