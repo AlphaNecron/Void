@@ -89,7 +89,7 @@ export default function Upload() {
             </Dropzone>
           </Button>
           <HStack justify='stretch' width='385'>
-            <Checkbox width='160' isChecked={preserve} onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
+            <Checkbox width='160' isChecked={preserve} colorScheme='purple' onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
             <Select size='sm' variant='filled' width='110' value={generator} onChange={selection => setGenerator(selection.target.value)}>
               <option value='random'>Random</option>
               <option value='zws'>Invisible</option>
