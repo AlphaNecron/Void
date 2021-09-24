@@ -6,7 +6,7 @@ export default function FileGrid({ files, onDelete, filter }) {
   return (
     <SimpleGrid minChildWidth='150px' spacing='10px' mr={2}>
       {files && (files.map((file, i) =>
-        (['video', 'image'].some(t => file.mimetype.startsWith(t)) && [file.fileName, file.origFileName].some(name => name.toLowerCase().includes(filter))) && (
+        (['video', 'image'].some(t => file.mimetype.startsWith(t)) && [file.fileName, file.origFileName].some(name => name.toLowerCase().includes(filter.toLowerCase()))) && (
           <FileCard file={file} m={2} key={i} onDelete={onDelete}/>
         )
       ))}

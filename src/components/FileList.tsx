@@ -21,7 +21,7 @@ export default function FileList({ files, onDelete, filter }) {
       </Thead>
       <Tbody>
         {files && (files.map((file, i) =>
-          ([file.fileName, file.origFileName].some(name => name.toLowerCase().includes(filter))) && (
+          ([file.fileName, file.origFileName].some(name => name.toLowerCase().includes(filter.toLowerCase()))) && (
             <Tr key={i}>
               <Td>{file.id}</Td>
               <Td>
