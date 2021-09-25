@@ -23,7 +23,7 @@ model File {
   fileName        String
   origFileName    String
   mimetype        String          @default("image/png")
-  slug            String          @unique
+  slug            String
   uploadedAt      DateTime        @default(now())
   deletionToken   String	        @unique
   views           Int             @default(0)

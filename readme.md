@@ -10,7 +10,7 @@ A self-hosted file hosting service based on Zipline with many features.
 </div>
 
 ### Requirements
-  - `node` >= 16
+  - `node` >= 14
   - PostgreSQL
   - Either `yarn` or `npm`
 
@@ -43,6 +43,21 @@ A self-hosted file hosting service based on Zipline with many features.
           proxy_set_header X-Forwarded-Proto $scheme;
       }
   }
+  ```
+
+### Config schema
+  ```
+  [core]
+  secure = false # Whether to use https or not
+  secret = 'supersecretpassphrase' # The secret used to sign cookie
+  host = '0.0.0.0' # The host Draconic should run on
+  port = 3000 # The port Draconic should run on
+  database_url = 'postgres://username:password@localhost:5432/db_name' # PostgreSQL database url
+
+  [uploader]
+  length = 6 # Slug length
+  directory = './uploads' # The directory where images are stored
+  blacklisted = ['exe'] # Blacklisted extensions
   ```
 
 ### Features

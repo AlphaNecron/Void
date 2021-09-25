@@ -7,7 +7,6 @@ on:
       - 'LICENSE'
       - 'config.example.toml'
       - '.gitignore'
-      - '.github/workflows/**'
   pull_request:
     branches: [ dev ]
     paths-ignore:
@@ -15,7 +14,6 @@ on:
       - 'LICENSE'
       - 'config.example.toml'
       - '.gitignore'
-      - '.github/workflows/**'
   workflow_dispatch:
 jobs:
   build:
