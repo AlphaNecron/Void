@@ -46,7 +46,7 @@ A self-hosted file hosting service based on Zipline with many features.
   ```
 
 ### Config schema
-  ```
+  ```toml
   [core]
   secure = false # Whether to use https or not
   secret = 'supersecretpassphrase' # The secret used to sign cookie
