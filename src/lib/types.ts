@@ -6,6 +6,14 @@ export interface Core {
   database_url: string
 }
 
+export interface Bot {
+  enabled: boolean;
+  prefix: string;
+  token: string;
+  admin: string[];
+  log_channel: string;
+}
+
 export interface Uploader {
   length: number;
   directory: string;
@@ -15,4 +23,5 @@ export interface Uploader {
 export interface Config {
   core: Core;
   uploader: Uploader;
+  bot: Bot;
 }

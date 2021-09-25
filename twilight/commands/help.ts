@@ -1,0 +1,19 @@
+import { Message, MessageEmbed } from 'discord.js';
+import { commands } from '../index';
+import config from '../../src/lib/config';
+
+const help = {
+  command: 'help',
+  description: 'Show this message',
+  syntax: '{PREFIX}help',
+  scopes: ['dm', 'text'],
+  execute: (msg: Message) => {
+    const embed = new MessageEmbed().setTimestamp().setTitle('Help').setColor('#B794F4');
+    commands.forEach(command =>
+      embed.addField(command.syntax.replace('{PREFIX}', config.bot.prefix),
+        command.description));
+    msg.channel.send(embed);
+  }
+};
+
+export default help;

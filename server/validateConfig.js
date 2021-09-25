@@ -8,6 +8,13 @@ const validator = yup.object({
     port: yup.number().default(3000),
     database_url: yup.string().required(),
   }).required(),
+  bot: yup.object({
+    enabled: yup.bool().default(false),
+    prefix: yup.string().min(1).default('*'),
+    token: yup.string(),
+    admin: yup.array().default([]),
+    log_channel: yup.string()
+  }),
   uploader: yup.object({
     length: yup.number().default(6),
     directory: yup.string().required(),

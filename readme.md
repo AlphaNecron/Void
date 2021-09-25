@@ -54,6 +54,13 @@ A self-hosted file hosting service based on Zipline with many features.
   port = 3000 # The port Draconic should run on
   database_url = 'postgres://username:password@localhost:5432/db_name' # PostgreSQL database url
 
+  [bot]
+  enabled = false # Whether to enable the bot or not
+  prefix = '&' # Bot's prefix
+  token = '' # Bot's token
+  admin = [''] # Admin ids
+  log_channel = '' # The channel where logs are sent, leave blank to disable logging
+
   [uploader]
   length = 6 # Slug length
   directory = './uploads' # The directory where images are stored
