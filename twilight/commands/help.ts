@@ -10,7 +10,7 @@ const help = {
   execute: (msg: Message) => {
     const embed = new MessageEmbed().setTimestamp().setTitle('Help').setColor('#B794F4');
     commands.forEach(command =>
-      embed.addField(command.syntax.replace('{PREFIX}', config.bot.prefix),
+      embed.addField(command.syntax.replaceAll('{PREFIX}', config.bot.prefix),
         command.description));
     msg.channel.send(embed);
   }
