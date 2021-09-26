@@ -22,7 +22,7 @@ const users = {
     all.forEach(user => {
       embed.addField(`${user.username}`, `ID: ${user.id}\nAdmin: ${user.isAdmin ? 'yes' : 'no'}`);
     });
-    msg.channel.send(embed);
+    await msg.channel.send(embed);
   }
 };
 

@@ -19,7 +19,7 @@ const stats = {
         views: true
       }
     });
-    msg.channel.send(new MessageEmbed().addFields(
+    await msg.channel.send(new MessageEmbed().addFields(
       { name: 'Size', value: bytesToHr(size) },
       { name: 'Average size', value: bytesToHr(isNaN(size / count) ? 0 : size / count) },
       { name: 'File count', value: count },

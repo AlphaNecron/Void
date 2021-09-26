@@ -1,6 +1,4 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { Message, MessageEmbed } from 'discord.js';
-import { Delete } from 'react-feather';
 import prisma from '../../src/lib/prisma';
 import { createToken, hashPassword } from '../../src/lib/utils';
 import { logger } from '../index';
@@ -39,11 +37,11 @@ const user = {
         .setTitle('Created a new user')
         .setColor('#B794F4')
         .addFields(
-          { name: 'id', value: newUser.id, inline: true },
-          { name: 'Username', value: newUser.username, inline: true }
+          { name: 'id', value: newUser.id },
+          { name: 'Username', value: newUser.username }
         );
       logger.log();
-      msg.channel.send(embed.addField('Token', newUser.token, true)); 
+      msg.channel.send(embed.addField('Token', newUser.token)); 
     }
     case 'delete': {
       const id = parseInt(args[1]);
@@ -60,6 +58,7 @@ const user = {
       const embed = new MessageEmbed()
         .setTitle('Deleted user')
         .setColor('#B794F4')
+        .setFooter(`By: ${msg.author.username}#${msg.author.discriminator}`)
         .addField('Username', userToDelete.username, true);
       logger.log(embed);
       msg.channel.send(embed);

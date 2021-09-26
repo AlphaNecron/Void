@@ -7,6 +7,7 @@ import { Logger } from './utils/logger';
 
 if (!config.bot.enabled) exit(0);
 process.env.DATABASE_URL = config.core.database_url;
+if (!config.bot.token) exit(1);
 
 export let logger;
 
@@ -20,10 +21,6 @@ client.once('ready', () => {
   logger.log(new MessageEmbed()
     .setTitle('Twilight is ready')
     .setColor('#B794F4'));
-  loadCommands();
-});
-
-const loadCommands = async () => {
   readdir(`${__dirname}/commands`, (err, files) => {
     err && error('BOT', err.message);
     files.forEach(file => {
@@ -32,7 +29,7 @@ const loadCommands = async () => {
         info('COMMAND', `Loaded command: ${file.toString().split('.').slice(0, -1)}`);}
     });
   });
-};
+});
 
 client.on('message', (msg: Message) => {
   if (config.bot.admin.includes(msg.author.id) && msg.content.startsWith(config.bot.prefix)) {

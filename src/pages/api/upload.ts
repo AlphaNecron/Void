@@ -25,7 +25,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const ext = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : req.file.originalname;
   if (cfg.uploader.blacklisted.includes(ext)) return res.error('Blacklisted extension received: ' + ext);
   const rand = generate(cfg.uploader.length);
-  let slug = '';
+  let slug;
   switch (req.headers.generator) {
   case 'zws': {
     slug = zws(cfg.uploader.length);

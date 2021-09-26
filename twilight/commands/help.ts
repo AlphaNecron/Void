@@ -7,12 +7,12 @@ const help = {
   description: 'Show this message',
   syntax: '{PREFIX}help',
   scopes: ['dm', 'text'],
-  execute: (msg: Message) => {
+  execute: async (msg: Message) => {
     const embed = new MessageEmbed().setTimestamp().setTitle('Help').setColor('#B794F4');
     commands.forEach(command =>
       embed.addField(command.syntax.replaceAll('{PREFIX}', config.bot.prefix),
         command.description));
-    msg.channel.send(embed);
+    await msg.channel.send(embed);
   }
 };
 
