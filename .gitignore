@@ -38,6 +38,7 @@ package.lock.json
 
 # draconic
 .vscode/
+.idea/
 config.toml
 uploads/
 .vscode/settings.json
