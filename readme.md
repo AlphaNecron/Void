@@ -55,13 +55,13 @@ A self-hosted file hosting service based on Zipline with many features.
   - Emoji URL
   - Text previewing (with syntax highlighting)
   - Video embed
+  - URL shortener
 
 ### Contribution
   - All contribution must be made in `dev` branch, other contributions in `v0` will be rejected.
 
 ### Todo
   - Docker support
-  - URL shortener
   - Discord bot
   - Discord integration
   - Album / Bulk upload
