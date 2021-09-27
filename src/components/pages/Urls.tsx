@@ -68,7 +68,7 @@ export default function URLs() {
   }, []);
   return (
     <>
-      <Skeleton isLoaded={urls && !busy}>
+      <Skeleton isLoaded={!busy}>
         <Table>
           <TableCaption placement='top'>
             <HStack>
