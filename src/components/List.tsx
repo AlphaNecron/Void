@@ -9,7 +9,6 @@ export default function List({ types, users }) {
         </TableCaption>
         <Thead>
           <Tr>
-            <Th>Index</Th>
             <Th>File type</Th>
             <Th>Count</Th>
           </Tr>
@@ -17,7 +16,6 @@ export default function List({ types, users }) {
         <Tbody>
           {types.map((type, i) => (
             <Tr key={i}>
-              <Td>{i}</Td>
               <Td>{type.mimetype}</Td>
               <Td>{type.count}</Td>
             </Tr>
@@ -30,7 +28,6 @@ export default function List({ types, users }) {
         </TableCaption>
         <Thead>
           <Tr>
-            <Th>Index</Th>
             <Th>Username</Th>
             <Th>File count</Th>
           </Tr>
@@ -38,7 +35,6 @@ export default function List({ types, users }) {
         <Tbody>
           {users.map((usr, i) => (
             <Tr key={i}>
-              <Td>{i}</Td>
               <Td>{usr.username}</Td>
               <Td>{usr.count}</Td>
             </Tr>

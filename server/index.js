@@ -55,16 +55,6 @@ const dev = process.env.NODE_ENV === 'development';
             }
           });
           if (file) {
-            await prisma.file.update({
-              where: {
-                id: file.id,
-              },
-              data: {
-                views: {
-                  increment: 1
-                }
-              }
-            });
             res.setHeader('Content-Type', file.mimetype);
           } else {
             const mimetype = mimes[extname(parts[2])] ?? 'application/octet-stream';

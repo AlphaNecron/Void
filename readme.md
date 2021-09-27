@@ -34,7 +34,7 @@ A self-hosted file hosting service based on Zipline with many features.
       ssl_certificate_key /path/to/key;
       ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
       ssl_ciphers         HIGH:!aNULL:!MD5;
-      client_max_body_size 128M;
+      client_max_body_size 100M;
       location / {
           proxy_pass http://localhost:3000;
           proxy_set_header Host $host;
@@ -53,16 +53,15 @@ A self-hosted file hosting service based on Zipline with many features.
   - Easy to setup
   - Invisible URL
   - Emoji URL
+  - Text previewing (with syntax highlighting)
   - Video embed
 
 ### Contribution
   - All contribution must be made in `dev` branch, other contributions in `v0` will be rejected.
 
 ### Todo
-  - AWS S3 support
   - Docker support
   - URL shortener
-  - Better gallery
   - Discord bot
   - Discord integration
   - Album / Bulk upload
