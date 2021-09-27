@@ -12,6 +12,13 @@ export interface Bot {
   token: string;
   admin: string[];
   log_channel: string;
+  hostname: string;
+}
+
+export interface Shortener {
+  allow_vanity: boolean;
+  length: number;
+  route: string;
 }
 
 export interface Uploader {
@@ -22,6 +29,7 @@ export interface Uploader {
 
 export interface Config {
   core: Core;
-  uploader: Uploader;
   bot: Bot;
+  shortener: Shortener;
+  uploader: Uploader;
 }

@@ -1,4 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
+import { info } from '../../src/lib/logger';
 import prisma from '../../src/lib/prisma';
 import { createToken, hashPassword } from '../../src/lib/utils';
 import { logger } from '../index';
@@ -36,12 +37,14 @@ const user = {
       const embed = new MessageEmbed()
         .setTitle('Created a new user')
         .setColor('#B794F4')
+        .setFooter(`By: ${msg.author.username}#${msg.author.discriminator}`)
         .addFields(
           { name: 'id', value: newUser.id },
           { name: 'Username', value: newUser.username }
         );
-      logger.log();
-      msg.channel.send(embed.addField('Token', newUser.token)); 
+      logger.log(embed);
+      msg.channel.send(embed.addField('Token', newUser.token));
+      info('USER',`${msg.author.username}#${msg} created a user: ${newUser.username}`);
     }
     case 'delete': {
       const id = parseInt(args[1]);
@@ -62,6 +65,7 @@ const user = {
         .addField('Username', userToDelete.username, true);
       logger.log(embed);
       msg.channel.send(embed);
+      info('USER',`${msg.author.username}#${msg} created a user: ${userToDelete.username}`);
     }
     }
   }

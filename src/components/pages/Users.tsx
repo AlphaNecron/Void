@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Switch, Table, Tbody, Td, Text, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, ButtonGroup, FormControl, FormErrorMessage, FormLabel, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Checkbox, Table, Tbody, Td, Text, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
 import IconTextbox from 'components/IconTextbox';
 import PasswordBox from 'components/PasswordBox';
 import { Field, Form, Formik } from 'formik';
@@ -120,7 +120,7 @@ export default function Users() {
                     {({ field }) => (
                       <FormControl isRequired>
                         <FormLabel htmlFor='isAdmin'>Administrator</FormLabel>
-                        <Switch {...field}/>
+                        <Checkbox {...field}/>
                       </FormControl>
                     )}
                   </Field>
@@ -128,11 +128,11 @@ export default function Users() {
                 <PopoverFooter
                   border='0'
                   d='flex'
-                  alignItems='center'
-                  justifyContent='space-between'
+                  justifyContent='flex-end'
                   pb={4}
+                  pt={-4}
                 >
-                  <ButtonGroup alignSelf='flex-end' size='sm'>
+                  <ButtonGroup size='sm'>
                     <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
                     <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Creating' type='submit' leftIcon={<Plus size={16}/>}>Create</Button>
                   </ButtonGroup>

@@ -1,5 +1,5 @@
-import prisma from '../../src/lib/prisma';
 import { Message, MessageEmbed } from 'discord.js';
+import prisma from '../../src/lib/prisma';
 
 const users = {
   command: 'files',
@@ -27,7 +27,6 @@ const users = {
               Original file name: ${file.origFileName}
               Mimetype: ${file.mimetype}
               Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`);
-
     });
     await msg.channel.send(embed);
   }

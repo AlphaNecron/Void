@@ -66,7 +66,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   return res.json({
     url: `${baseUrl}/${file.slug}`,
     deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
-    thumbUrl: `${baseUrl}/raw/${file.fileName}`
+    thumbUrl: `${baseUrl}/${cfg.uploader.raw_route}/${file.fileName}`
   });
 }
 

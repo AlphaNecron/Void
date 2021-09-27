@@ -1,16 +1,16 @@
 import Layout from 'components/Layout';
-import UserPage from 'components/pages/Users';
+import URLs from 'components/pages/Urls';
 import useLogin from 'lib/hooks/useLogin';
 import React from 'react';
 
-export default function Users() {
+export default function Urls() {
   const { user, isLoading } = useLogin();
   if (isLoading) return null;
   return (
-    <Layout user={user} id={4}>
-      <UserPage/>
+    <Layout user={user} id={3}>
+      <URLs/>
     </Layout>
   );
 }
 
-Users.title = 'Users';
+Urls.title = 'URLs';

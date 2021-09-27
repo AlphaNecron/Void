@@ -12,10 +12,10 @@ export default function Upload() {
   const [generator, setGenerator] = useState('random');
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState(false);
-  const showToast = (srv, title, content) => {
+  const showToast = (srv, title, description?) => {
     toast({
-      title: title,
-      description: content,
+      title,
+      description,
       status: srv,
       duration: 5000,
       isClosable: true,
@@ -38,12 +38,10 @@ export default function Upload() {
       const json = await res.json();
       if (res.ok && !json.error) {
         showToast('success', 'File uploaded', json.url);
-        let hasCopied = copy(json.url);
-        if (hasCopied) {
-          showToast('info', 'Copied the URL to your clipboard', null);
-        }
-      } else {
-        showToast('error', 'Couldn\'t upload the file', json.error);
+        if (copy(json.url))
+          showToast('info', 'Copied the URL to your clipboard');
+        else
+          showToast('error', 'Couldn\'t upload the file', json.error);
       }
     }
     catch (error) {

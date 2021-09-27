@@ -1,8 +1,8 @@
-import { error, info } from '../src/lib/logger';
 import Discord, { Message, MessageEmbed } from 'discord.js';
-import config from '../src/lib/config';
-import { exit } from 'process';
 import { readdir } from 'fs';
+import { exit } from 'process';
+import config from '../src/lib/config';
+import { error, info } from '../src/lib/logger';
 import { Logger } from './utils/logger';
 
 if (!config.bot.enabled) exit(0);
@@ -22,7 +22,7 @@ client.once('ready', () => {
     .setTitle('Twilight is ready')
     .setColor('#B794F4'));
   readdir(`${__dirname}/commands`, (err, files) => {
-    err && error('BOT', err.message);
+    if(err) error('BOT', err.message);
     files.forEach(file => {
       if (file.toString().includes('.ts')) {
         commands.push(require(`${__dirname}/commands/${file.toString()}`).default);

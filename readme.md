@@ -60,8 +60,15 @@ A self-hosted file hosting service based on Zipline with many features.
   token = '' # Bot's token
   admin = [''] # Admin ids
   log_channel = '' # The channel where logs are sent, leave blank to disable logging
+  hostname = 'example.com' # The hostname shortened urls should use in Twilight
+
+  [shortener]
+  allow_vanity = true # Whether to allow vanity urls or not
+  length = 6 # Slug length
+  route = '/go' # Route to serve shortened urls
 
   [uploader]
+  raw_route = '/r' # Route to serve raw contents
   length = 6 # Slug length
   directory = './uploads' # The directory where images are stored
   blacklisted = ['exe'] # Blacklisted extensions
@@ -77,13 +84,13 @@ A self-hosted file hosting service based on Zipline with many features.
   - Emoji URL
   - Text previewing (with syntax highlighting)
   - Video embed
+  - URL shortener
+  - Discord bot
 
 ### Contribution
   - All contribution must be made in `dev` branch, other contributions in `v0` will be rejected.
 
 ### Todo
   - Docker support
-  - URL shortener
-  - Discord bot
   - Discord integration
   - Album / Bulk upload

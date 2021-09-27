@@ -1,5 +1,5 @@
-import prisma from '../../src/lib/prisma';
 import { Message, MessageEmbed } from 'discord.js';
+import prisma from '../../src/lib/prisma';
 
 const users = {
   command: 'users',

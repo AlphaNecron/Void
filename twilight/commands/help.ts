@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { commands } from '../index';
 import config from '../../src/lib/config';
+import { commands } from '../index';
 
 const help = {
   command: 'help',

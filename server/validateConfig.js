@@ -13,9 +13,16 @@ const validator = yup.object({
     prefix: yup.string().min(1).default('*'),
     token: yup.string(),
     admin: yup.array().default([]),
-    log_channel: yup.string()
+    log_channel: yup.string(),
+    hostname: yup.string().required()
   }),
+  shortener: yup.object({
+    allow_vanity: yup.bool().default(false),
+    length: yup.number().default(6),
+    route: yup.string().required()
+  }).required(),
   uploader: yup.object({
+    raw_route: yup.string().required(),
     length: yup.number().default(6),
     directory: yup.string().required(),
     blacklisted: yup.array().default([]),

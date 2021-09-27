@@ -11,8 +11,15 @@ prefix = '&'
 token = ''
 admin = ['']
 log_channel = ''
+hostname = 'example.com'
+
+[shortener]
+allow_vanity = true
+length = 6
+route = '/go'
 
 [uploader]
+raw_route = '/r'
 length = 6
 directory = './uploads'
 blacklisted = ['exe']

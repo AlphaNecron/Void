@@ -36,7 +36,7 @@ const dev = process.env.NODE_ENV === 'development';
     const handle = app.getRequestHandler();
     const prisma = new PrismaClient();
     const srv = createServer(async (req, res) => {
-      if (req.url.startsWith('/r')) {
+      if (req.url.startsWith(config.uploader.raw_route)) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
         let data;
@@ -66,7 +66,7 @@ const dev = process.env.NODE_ENV === 'development';
         handle(req, res);
       }
       if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs'))) {
-        res.statusCode === 200 ? info('URL', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
+        res.statusCode === 200 ? info('ROUTER', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
       }
     });
     srv.on('error', (e) => {

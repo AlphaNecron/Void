@@ -1,8 +1,8 @@
-import { bytesToHr, sizeOfDir } from '../../src/lib/utils';
-import config from '../../src/lib/config';
-import prisma from '../../src/lib/prisma';
 import { Message, MessageEmbed } from 'discord.js';
 import { join } from 'path';
+import config from '../../src/lib/config';
+import prisma from '../../src/lib/prisma';
+import { bytesToHr, sizeOfDir } from '../../src/lib/utils';
 
 const stats = {
   command: 'stats',
