@@ -1,4 +1,4 @@
-import { Button, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Switch } from '@chakra-ui/react';
+import { Button, ButtonGroup, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Switch } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Download, X } from 'react-feather';
 
@@ -81,9 +81,11 @@ export default function ShareXDialog({ open, onClose, token }) {
           <Switch isChecked={preserveFileName} onChange={p => setPreserveFileName(p.target.checked)}/>
         </ModalBody>
         <ModalFooter>
-          <Button size='sm' onClick={onClose} leftIcon={<X size={16}/>} mx={2}>Cancel</Button>
-          <Button size='sm' colorScheme='purple' leftIcon={<Download size={16}/>} onClick={() => generateConfig(true)} ref={ref}>Shortener</Button>
-          <Button size='sm' colorScheme='purple' leftIcon={<Download size={16}/>} onClick={() => generateConfig(false)} ref={ref}>Uploader</Button>
+          <ButtonGroup size='sm'>
+            <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
+            <Button colorScheme='purple' leftIcon={<Download size={16}/>} onClick={() => generateConfig(true)}>Shortener</Button>
+            <Button colorScheme='purple' leftIcon={<Download size={16}/>} onClick={() => generateConfig(false)} ref={ref}>Uploader</Button>
+          </ButtonGroup>
         </ModalFooter>
       </ModalContent>
     </Modal>
