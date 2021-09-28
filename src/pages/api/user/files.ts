@@ -21,7 +21,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         deletionToken: true
       }
     });
-    files.forEach(file => {
+    files.map(file => {
       const baseUrl = `http${config.core.secure ? 's' : ''}://${req.headers.host}/`;
       file.url = baseUrl + file.slug;
       file.rawUrl = baseUrl + 'r/' + file.fileName;

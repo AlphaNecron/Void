@@ -16,6 +16,17 @@ model User {
   embedTitle    String?
   embedColor    String  @default("#B794F4")
   files         File[]
+  urls          Url[]
+}
+
+model Url {
+  id          Int           @id @default(autoincrement())
+  destination String
+  short       String
+  createdAt   DateTime      @default(now())
+  views       Int           @default(0)
+  user        User          @relation(fields: [userId], references: [id])
+  userId      Int
 }
 
 model File {
@@ -23,7 +34,7 @@ model File {
   fileName        String
   origFileName    String
   mimetype        String          @default("image/png")
-  slug            String          @unique
+  slug            String
   uploadedAt      DateTime        @default(now())
   deletionToken   String	        @unique
   views           Int             @default(0)

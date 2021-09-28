@@ -15,7 +15,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     if (!file) {
       return res.json({
-        success: 'false'
+        success: false
       });
     }
     await rm(join(process.cwd(), cfg.uploader.directory, file.fileName));

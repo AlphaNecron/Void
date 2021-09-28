@@ -13,7 +13,7 @@ export default function Paste({ content, ext, style = null, language, ...other }
           <option key={key} value={value}>{key}</option>
         ))}
       </Select>
-      <Code language={selectedLanguage} style={theme} showLineNumbers showInlineLineNumbers customStyle={{ maxWidth: '80vw', maxHeight: '65vh', fontSize: 13 }}>{content}</Code>
+      <Code language={selectedLanguage} style={theme} showLineNumbers customStyle={{ maxWidth: '80vw', maxHeight: '65vh', fontSize: 13 }}>{content}</Code>
     </VStack>
   );
 }

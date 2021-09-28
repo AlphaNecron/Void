@@ -10,9 +10,6 @@ import React from 'react';
 import { DownloadCloud } from 'react-feather';
 
 export default function Embed({ file, title, color, username, content = '', misc }) {
-  const bg = useColorModeValue('gray.100', 'gray.700');
-  const fg = useColorModeValue('gray.800', 'white');
-  const shadow = useColorModeValue('outline', 'dark-lg');
   const handleDownload = () => {
     const a = document.createElement('a');
     a.download = file.origFileName;
@@ -55,12 +52,12 @@ export default function Embed({ file, title, color, username, content = '', misc
           m={4}
           boxShadow='xl'
           flexDirection='column'
-          bg={bg}
-          fg={fg}
+          bg={useColorModeValue('gray.100', 'gray.700')}
+          fg={useColorModeValue('gray.800', 'white')}
           p={1}
           borderRadius={5}
           textAlign='center'
-          shadow={shadow}
+          shadow={useColorModeValue('outline', 'dark-lg')}
         >
           <Heading mb={1} mx={2} fontSize='md'>{file.origFileName}</Heading>
           <FileViewer ext={misc.ext} content={content} src={misc.src} type={misc.type} language={misc.language} style={{ maxWidth: '90vw', maxHeight: '80vh' }}/>
@@ -73,6 +70,35 @@ export default function Embed({ file, title, color, username, content = '', misc
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const slug = context.params.id[0];
+  if (slug === config.shortener.route.split('/').pop()) {
+    const short = context.params.id[1];
+    const url = await prisma.url.findFirst({
+      where: {
+        short
+      },
+      select: {
+        id: true,
+        destination: true
+      }
+    });
+    if (!url) return { notFound: true };
+    await prisma.url.update({
+      where: {
+        id: url.id,
+      },
+      data: {
+        views: {
+          increment: 1
+        }
+      }
+    });
+    return {
+      redirect: {
+        destination: url.destination,
+      },
+      props: undefined,
+    };
+  }
   const file = await prisma.file.findFirst({
     where: {
       slug
@@ -110,10 +136,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
   });
   const ext = file.fileName.split('.').pop();
   const type = file.mimetype.split('/').shift();
-  const src = `/r/${file.fileName}`;
+  const src = `${config.uploader.raw_route}/${file.fileName}`;
   const isCode = Object.keys(languages).some(name => languages[name] === ext);
   if (file.mimetype.startsWith('text') || isCode) {
-    const res = await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/r/${file.fileName}`);
+    const res = await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/${config.uploader.raw_route}/${file.fileName}`);
     if (!res.ok) return { notFound: true };
     const content = await res.text();
     return {

@@ -5,7 +5,6 @@ import config from '../config';
 import prisma from '../prisma';
 import { sign64, unsign64 } from '../utils';
 
-
 export interface NextApiFile {
   fieldname: string;
   originalname: string;
@@ -41,7 +40,9 @@ export type NextApiRes = NextApiResponse & {
 export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
   res.error = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
+    res.status(400);
     res.json({
+      code: 400,
       error: message
     });
   };
@@ -57,7 +58,7 @@ export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse
     res.setHeader('Content-Type', 'application/json');
     res.status(401);
     res.json({
-      code: 403,
+      code: 401,
       error: message
     });
   };
@@ -96,7 +97,6 @@ export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse
           username: true
         }
       });
-
       if (!user) return null;
       return user;
     } catch (e) {

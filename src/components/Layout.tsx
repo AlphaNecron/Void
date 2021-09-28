@@ -2,7 +2,7 @@ import { Button, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList,
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { Edit, File, Home, LogOut, Moon, Sun, Tool, UploadCloud, User, Users } from 'react-feather';
+import { Edit, File, Home, Link2, LogOut, Moon, Sun, Tool, UploadCloud, User, Users } from 'react-feather';
 import MediaQuery from 'react-responsive';
 import ManageAccountDialog from './ManageAccountDialog';
 import Navigation from './Navigation';
@@ -41,6 +41,11 @@ export default function Layout({ children, id, user }) {
       route: '/dash/upload'
     },
     {
+      icon: Link2,
+      label: 'URLs',
+      route: '/dash/urls'
+    },
+    {
       icon: Users,
       label: 'Users',
       route: '/dash/users',
@@ -59,12 +64,12 @@ export default function Layout({ children, id, user }) {
                 <>
                   {(page.adminRequired && !user.isAdmin) || (
                     <>
-                      <MediaQuery minWidth={641}>
+                      <MediaQuery minWidth={pages.length * 150}>
                         <Link key={i} href={page.route} passHref>
                           <Button justifyContent='flex-start' colorScheme='purple' isActive={i === id} variant='ghost' leftIcon={<Icon as={page.icon}/>}>{page.label}</Button>
                         </Link>
                       </MediaQuery>
-                      <MediaQuery maxWidth={640}>
+                      <MediaQuery maxWidth={pages.length * 150 - 1}>
                         <Link key={i} href={page.route} passHref>
                           <IconButton colorScheme='purple' aria-label={page.label} isActive={i === id} variant='ghost' icon={<Icon as={page.icon}/>}>{page.label}</IconButton>
                         </Link>

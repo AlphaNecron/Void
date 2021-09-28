@@ -19,7 +19,7 @@ const dev = process.env.NODE_ENV === 'development';
   try {
     const config = await validateConfig(configReader());
     const data = await prismaRun(config.core.database_url, ['migrate', 'status'], true);
-    if (data.includes('Following migration have not yet been applied:')) {
+    if (data.includes('Following migration(s) have not yet been applied:')) {
       info('DB', 'Some migrations are not applied, applying them now...');
       await deployDb(config);
       info('DB', 'Finished applying migrations');
@@ -36,7 +36,7 @@ const dev = process.env.NODE_ENV === 'development';
     const handle = app.getRequestHandler();
     const prisma = new PrismaClient();
     const srv = createServer(async (req, res) => {
-      if (req.url.startsWith('/r')) {
+      if (req.url.startsWith(config.uploader.raw_route)) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
         let data;
@@ -66,7 +66,7 @@ const dev = process.env.NODE_ENV === 'development';
         handle(req, res);
       }
       if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs'))) {
-        res.statusCode === 200 ? info('URL', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
+        res.statusCode === 200 ? info('ROUTER', `${res.statusCode} ${req.url}`) : error('URL', `${res.statusCode} ${req.url}`);
       }
     });
     srv.on('error', (e) => {

@@ -25,7 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # lock files
-yarn.lock
 package.lock.json
 
 # local env files
@@ -39,6 +38,7 @@ package.lock.json
 
 # draconic
 .vscode/
+.idea/
 config.toml
 uploads/
 .vscode/settings.json

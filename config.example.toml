@@ -5,7 +5,21 @@ host = '0.0.0.0'
 port = 3000
 database_url = 'postgres://username:password@localhost:5432/db_name'
 
+[bot]
+enabled = false
+prefix = '&'
+token = ''
+admin = ['']
+log_channel = ''
+hostname = 'example.com'
+
+[shortener]
+allow_vanity = true
+length = 6
+route = '/go'
+
 [uploader]
+raw_route = '/r'
 length = 6
 directory = './uploads'
 blacklisted = ['exe']

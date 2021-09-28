@@ -13,7 +13,7 @@ export function checkPassword(s: string, hash: string): Promise<boolean> {
 }
 
 export function createToken() {
-  return generate(24) + '.' + Buffer.from(Date.now().toString()).toString('base64url');
+  return generate(24) + '.' + Buffer.from(Date.now().toString()).toString('base64');
 }
 
 export function sign(value: string, secret: string): string {

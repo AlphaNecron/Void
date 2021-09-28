@@ -25,7 +25,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const ext = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : req.file.originalname;
   if (cfg.uploader.blacklisted.includes(ext)) return res.error('Blacklisted extension received: ' + ext);
   const rand = generate(cfg.uploader.length);
-  let slug = '';
+  let slug;
   switch (req.headers.generator) {
   case 'zws': {
     slug = zws(cfg.uploader.length);
@@ -66,7 +66,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   return res.json({
     url: `${baseUrl}/${file.slug}`,
     deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
-    thumbUrl: `${baseUrl}/raw/${file.fileName}`
+    thumbUrl: `${baseUrl}/${cfg.uploader.raw_route}/${file.fileName}`
   });
 }
 

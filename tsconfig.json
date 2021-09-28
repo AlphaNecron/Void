@@ -38,7 +38,8 @@
     "next-env.d.ts",
     "draconic-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "twilight/**/*.ts"
   ],
   "exclude": [
     "node_modules",

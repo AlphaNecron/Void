@@ -7,7 +7,6 @@ on:
       - 'LICENSE'
       - 'config.example.toml'
       - '.gitignore'
-      - '.github/workflows/**'
   pull_request:
     branches: [ dev ]
     paths-ignore:
@@ -15,7 +14,6 @@ on:
       - 'LICENSE'
       - 'config.example.toml'
       - '.gitignore'
-      - '.github/workflows/**'
   workflow_dispatch:
 jobs:
   build:
@@ -24,11 +22,11 @@ jobs:
       - name: 'checkout'
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.ref }}
-      - name: 'setup node 16'
+          ref: ${{ github.sha }}
+      - name: 'setup node 14'
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '14.x'
       - name: 'restore deps'
         id: cache-restore
         uses: actions/cache@v2
