@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import prisma from '../../src/lib/prisma';
 
-const users = {
+const files = {
   command: 'files',
   description: 'View files',
   syntax: '{PREFIX}files',
@@ -16,20 +16,22 @@ const users = {
         uploadedAt: true
       }
     });
-    const embed = new MessageEmbed()
-      .setTimestamp()
-      .setTitle('Files')
-      .setColor('#B794F4')
-      .setFooter(`Total: ${all.length}`);
-    all.forEach(file => {
-      embed.addField(`${file.fileName}`,
-        `ID: ${file.id}
-              Original file name: ${file.origFileName}
-              Mimetype: ${file.mimetype}
-              Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`);
-    });
-    await msg.channel.send(embed);
+    for (let i = 0; i < all.length; i += 4) {
+      const files = all.slice(i, i + 4);
+      const embed = new MessageEmbed()
+        .setTitle('Files')
+        .setColor('#B794F4');
+      files.forEach(file => {
+        embed.addField(`${file.fileName}`,
+          `ID: ${file.id}
+          Original file name: ${file.origFileName}
+          Mimetype: ${file.mimetype}
+          Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`)
+          .setFooter(`Page ${i / 4 + 1}/${Math.ceil(all.length / 4)}`);
+      });
+      msg.channel.send(embed);
+    }
   }
 };
 
-export default users;
+export default files;

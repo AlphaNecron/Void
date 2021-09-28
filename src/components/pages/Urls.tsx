@@ -13,14 +13,7 @@ export default function URLs() {
   const [busy, setBusy] = useState(false);
   const toast = useToast();
   const schema = yup.object({
-    destination: yup.string().test('Valid destination', 'Invalid destination', dest => {
-      try {
-        new URL(dest);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    }).required('Destination is required'),
+    destination: yup.string().url().required(),
     vanity: yup.string()
   });
   const handleDelete = async u => {
@@ -49,7 +42,7 @@ export default function URLs() {
   const handleSubmit = async (values, actions) => {
     const data = {
       destination: values.destination.trim(),
-      ...(values.vanity.trim() === '' || { vanity: values.vanity } as {})
+      vanity: values.vanity.trim()
     };
     setBusy(true);
     const res = await useFetch('/api/shorten', 'POST', data);
