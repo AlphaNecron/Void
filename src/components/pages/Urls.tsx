@@ -4,6 +4,7 @@ import { Field, Form, Formik } from 'formik';
 import useFetch from 'lib/hooks/useFetch';
 import React, { useEffect, useState } from 'react';
 import { ExternalLink, Scissors, Trash2, X } from 'react-feather';
+import schemify from 'url-schemify';
 import * as yup from 'yup';
 
 export default function URLs() {
@@ -13,7 +14,7 @@ export default function URLs() {
   const [busy, setBusy] = useState(false);
   const toast = useToast();
   const schema = yup.object({
-    destination: yup.string().url().required(),
+    destination: yup.string().required(),
     vanity: yup.string()
   });
   const handleDelete = async u => {
@@ -41,7 +42,7 @@ export default function URLs() {
   };
   const handleSubmit = async (values, actions) => {
     const data = {
-      destination: values.destination.trim(),
+      destination: schemify(values.destination.trim()),
       vanity: values.vanity.trim()
     };
     setBusy(true);
@@ -56,7 +57,7 @@ export default function URLs() {
   const copyUrl = u => {
     if (copy(u.url)) showToast('info', 'Copied the URL to your clipboard');
   };
-  useEffect(() => { 
+  useEffect(() => {
     updateUrls();
   }, []);
   return (

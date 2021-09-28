@@ -1,7 +1,7 @@
 import { Select, VStack } from '@chakra-ui/react';
 import languages from 'lib/languages';
 import React, { useState } from 'react';
-import { PrismLight as Code } from 'react-syntax-highlighter';
+import { Prism as Code } from 'react-syntax-highlighter';
 import theme from 'react-syntax-highlighter/dist/cjs/styles/prism/coldark-dark';
 
 export default function Paste({ content, ext, style = null, language, ...other }) {
