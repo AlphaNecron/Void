@@ -35,7 +35,7 @@ export default function Embed({ file, embed, username, content = undefined, misc
             <meta property='og:title' content={replace(embed.title)}/>
             <meta property='og:description' content={replace(embed.desc)}/>
             <meta property='theme-color' content={embed.color}/>
-            <meta property='og:url' content={window.location.toString()}/>
+            <meta property='og:url' content={`/${file.slug}`}/>
             {misc.type === 'image' ? (
               <>
                 <meta property='og:image' content={misc.src}/>
@@ -116,6 +116,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
       id: true,
       fileName: true,
       mimetype: true,
+      uploadedAt: true,
+      slug: true,
       origFileName: true,
       userId: true
     }
