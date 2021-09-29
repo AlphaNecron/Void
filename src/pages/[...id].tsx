@@ -22,8 +22,8 @@ export default function Embed({ file, embed, username, content = undefined, misc
     return (text ?? '').replace(/{size}/ig, misc.size)
       .replace(/{filename}/ig, file.fileName)
       .replace(/{orig}/ig, file.origFileName)
-      .replace(/date/ig, time.toLocaleDateString())
-      .replace(/time/ig, time.toLocaleTimeString())
+      .replace(/{date}/ig, time.toLocaleDateString())
+      .replace(/{time}/ig, time.toLocaleTimeString())
       .replace(/{author}/ig, username);
   };
   return (
