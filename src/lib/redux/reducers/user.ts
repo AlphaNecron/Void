@@ -3,8 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface User {
   username: string;
   token: string;
+  useEmbed: boolean;
+  embedSiteName: string;
   embedTitle: string;
   embedColor: string;
+  embedDesc: string;
 }
 
 const initialState: User = null;

@@ -13,12 +13,12 @@ export default function FileCard({ file, onDelete, ...other }) {
       <Spacer/>
       <Tooltip hasArrow label={
         <>
-          <p>{`ID: ${file.id}`}</p>
-          <p>{`File name: ${file.fileName}`}</p>
+          <p>ID: {file.id}</p>
+          <p>File name: {file.fileName}</p>
           <p>{file.origFileName === file.fileName ? '' : `Original file name: ${file.origFileName}`}</p>
-          <p>{`Views: ${file.views}`}</p>
-          <p>{`Type: ${file.mimetype}`}</p>
-          <p>{`Uploaded at: ${new Date(file.uploadedAt).toLocaleString()}`}</p>
+          <p>Views: {file.views}</p>
+          <p>Type: {file.mimetype}</p>
+          <p>Uploaded at: {new Date(file.uploadedAt).toLocaleString()}</p>
         </>
       } bg='gray.600' color='white'>
         <Heading size='sm' maxWidth='140' isTruncated>{file.origFileName}</Heading>

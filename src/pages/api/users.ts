@@ -51,8 +51,11 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         id: true,
         isAdmin: true,
         token: true,
+        useEmbed: true,
+        embedSiteName: true,
         embedColor: true,
         embedTitle: true,
+        embedDesc: true
       }
     });
     return res.json(all);

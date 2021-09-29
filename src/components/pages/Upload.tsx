@@ -31,7 +31,7 @@ export default function Upload() {
         headers: {
           'Token': token,
           'Generator': generator,
-          ...(preserve && {'PreserveFileName': 'true'})
+          'PreserveFileName': preserve ? 'true' : ''
         },
         body
       });

@@ -7,7 +7,7 @@ export default function IconTextbox({ icon, ...other }) {
       <InputLeftElement pointerEvents='none' width='4.5rem'>
         <Icon as={icon} mr={8} mb={2}/>
       </InputLeftElement>
-      <Input size='sm' {...other} />
+      <Input size='sm' {...other}/>
     </InputGroup>
   );
 }

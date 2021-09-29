@@ -12,8 +12,9 @@ const stats = {
   execute: async (msg: Message) => {
     const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
     const userCount = await prisma.user.count();
-    const count = await prisma.file.count();
-    const viewsCount = await prisma.file.groupBy({
+    const fcount = await prisma.file.count();
+    const ucount = await prisma.url.count();
+    const viewCount = await prisma.file.groupBy({
       by: ['views'],
       _sum: {
         views: true
@@ -21,10 +22,11 @@ const stats = {
     });
     await msg.channel.send(new MessageEmbed().addFields(
       { name: 'Size', value: bytesToHr(size) },
-      { name: 'Average size', value: bytesToHr(isNaN(size / count) ? 0 : size / count) },
-      { name: 'File count', value: count },
+      { name: 'Average size', value: bytesToHr(isNaN(size / fcount) ? 0 : size / fcount) },
+      { name: 'File count', value: fcount },
+      { name: 'URL count', value: ucount },
       { name: 'User count', value: userCount },
-      { name: 'View count', value: viewsCount[0]?._sum?.views ?? 0 }
+      { name: 'View count', value: viewCount[0]?._sum?.views ?? 0 }
     ).setAuthor('Server stats').setTimestamp().setColor('#B794F4'));
   }
 };

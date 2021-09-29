@@ -60,6 +60,7 @@ const dev = process.env.NODE_ENV === 'development';
             const mimetype = mimes[extname(parts[2])] ?? 'application/octet-stream';
             res.setHeader('Content-Type', mimetype);
           }
+          res.setHeader('Content-Length', data.byteLength);
           res.end(data);
         }
       } else {

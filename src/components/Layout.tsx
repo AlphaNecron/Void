@@ -1,11 +1,10 @@
-import { Button, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spacer, useColorMode, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spacer, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { Edit, File, Home, Link2, LogOut, Moon, Sun, Tool, UploadCloud, User, Users } from 'react-feather';
 import MediaQuery from 'react-responsive';
 import ManageAccountDialog from './ManageAccountDialog';
-import Navigation from './Navigation';
 import ShareXDialog from './ShareXDialog';
 
 export default function Layout({ children, id, user }) {
@@ -58,7 +57,7 @@ export default function Layout({ children, id, user }) {
         <Skeleton r={4} l={4} t={4} b={4} height='96%' width='98%' m={4} pos='fixed'/>
       ) : (
         <>
-          <Navigation>
+          <Box h='48px' bg={useColorModeValue('gray.100', 'gray.900')} sx={{ zIndex: 100, position: 'sticky' }} top={0} right={0} left={0} p={1} boxShadow='base'>
             <HStack align='left'>
               {pages.map((page, i) => (
                 <>
@@ -99,7 +98,7 @@ export default function Layout({ children, id, user }) {
                 </MenuList>
               </Menu>
             </HStack>
-          </Navigation>
+          </Box>
           <ManageAccountDialog onClose={onManageClose} open={manageOpen} user={user}/>
           <ShareXDialog onClose={onShareXClose} open={shareXOpen} token={user.token}/>
           {children}

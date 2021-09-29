@@ -1,6 +1,6 @@
-import { Button, ButtonGroup, FormControl, FormLabel, HStack, IconButton, Input, Link, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Table, TableCaption, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, ButtonGroup, FormControl, FormLabel, HStack, IconButton, Input, Link, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
-import { Field, Form, Formik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import useFetch from 'lib/hooks/useFetch';
 import React, { useEffect, useState } from 'react';
 import { ExternalLink, Scissors, Trash2, X } from 'react-feather';
@@ -63,65 +63,63 @@ export default function URLs() {
   return (
     <>
       <Skeleton isLoaded={!busy}>
+        <HStack m={2}>
+          <Popover
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            placement='right-start'
+          >
+            <PopoverTrigger>
+              <Button size='sm' colorScheme='purple' leftIcon={<Scissors size={16}/>}>Shorten</Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverHeader fontWeight='bold' border='0'>
+                Shorten a URL
+              </PopoverHeader>
+              <PopoverArrow/>
+              <PopoverCloseButton/>
+              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
+                {props => (
+                  <Form>
+                    <PopoverBody>
+                      <Field name='destination'>
+                        {({ field, form }) => (
+                          <FormControl isInvalid={form.errors.destination && form.touched.destination} isRequired>
+                            <FormLabel htmlFor='destination'>Destination</FormLabel>
+                            <Input {...field} size='sm' id='destination' mb={4} placeholder='Destination'/>
+                          </FormControl>
+                        )}
+                      </Field>
+                      <Field name='vanity'>
+                        {({ field }) => (
+                          <FormControl>
+                            <FormLabel htmlFor='vanity'>Vanity URL</FormLabel>
+                            <Input {...field} size='sm' id='vanity' mb={4} placeholder='Leave blank for random'/>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </PopoverBody>
+                    <PopoverFooter
+                      border='0'
+                      d='flex'
+                      justifyContent='flex-end'
+                      pb={4}
+                      pt={-4}
+                    >
+                      <ButtonGroup size='sm'>
+                        <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
+                        <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Shortening' type='submit' leftIcon={<Scissors size={16}/>}>Shorten</Button>
+                      </ButtonGroup>
+                    </PopoverFooter>
+                  </Form>
+                )}
+              </Formik>
+            </PopoverContent>
+          </Popover>
+          <Input size='sm' variant='filled' placeholder='Search something' value={filter} onChange={f => setFilter(f.target.value)}/>
+        </HStack>
         <Table>
-          <TableCaption placement='top'>
-            <HStack>
-              <Popover
-                isOpen={isOpen}
-                onOpen={onOpen}
-                onClose={onClose}
-                placement='right-start'
-              >
-                <PopoverTrigger>
-                  <Button size='sm' colorScheme='purple' leftIcon={<Scissors size={16}/>}>Shorten</Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverHeader fontWeight='bold' border='0'>
-                    Shorten a URL
-                  </PopoverHeader>
-                  <PopoverArrow/>
-                  <PopoverCloseButton/>
-                  <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
-                    {props => (
-                      <Form>
-                        <PopoverBody>
-                          <Field name='destination'>
-                            {({ field, form }) => (
-                              <FormControl isInvalid={form.errors.destination && form.touched.destination} isRequired>
-                                <FormLabel htmlFor='destination'>Destination</FormLabel>
-                                <Input {...field} size='sm' id='destination' mb={4} placeholder='Destination'/>
-                              </FormControl>
-                            )}
-                          </Field>
-                          <Field name='vanity'>
-                            {({ field }) => (
-                              <FormControl>
-                                <FormLabel htmlFor='vanity'>Vanity URL</FormLabel>
-                                <Input {...field} size='sm' id='vanity' mb={4} placeholder='Leave blank for random'/>
-                              </FormControl>
-                            )}
-                          </Field>
-                        </PopoverBody>
-                        <PopoverFooter 
-                          border='0'
-                          d='flex'
-                          justifyContent='flex-end'
-                          pb={4}
-                          pt={-4}
-                        >
-                          <ButtonGroup size='sm'>
-                            <Button onClick={onClose} leftIcon={<X size={16}/>}>Cancel</Button>
-                            <Button colorScheme='purple' isLoading={props.isSubmitting} loadingText='Shortening' type='submit' leftIcon={<Scissors size={16}/>}>Shorten</Button>
-                          </ButtonGroup>
-                        </PopoverFooter>
-                      </Form>
-                    )}
-                  </Formik>
-                </PopoverContent>
-              </Popover>
-              <Input size='sm' variant='filled' placeholder='Search something' value={filter} onChange={f => setFilter(f.target.value)}/>
-            </HStack>
-          </TableCaption>
           <Thead>
             <Tr>
               <Th>ID</Th>

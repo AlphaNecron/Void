@@ -11,7 +11,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const userCount = await prisma.user.count();
   const fileCount = await prisma.file.count();
   const urlCount = await prisma.url.count();
-  if (fileCount === 0 || urlCount === 0) {
+  if (fileCount === 0 && urlCount === 0) {
     return res.json({
       size: bytesToHr(0),
       sizeRaw: 0,

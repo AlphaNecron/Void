@@ -28,6 +28,14 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         data: { username: req.body.username }
       });
     }
+    if (req.body.useEmbed) await prisma.user.update({
+      where: { id: user.id },
+      data: { useEmbed: !!req.body.useEmbed }
+    });
+    if (req.body.embedSiteName) await prisma.user.update({
+      where: { id: user.id },
+      data: { embedSiteName: req.body.embedSiteName }
+    });
     if (req.body.embedTitle) await prisma.user.update({
       where: { id: user.id },
       data: { embedTitle: req.body.embedTitle }
@@ -36,14 +44,21 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       where: { id: user.id },
       data: { embedColor: req.body.embedColor }
     });
+    if (req.body.embedDesc) await prisma.user.update({
+      where: { id: user.id },
+      data: { embedDesc: req.body.embedDesc }
+    });
     const newUser = await prisma.user.findFirst({
       where: {
         id: Number(user.id)
       },
       select: {
         isAdmin: true,
+        useEmbed: true,
+        embedSiteName: true,
         embedColor: true,
         embedTitle: true,
+        embedDesc: true,
         id: true,
         files: false,
         password: false,
