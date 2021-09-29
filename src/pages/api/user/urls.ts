@@ -27,6 +27,9 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         short: true,
         destination: true,
         views: true
+      },
+      orderBy: {
+        id: 'asc',
       }
     });
     urls.map(url => url.url = `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`);

@@ -9,33 +9,35 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   if (!user) return res.forbid('Unauthorized');
   const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
   const userCount = await prisma.user.count();
-  const count = await prisma.file.count();
-  if (count === 0) {
+  const fileCount = await prisma.file.count();
+  const urlCount = await prisma.url.count();
+  if (fileCount === 0 || urlCount === 0) {
     return res.json({
       size: bytesToHr(0),
       sizeRaw: 0,
       avgSize: bytesToHr(0),
-      count,
+      fileCount,
+      urlCount,
       viewCount: 0,
       userCount
     });
   }
-  const byUser = await prisma.file.groupBy({
-    by: ['userId'],
-    _count: {
-      _all: true
+  const users = await prisma.user.findMany({
+    include: {
+      _count: {
+        select: {
+          urls: true,
+          files: true
+        }
+      }
     }
   });
   const countByUser = [];
-  for (let i = 0, L = byUser.length; i !== L; ++i) {
-    const user = await prisma.user.findFirst({
-      where: {
-        id: byUser[i].userId
-      }
-    });
+  for (let i = 0, L = users.length; i !== L; ++i) {
     countByUser.push({
-      username: user.username,
-      count: byUser[i]._count._all
+      username: users[i].username,
+      fileCount: users[i]._count.files,
+      urlCount: users[i]._count.urls
     });
   }
   const viewsCount = await prisma.file.groupBy({
@@ -57,9 +59,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   return res.json({
     size: bytesToHr(size),
     sizeRaw: size,
-    avgSize: bytesToHr(isNaN(size / count) ? 0 : size / count),
-    count,
-    countByUser: countByUser.sort((x,y) => x.count - y.count),
+    avgSize: bytesToHr(isNaN(size / fileCount) ? 0 : size / fileCount),
+    fileCount,
+    urlCount,
+    countByUser: countByUser,
     userCount,
     viewCount: (viewsCount[0]?._sum?.views ?? 0),
     countByType: countByType.sort((x,y) => x.count - y.count)

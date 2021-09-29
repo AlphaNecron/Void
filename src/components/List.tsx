@@ -30,13 +30,15 @@ export default function List({ types, users }) {
           <Tr>
             <Th>Username</Th>
             <Th>File count</Th>
+            <Th>URL count</Th>
           </Tr>
         </Thead>
         <Tbody>
           {users.map((usr, i) => (
             <Tr key={i}>
               <Td>{usr.username}</Td>
-              <Td>{usr.count}</Td>
+              <Td>{usr.fileCount}</Td>
+              <Td>{usr.urlCount}</Td>
             </Tr>
           ))}
         </Tbody>

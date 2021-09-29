@@ -19,6 +19,9 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         slug: true,
         views: true,
         deletionToken: true
+      },
+      orderBy: {
+        id: 'asc',
       }
     });
     files.map(file => {
@@ -26,7 +29,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       file.url = baseUrl + file.slug;
       file.rawUrl = baseUrl + 'r/' + file.fileName;
     });
-    return res.json(files.sort((a, b) => a.id - b.id));
+    return res.json(files);
   } else {
     return res.forbid('Invalid method');
   }
