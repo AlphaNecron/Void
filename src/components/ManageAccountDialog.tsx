@@ -40,7 +40,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
       password: values.password.trim()
     };
     const edata = {
-      useEmbed,
+      useEmbed: useEmbed.toString(),
       embedSiteName: values.embedSiteName,
       embedColor: values.embedColor.trim(),
       embedTitle: values.embedTitle,
