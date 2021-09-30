@@ -29,32 +29,34 @@ export default function Embed({ file, embed, username, content = undefined, misc
   return (
     <>
       <Head>
-        {embed.enabled && (
-          <>
-            <meta property='og:site_name' content={replace(embed.siteName)}/>
-            <meta property='og:title' content={replace(embed.title)}/>
-            <meta property='og:description' content={replace(embed.desc)}/>
-            <meta property='theme-color' content={embed.color}/>
-            <meta property='og:url' content={`/${file.slug}`}/>
-            {misc.type === 'image' ? (
-              <>
-                <meta property='og:image' content={misc.src}/>
-                <meta property='twitter:card' content='summary_large_image'/>
-              </>
-            ) : misc.type === 'video' ? (
-              <>
-                <meta property='og:type' content='video.other'/>
-                <meta property='og:video' content={misc.src}/>
-                <meta property='og:video:url' content={misc.src}/>
-                <meta property='og:video:secure_url' content={misc.src}/>
-                <meta property='og:video:type' content={file.mimetype}/>
-              </>
-            ) : (
-              <meta property='og:image' content='/logo.png'/>
-            )}
-          </>
-        )}
-        <title>Uploaded by {username}</title>
+        <>
+          {embed.enabled && (
+            <>
+              <meta property='og:site_name' content={replace(embed.siteName)}/>
+              <meta property='og:title' content={replace(embed.title)}/>
+              <meta property='og:description' content={replace(embed.desc)}/>
+              <meta property='theme-color' content={embed.color}/>
+            </>
+          )}
+          <meta property='og:url' content={`/${file.slug}`}/>
+          {misc.type === 'image' ? (
+            <>
+              <meta property='og:image' content={misc.src}/>
+              <meta property='twitter:card' content='summary_large_image'/>
+            </>
+          ) : misc.type === 'video' ? (
+            <>
+              <meta property='og:type' content='video.other'/>
+              <meta property='og:video' content={misc.src}/>
+              <meta property='og:video:url' content={misc.src}/>
+              <meta property='og:video:secure_url' content={misc.src}/>
+              <meta property='og:video:type' content={file.mimetype}/>
+            </>
+          ) : (
+            <meta property='og:image' content='/logo.png'/>
+          )}
+          <title>Uploaded by {username}</title>
+        </>
       </Head>
       <Center>
         <Box

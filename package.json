@@ -1,6 +1,6 @@
 {
   "name": "draconic",
-  "version": "0.2.2-dev",
+  "version": "0.2.2",
   "private": true,
   "engines": {
     "node": ">=14"

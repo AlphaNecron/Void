@@ -30,7 +30,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     }
     if (req.body.useEmbed) await prisma.user.update({
       where: { id: user.id },
-      data: { useEmbed: !!req.body.useEmbed }
+      data: { useEmbed: req.body.useEmbed === 'true' }
     });
     if (req.body.embedSiteName) await prisma.user.update({
       where: { id: user.id },
