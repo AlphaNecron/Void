@@ -13,7 +13,7 @@ export function checkPassword(s: string, hash: string): Promise<boolean> {
 }
 
 export function createToken() {
-  return generate(24) + '.' + Buffer.from(Date.now().toString()).toString('base64');
+  return generate(24) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
 }
 
 export function sign(value: string, secret: string): string {
@@ -44,8 +44,8 @@ export async function sizeOfDir(directory: string): Promise<number> {
   const files = await readdir(directory);
   let size = 0;
   for (let i = 0, L = files.length; i !== L; ++i) {
-    const sta = await stat(join(directory, files[i]));
-    size += sta.size;
+    const stats = await stat(join(directory, files[i]));
+    size += stats.size;
   }
   return size;
 }
