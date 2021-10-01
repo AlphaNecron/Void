@@ -7,7 +7,7 @@
   ![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Void/CI:%20Build/dev?color=%2368D391&label=dev&logo=github&style=for-the-badge)
   ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
   ![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v0?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
-  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecdron/Void/dev?color=%234FD1C5&logo=github&style=for-the-badge)
+  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/dev?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
 ### Requirements
