@@ -11,6 +11,9 @@
 </div>
 
 ### Requirements
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c9555bf24e704bb29d4511ce1e961167)](https://app.codacy.com/gh/AlphaNecron/Void?utm_source=github.com&utm_medium=referral&utm_content=AlphaNecron/Void&utm_campaign=Badge_Grade_Settings)
+
   - `node` >= 14
   - PostgreSQL
   - Either `yarn` or `npm`
