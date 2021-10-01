@@ -92,7 +92,7 @@ export default function Login() {
                   type='submit'
                   width='full'
                 >
-                  <LogIn size={16} />
+                  <LogIn size={16}/>
                   <Text ml={2}>Login</Text>
                 </Button>
               </VStack>

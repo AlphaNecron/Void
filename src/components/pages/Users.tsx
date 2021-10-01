@@ -103,7 +103,7 @@ export default function Users() {
                     {({ field, form }) => (
                       <FormControl isInvalid={form.errors.username && form.touched.username} isRequired mb={4}>
                         <FormLabel htmlFor='username'>Username</FormLabel>
-                        <IconTextbox icon={User} {...field} id='username' placeholder='Username' />
+                        <IconTextbox icon={User} {...field} id='username' placeholder='Username'/>
                         <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                       </FormControl>
                     )}
@@ -116,7 +116,7 @@ export default function Users() {
                       </FormControl>
                     )}
                   </Field>
-                  <Field name='isAdmin'>
+                  <Field name='isAdmin' type='checkbox'>
                     {({ field }) => (
                       <FormControl isRequired>
                         <FormLabel htmlFor='isAdmin'>Administrator</FormLabel>
@@ -165,7 +165,7 @@ export default function Users() {
               <Td>{usr.embedTitle}</Td>
               <Td>
                 {usr.username === username || (
-                  <IconButton aria-label='Delete' size='sm' colorScheme='red' onClick={() => handleDelete(usr)} icon={<Trash2 size={16} />} />
+                  <IconButton aria-label='Delete' size='sm' colorScheme='red' onClick={() => handleDelete(usr)} icon={<Trash2 size={16}/>}/>
                 )}
               </Td>
             </Tr>

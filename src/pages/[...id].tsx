@@ -3,49 +3,60 @@ import FileViewer from 'components/FileViewer';
 import config from 'lib/config';
 import languages from 'lib/languages';
 import prisma from 'lib/prisma';
+import { bytesToHr } from 'lib/utils';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import fetch from 'node-fetch';
 import React from 'react';
 import { DownloadCloud } from 'react-feather';
 
-export default function Embed({ file, title, color, username, content = '', misc }) {
+export default function Embed({ file, embed, username, content = undefined, misc }) {
   const handleDownload = () => {
     const a = document.createElement('a');
     a.download = file.origFileName;
     a.href = misc.src;
     a.click();
   };
+  const replace = text => {
+    const time = new Date(file.uploadedAt);
+    return (text ?? '').replace(/{size}/ig, misc.size)
+      .replace(/{filename}/ig, file.fileName)
+      .replace(/{orig}/ig, file.origFileName)
+      .replace(/{date}/ig, time.toLocaleDateString())
+      .replace(/{time}/ig, time.toLocaleTimeString())
+      .replace(/{author}/ig, username);
+  };
   return (
     <>
       <Head>
-        {title ? (
-          <>
-            <meta property='og:site_name' content='Draconic'/>
-            <meta property='og:title' content={title}/>
-          </>
-        ) : (
-          <meta property='og:title' content='Draconic'/>
-        )}
-        <meta property='theme-color' content={color}/>
-        <meta property='og:url' content={file.slug}/>
-        {misc.type === 'image' ? (
-          <>
-            <meta property='og:image' content={misc.src}/>
-            <meta property='twitter:card' content='summary_large_image'/>
-          </>
-        ) : misc.type === 'video' ? (
-          <>
-            <meta property='og:type' content='video.other'/>
-            <meta property='og:video' content={misc.src}/>
-            <meta property='og:video:url' content={misc.src}/>
-            <meta property='og:video:secure_url' content={misc.src}/>
-            <meta property='og:video:type' content={file.mimetype}/>
-          </>
-        ) : (
-          <meta property='og:image' content='/logo.png'/>
-        )}
-        <title>{'Uploaded by ' + username}</title>
+        <>
+          {embed.enabled && (
+            <>
+              <meta property='og:site_name' content={replace(embed.siteName)}/>
+              <meta property='og:title' content={replace(embed.title)}/>
+              <meta property='og:description' content={replace(embed.desc)}/>
+              <meta property='theme-color' content={embed.color}/>
+            </>
+          )}
+          <meta property='og:url' content={`/${file.slug}`}/>
+          {misc.type === 'image' ? (
+            <>
+              <meta property='og:image' content={misc.src}/>
+              <meta property='twitter:card' content='summary_large_image'/>
+            </>
+          ) : misc.type === 'video' ? (
+            <>
+              <meta property='og:type' content='video.other'/>
+              <meta property='og:video' content={misc.src}/>
+              <meta property='og:video:url' content={misc.src}/>
+              <meta property='og:video:secure_url' content={misc.src}/>
+              <meta property='og:video:type' content={file.mimetype}/>
+            </>
+          ) : (
+            <meta property='og:image' content='/logo.png'/>
+          )}
+          <title>Uploaded by {username}</title>
+        </>
       </Head>
       <Center>
         <Box
@@ -107,6 +118,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
       id: true,
       fileName: true,
       mimetype: true,
+      uploadedAt: true,
+      slug: true,
       origFileName: true,
       userId: true
     }
@@ -124,49 +137,67 @@ export const getServerSideProps: GetServerSideProps = async context => {
       }
     }
   });
-  const user = await prisma.user.findFirst({
-    select: {
-      embedTitle: true,
-      embedColor: true,
-      username: true
-    },
+  const { useEmbed: enabled, embedSiteName: siteName, embedTitle: title, embedColor: color, embedDesc: desc, username } = await prisma.user.findFirst({
     where: {
       id: file.userId
+    },
+    select: {
+      username: true,
+      useEmbed: true,
+      embedSiteName: true,
+      embedTitle: true,
+      embedColor: true,
+      embedDesc: true
     }
   });
   const ext = file.fileName.split('.').pop();
   const type = file.mimetype.split('/').shift();
   const src = `${config.uploader.raw_route}/${file.fileName}`;
+  const url = `http${config.core.secure ? 's' : ''}://${context.req.headers.host}/${config.uploader.raw_route}`;
   const isCode = Object.keys(languages).some(name => languages[name] === ext);
   if (file.mimetype.startsWith('text') || isCode) {
-    const res = await fetch(`http${config.core.secure ? 's' : ''}://${context.req.headers.host}/${config.uploader.raw_route}/${file.fileName}`);
+    const res = await fetch(`${url}/${file.fileName}`);
     if (!res.ok) return { notFound: true };
     const content = await res.text();
+    const size = bytesToHr(res.headers.get('content-length'));
     return {
       props: {
         file,
-        title: user.embedTitle,
-        color: user.embedColor,
-        username: user.username,
+        embed: {
+          enabled,
+          siteName,
+          title,
+          color,
+          desc
+        },
+        username,
         misc: {
           ext,
           type,
-          language: isCode ? ext : 'text'
+          language: isCode ? ext : 'text',
+          size
         },
         content
       }
     };
   };
+  const size = bytesToHr((await fetch(`${url}/${file.fileName}`)).headers.get('content-length'));
   return {
     props: {
       file,
-      title: user.embedTitle,
-      color: user.embedColor,
-      username: user.username,
+      embed: {
+        enabled,
+        siteName,
+        title,
+        color,
+        desc
+      },
+      username,
       misc: {
         ext,
         type,
-        src
+        src,
+        size
       }
     }
   };

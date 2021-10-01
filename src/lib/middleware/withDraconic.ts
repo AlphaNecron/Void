@@ -18,8 +18,11 @@ export type NextApiReq = NextApiRequest & {
   user: () => Promise<{
     username: string;
     token: string;
+    useEmbed: boolean;
+    embedSiteName: string;
     embedTitle: string;
     embedColor: string;
+    embedDesc: string;
     isAdmin: boolean;
     id: number;
     password: string;
@@ -89,8 +92,11 @@ export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse
         },
         select: {
           isAdmin: true,
+          useEmbed: true,
+          embedSiteName: true,
           embedColor: true,
           embedTitle: true,
+          embedDesc: true,
           id: true,
           password: true,
           token: true,

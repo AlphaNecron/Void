@@ -21,7 +21,8 @@ export default function Dashboard() {
           <SimpleGrid mx={2} gap={4} minChildWidth='150px' columns={[2, 3, 3]}>
             <StatCard name='Size' value={stats.size}/>
             <StatCard name='Average size' value={stats.avgSize}/>
-            <StatCard name='Files' value={stats.count}/>
+            <StatCard name='Files' value={stats.fileCount}/>
+            <StatCard name='URLs' value={stats.urlCount}/>
             <StatCard name='Views' value={stats.viewCount}/>
             <StatCard name='Users' value={stats.userCount}/>
           </SimpleGrid>
