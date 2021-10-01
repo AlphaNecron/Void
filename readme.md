@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/AlphaNecron/Draconic/v0/public/banner.png"/>
+  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v0/public/banner.png"/>
 A self-hosted file hosting service based on Zipline with many features. 
 
-![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Draconic/CI:%20Build/v0?color=%2368D391&label=stable&logo=github&style=for-the-badge)
-![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Draconic/CI:%20Build/dev?color=%2368D391&label=dev&logo=github&style=for-the-badge)
-![Stars](https://img.shields.io/github/stars/AlphaNecron/Draconic?color=%23B794F4&logo=github&style=for-the-badge)
-![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Draconic/v0?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
-![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Draconic/dev?color=%234FD1C5&logo=github&style=for-the-badge)
+![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Void/CI:%20Build/v0?color=%2368D391&label=stable&logo=github&style=for-the-badge)
+![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Void/CI:%20Build/dev?color=%2368D391&label=dev&logo=github&style=for-the-badge)
+![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
+![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v0?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
+![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/dev?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
 ### Requirements
@@ -16,8 +16,8 @@ A self-hosted file hosting service based on Zipline with many features.
 
 ### Installation / Deployment
   ```sh
-  git clone https://github.com/AlphaNecron/Draconic.git
-  cd Draconic
+  git clone https://github.com/AlphaNecron/Void.git
+  cd Void
   yarn install # or npm install
   cp config.example.toml config.toml
   nano config.toml # edit the config file
@@ -50,8 +50,8 @@ A self-hosted file hosting service based on Zipline with many features.
   [core]
   secure = false # Whether to use https or not
   secret = 'supersecretpassphrase' # The secret used to sign cookie
-  host = '0.0.0.0' # The host Draconic should run on
-  port = 3000 # The port Draconic should run on
+  host = '0.0.0.0' # The host Void should run on
+  port = 3000 # The port Void should run on
   database_url = 'postgres://username:password@localhost:5432/db_name' # PostgreSQL database url
 
   [bot]

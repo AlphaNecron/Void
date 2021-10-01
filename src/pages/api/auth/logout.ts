@@ -1,5 +1,5 @@
 import { info } from 'lib/logger';
-import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
+import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();
@@ -9,4 +9,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   return res.json({ success: true });
 }
 
-export default withDraconic(handler);
+export default withVoid(handler);

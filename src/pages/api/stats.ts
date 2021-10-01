@@ -1,7 +1,7 @@
 import config from 'lib/config';
 import prisma from 'lib/prisma';
 import { bytesToHr, sizeOfDir } from 'lib/utils';
-import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
+import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 import { join } from 'path';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
@@ -69,4 +69,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   });
 }
 
-export default withDraconic(handler);
+export default withVoid(handler);

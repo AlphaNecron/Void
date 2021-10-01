@@ -14,7 +14,7 @@ model User {
   token         String    @unique
   isAdmin       Boolean   @default(false)
   useEmbed      Boolean?  @default(false)
-  embedSiteName String?   @default("Draconic")
+  embedSiteName String?   @default("Void")
   embedTitle    String?
   embedColor    String    @default("#B794F4")
   embedDesc     String?

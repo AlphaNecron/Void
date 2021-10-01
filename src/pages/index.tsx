@@ -9,7 +9,7 @@ export default function Index() {
   }, [router]);
   return (
     <Head>
-      <meta property='og:title' content='Draconic'/>
+      <meta property='og:title' content='Void'/>
       <meta property='og:description' content='Free and open source file hosting service.'/>
     </Head>
   );

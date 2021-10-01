@@ -17,24 +17,15 @@ export default function Embed({ file, embed, username, content = undefined, misc
     a.href = misc.src;
     a.click();
   };
-  const replace = text => {
-    const time = new Date(file.uploadedAt);
-    return (text ?? '').replace(/{size}/ig, misc.size)
-      .replace(/{filename}/ig, file.fileName)
-      .replace(/{orig}/ig, file.origFileName)
-      .replace(/{date}/ig, time.toLocaleDateString())
-      .replace(/{time}/ig, time.toLocaleTimeString())
-      .replace(/{author}/ig, username);
-  };
   return (
     <>
       <Head>
         <>
           {embed.enabled && (
             <>
-              <meta property='og:site_name' content={replace(embed.siteName)}/>
-              <meta property='og:title' content={replace(embed.title)}/>
-              <meta property='og:description' content={replace(embed.desc)}/>
+              <meta property='og:site_name' content={embed.siteName}/>
+              <meta property='og:title' content={embed.title}/>
+              <meta property='og:description' content={embed.desc}/>
               <meta property='theme-color' content={embed.color}/>
             </>
           )}
@@ -58,11 +49,10 @@ export default function Embed({ file, embed, username, content = undefined, misc
           <title>Uploaded by {username}</title>
         </>
       </Head>
-      <Center>
+      <Center h='100vh'>
         <Box
           m={4}
           boxShadow='xl'
-          flexDirection='column'
           bg={useColorModeValue('gray.100', 'gray.700')}
           fg={useColorModeValue('gray.800', 'white')}
           p={1}
@@ -150,54 +140,63 @@ export const getServerSideProps: GetServerSideProps = async context => {
       embedDesc: true
     }
   });
+  const embed = {
+    enabled,
+    siteName,
+    title,
+    color,
+    desc
+  };
   const ext = file.fileName.split('.').pop();
   const type = file.mimetype.split('/').shift();
   const src = `${config.uploader.raw_route}/${file.fileName}`;
   const url = `http${config.core.secure ? 's' : ''}://${context.req.headers.host}/${config.uploader.raw_route}`;
   const isCode = Object.keys(languages).some(name => languages[name] === ext);
+  const replace = size => {
+    const time = new Date(file.uploadedAt);
+    const replace = text => {
+      return (text ?? '').replace(/{size}/ig, size)
+        .replace(/{filename}/ig, file.fileName)
+        .replace(/{orig}/ig, file.origFileName)
+        .replace(/{date}/ig, time.toLocaleDateString())
+        .replace(/{time}/ig, time.toLocaleTimeString())
+        .replace(/{author}/ig, username);
+    };
+    ['siteName', 'title', 'desc'].forEach(prop => embed[prop] = replace(embed[prop]));
+  };
   if (file.mimetype.startsWith('text') || isCode) {
     const res = await fetch(`${url}/${file.fileName}`);
     if (!res.ok) return { notFound: true };
     const content = await res.text();
     const size = bytesToHr(res.headers.get('content-length'));
+    replace(size);
+    delete file.uploadedAt;
     return {
       props: {
         file,
-        embed: {
-          enabled,
-          siteName,
-          title,
-          color,
-          desc
-        },
+        embed,
         username,
         misc: {
           ext,
           type,
-          language: isCode ? ext : 'text',
-          size
+          language: isCode ? ext : 'text'
         },
         content
       }
     };
   };
   const size = bytesToHr((await fetch(`${url}/${file.fileName}`)).headers.get('content-length'));
+  replace(size);
+  delete file.uploadedAt;
   return {
     props: {
       file,
-      embed: {
-        enabled,
-        siteName,
-        title,
-        color,
-        desc
-      },
+      embed,
       username,
       misc: {
         ext,
         type,
-        src,
-        size
+        src
       }
     }
   };

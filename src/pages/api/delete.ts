@@ -2,7 +2,7 @@ import { rm } from 'fs/promises';
 import { join } from 'path';
 import cfg from '../../lib/config';
 import { info } from '../../lib/logger';
-import { NextApiReq, NextApiRes, withDraconic } from '../../lib/middleware/withDraconic';
+import { NextApiReq, NextApiRes, withVoid } from '../../lib/middleware/withVoid';
 import prisma from '../../lib/prisma';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
@@ -47,4 +47,4 @@ export const config = {
   },
 };
 
-export default withDraconic(handler);
+export default withVoid(handler);

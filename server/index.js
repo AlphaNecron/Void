@@ -11,7 +11,7 @@ const mimes = require('../src/lib/mimetype');
 const deployDb = require('../scripts/deployDb');
 const { join } = require('path');
 
-info('SERVER', 'Starting Draconic server');
+info('SERVER', 'Starting Void server');
 
 const dev = process.env.NODE_ENV === 'development';
 

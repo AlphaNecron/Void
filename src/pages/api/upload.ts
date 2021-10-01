@@ -2,7 +2,7 @@ import { writeFile } from 'fs/promises';
 import cfg from 'lib/config';
 import generate, { emoji, zws } from 'lib/generators';
 import { info } from 'lib/logger';
-import { NextApiReq, NextApiRes, withDraconic } from 'lib/middleware/withDraconic';
+import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
 import mimetypes from 'lib/mimetype';
 import prisma from 'lib/prisma';
 import multer from 'multer';
@@ -82,7 +82,7 @@ function run(middleware: any) {
 
 export default async function handlers(req, res) {
   await run(uploader.single('file'))(req, res);
-  return withDraconic(handler)(req, res);
+  return withVoid(handler)(req, res);
 };
 
 export const config = {

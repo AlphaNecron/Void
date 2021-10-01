@@ -1,7 +1,7 @@
 import config from 'lib/config';
 import { info } from 'lib/logger';
 import prisma from 'lib/prisma';
-import { NextApiReq, NextApiRes, withDraconic } from 'middleware/withDraconic';
+import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   const user = await req.user();
@@ -37,4 +37,4 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   }
 }
 
-export default withDraconic(handler);
+export default withVoid(handler);

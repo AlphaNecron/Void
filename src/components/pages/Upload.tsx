@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Flex, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { Button, Center, Checkbox, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { useStoreSelector } from 'lib/redux/store';
 import React, { useState } from 'react';
@@ -55,48 +55,42 @@ export default function Upload() {
   const bg = useColorModeValue('gray.100', 'gray.700');
   const shadow = useColorModeValue('outline', 'dark-lg');
   return (
-    <Flex minHeight='92vh' width='full' align='center' justifyContent='center'>
-      <Box
+    <Center h='92vh'>
+      <VStack
         px={2}
         boxShadow='xl'
         bg={bg}
         fg={fg}
-        justify='center'
-        align='center'
         p={2}
         borderRadius={4}
-        textAlign='left'
-        shadow={shadow}
-      >
-        <VStack>
-          <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
-          <Button m={2} variant='ghost' width='385' height='200'>
-            <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
-              {({ getRootProps, getInputProps, isDragActive }) => (
-                <VStack {...getRootProps()}>
-                  <input {...getInputProps()}/>
-                  <UploadIcon size={56}/>
-                  {isDragActive ? (
-                    <Text fontSize='xl'>Drop the file here</Text>
-                  ) : (
-                    <Text fontSize='xl'>Drag a file here or click to upload one</Text>
-                  )}
-                  <Text fontSize='lg' colorScheme='yellow' isTruncated maxWidth='350'>{file && file.name}</Text>
-                </VStack>
-              )}
-            </Dropzone>
-          </Button>
-          <HStack justify='stretch' width='385'>
-            <Checkbox width='160' isChecked={preserve} colorScheme='purple' onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
-            <Select size='sm' variant='filled' width='110' value={generator} onChange={selection => setGenerator(selection.target.value)}>
-              <option value='random'>Random</option>
-              <option value='zws'>Invisible</option>
-              <option value='emoji'>Emoji</option>
-            </Select>
-            <Button size='sm' width='100' isDisabled={busy || !file} isLoading={busy} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
-          </HStack>
-        </VStack>
-      </Box>
-    </Flex>
+        shadow={shadow}>
+        <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
+        <Button m={2} variant='ghost' width='385' height='200'>
+          <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
+            {({ getRootProps, getInputProps, isDragActive }) => (
+              <VStack {...getRootProps()}>
+                <input {...getInputProps()}/>
+                <UploadIcon size={56}/>
+                {isDragActive ? (
+                  <Text fontSize='xl'>Drop the file here</Text>
+                ) : (
+                  <Text fontSize='xl'>Drag a file here or click to upload one</Text>
+                )}
+                <Text fontSize='lg' colorScheme='yellow' isTruncated maxWidth='350'>{file && file.name}</Text>
+              </VStack>
+            )}
+          </Dropzone>
+        </Button>
+        <HStack justify='stretch' width='385'>
+          <Checkbox width='160' isChecked={preserve} colorScheme='purple' onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
+          <Select size='sm' variant='filled' width='110' value={generator} onChange={selection => setGenerator(selection.target.value)}>
+            <option value='random'>Random</option>
+            <option value='zws'>Invisible</option>
+            <option value='emoji'>Emoji</option>
+          </Select>
+          <Button size='sm' width='100' isDisabled={busy || !file} isLoading={busy} loadingText='Uploading' onClick={handleFileUpload} colorScheme='purple' leftIcon={<UploadIcon size={16}/>}>Upload</Button>
+        </HStack>
+      </VStack>
+    </Center>
   );
 }

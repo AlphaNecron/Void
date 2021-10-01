@@ -4,7 +4,7 @@ import Head from 'next/head';
 import React from 'react';
 import { Provider } from 'react-redux';
 
-export default function Draconic({ Component, pageProps }) {
+export default function Void({ Component, pageProps }) {
   const store = useStore();
   return (
     <Provider store={store}>

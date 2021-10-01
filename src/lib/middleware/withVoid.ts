@@ -40,7 +40,7 @@ export type NextApiRes = NextApiResponse & {
   setCookie: (name: string, value: unknown, options: CookieSerializeOptions) => void;
 }
 
-export const withDraconic = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
+export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
   res.error = (message: string) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(400);

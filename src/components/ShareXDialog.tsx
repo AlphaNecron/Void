@@ -4,7 +4,7 @@ import { Download, X } from 'react-feather';
 
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
-  const [name, setName] = useState('Draconic');
+  const [name, setName] = useState('Void');
   const [generator, setGenerator] = useState('random');
   const [preserveFileName, setPreserveFileName] = useState(false);
   const generateConfig = shortener => {
@@ -64,7 +64,7 @@ export default function ShareXDialog({ open, onClose, token }) {
           <Input
             value={name}
             onChange={n => setName(n.target.value)}
-            placeholder='Draconic'
+            placeholder='Void'
             size='sm'
           />
           <Heading mt={2} mb={1} size='sm'>URL generator</Heading>
