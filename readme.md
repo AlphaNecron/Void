@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v0/public/banner.png"/>
+  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/dev/public/banner.png"/>
 A self-hosted file hosting service based on Zipline with many features. 
 
 ![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Void/CI:%20Build/v0?color=%2368D391&label=stable&logo=github&style=for-the-badge)
