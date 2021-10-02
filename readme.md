@@ -22,7 +22,7 @@
   yarn install # or npm install
   cp config.example.toml config.toml
   nano config.toml # edit the config file
-  yarn build # or npm build
+  yarn build # or npm run build
   yarn start # or npm start
   ```
 
@@ -89,7 +89,7 @@
   - Discord bot
 
 ### Contribution
-  - All contribution must be made in `dev` branch, other contributions in `v0` will be rejected.
+  - All contribution must be made in `dev` branch, contributions in `v0` will be closed.
 
 ### Todo
   - Docker support

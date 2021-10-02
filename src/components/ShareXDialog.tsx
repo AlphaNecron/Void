@@ -16,7 +16,7 @@ export default function ShareXDialog({ open, onClose, token }) {
       RequestMethod: 'POST',
       RequestURL: `${apiUrl}/upload`,
       Headers: {
-        Token: token,
+        Authorization: token,
         Generator: generator,
         PreserveFileName: preserveFileName ? 'true' : ''
       },
@@ -34,7 +34,7 @@ export default function ShareXDialog({ open, onClose, token }) {
       RequestMethod: 'POST',
       RequestURL: `${apiUrl}/shorten`,
       Headers: {
-        Token: token
+        Authorization: token
       },
       Body: 'FormURLEncoded',
       Arguments: {

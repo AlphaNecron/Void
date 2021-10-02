@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Heading, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import IconTextbox from 'components/IconTextbox';
 import PasswordBox from 'components/PasswordBox';
 import { Field, Form, Formik } from 'formik';
@@ -48,19 +48,14 @@ export default function Login() {
       isClosable: true,
     });
   };
-  const bg = useColorModeValue('gray.100', 'gray.700');
-  const shadow = useColorModeValue('outline', 'dark-lg');
   return (
-    <Flex minHeight='100vh' width='full' align='center' justifyContent='center'>
+    <Center h='100vh'>
       <Box
-        p={4}
-        bg={bg}
-        width={250}
-        justify='flex-end'
-        align='center'
         borderRadius={6}
-        boxShadow={shadow}
-      >
+        p={4}
+        w={300}
+        bg={useColorModeValue('gray.100', 'gray.700')}
+        boxShadow={useColorModeValue('outline', 'dark-lg')}>
         <Formik initialValues={{ username: '', password: '' }} validationSchema={schema}
           onSubmit={(values, actions) => onSubmit(actions, values)}
         >
@@ -100,7 +95,7 @@ export default function Login() {
           )}
         </Formik>
       </Box>
-    </Flex>
+    </Center>
   );
 }
 

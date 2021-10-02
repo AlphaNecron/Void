@@ -7,11 +7,11 @@ import prisma from 'lib/prisma';
 async function handler(req: NextApiReq, res: NextApiRes) {
   if (req.method !== 'POST') return res.forbid('Invalid method');
   const usr = await req.user();
-  if (!(req.headers.token || usr)) return res.forbid('Unauthorized');
+  if (!(req.headers.authorization || usr)) return res.forbid('Unauthorized');
   if (!config.shortener.allow_vanity) return res.forbid('Vanity URLs are not allowed');
   const user = await prisma.user.findFirst({
     where: {
-      token: req.headers.token
+      token: req.headers.authorization
     }
   }) || usr;
   if (!user) return res.forbid('Unauthorized');

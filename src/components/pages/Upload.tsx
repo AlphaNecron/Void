@@ -29,7 +29,7 @@ export default function Upload() {
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: {
-          'Token': token,
+          'Authorization': token,
           'Generator': generator,
           'PreserveFileName': preserve ? 'true' : ''
         },
