@@ -42,7 +42,6 @@ export default function URLs() {
     setBusy(false);
   };
   const handleSubmit = async (values, actions) => {
-    alert(JSON.stringify(values));
     const data = {
       destination: schemify(values.destination.trim()),
       vanity: values.vanity.trim(),
