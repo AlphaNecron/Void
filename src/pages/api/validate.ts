@@ -1,6 +1,3 @@
-import { default as cfg, default as config } from 'lib/config';
-import generate from 'lib/generators';
-import { info } from 'lib/logger';
 import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
 import { verifyPassword } from 'lib/utils';

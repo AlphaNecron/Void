@@ -1,4 +1,4 @@
-import { default as cfg, default as config } from 'lib/config';
+import { default as config } from 'lib/config';
 import generate from 'lib/generators';
 import { info } from 'lib/logger';
 import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
