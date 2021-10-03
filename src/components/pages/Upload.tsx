@@ -1,4 +1,4 @@
-import { Button, Center, Checkbox, Heading, HStack, Select, Input, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { Button, Center, Checkbox, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { useStoreSelector } from 'lib/redux/store';
 import React, { useState } from 'react';
@@ -66,7 +66,7 @@ export default function Upload() {
           <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
             {({ getRootProps, getInputProps, isDragActive }) => (
               <VStack {...getRootProps()}>
-                <Input {...getInputProps()}/>
+                <input {...getInputProps()}/>
                 <UploadIcon size={56}/>
                 {isDragActive ? (
                   <Text fontSize='xl'>Drop the file here</Text>
