@@ -10,11 +10,11 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   const usr = await req.user();
   if (!(req.headers.authorization || usr)) return res.forbid('Unauthorized');
   if (!config.shortener.allow_vanity) return res.forbid('Vanity URLs are not allowed');
-  const user = await prisma.user.findFirst({
+  const user = req.headers.authorization ? (await prisma.user.findFirst({
     where: {
       token: req.headers.authorization
     }
-  }) || usr;
+  })) : usr;
   if (!user) return res.forbid('Unauthorized');
   if (!req.body.destination) return res.error('No URL specified');
   if (req.body.vanity) {

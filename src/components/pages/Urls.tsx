@@ -81,7 +81,7 @@ export default function URLs() {
               </PopoverHeader>
               <PopoverArrow/>
               <PopoverCloseButton/>
-              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '', password: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
+              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '', urlPassword: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
                 {props => (
                   <Form>
                     <PopoverBody>
