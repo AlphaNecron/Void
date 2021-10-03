@@ -27,6 +27,7 @@ model Url {
   destination String
   short       String
   createdAt   DateTime      @default(now())
+  password    String?
   views       Int           @default(0)
   user        User          @relation(fields: [userId], references: [id])
   userId      Int

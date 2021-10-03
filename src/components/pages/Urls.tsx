@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, FormControl, FormLabel, HStack, IconButton, Input, Link, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
-import { Formik, Form, Field } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import useFetch from 'lib/hooks/useFetch';
 import React, { useEffect, useState } from 'react';
 import { ExternalLink, Scissors, Trash2, X } from 'react-feather';
@@ -15,7 +15,8 @@ export default function URLs() {
   const toast = useToast();
   const schema = yup.object({
     destination: yup.string().matches(/((?:(?:http?|ftp)[s]*:\/\/)?[a-z0-9-%\/\&=?\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?)/gi).min(3).required(),
-    vanity: yup.string()
+    vanity: yup.string(),
+    urlPassword: yup.string()
   });
   const handleDelete = async u => {
     const res = await useFetch('/api/user/urls', 'DELETE', { id: u.id });
@@ -41,9 +42,11 @@ export default function URLs() {
     setBusy(false);
   };
   const handleSubmit = async (values, actions) => {
+    alert(JSON.stringify(values));
     const data = {
       destination: schemify(values.destination.trim()),
-      vanity: values.vanity.trim()
+      vanity: values.vanity.trim(),
+      password: values.urlPassword.trim()
     };
     setBusy(true);
     const res = await useFetch('/api/shorten', 'POST', data);
@@ -79,7 +82,7 @@ export default function URLs() {
               </PopoverHeader>
               <PopoverArrow/>
               <PopoverCloseButton/>
-              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
+              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '', password: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
                 {props => (
                   <Form>
                     <PopoverBody>
@@ -96,6 +99,14 @@ export default function URLs() {
                           <FormControl>
                             <FormLabel htmlFor='vanity'>Vanity URL</FormLabel>
                             <Input {...field} size='sm' id='vanity' mb={4} placeholder='Leave blank for random'/>
+                          </FormControl>
+                        )}
+                      </Field>
+                      <Field name='urlPassword'>
+                        {({ field }) => (
+                          <FormControl>
+                            <FormLabel htmlFor='urlPassword'>Password</FormLabel>
+                            <Input {...field} size='sm' id='urlPassword' mb={4} placeholder='Password'/>
                           </FormControl>
                         )}
                       </Field>

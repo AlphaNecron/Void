@@ -1,4 +1,4 @@
-import { Button, Center, Checkbox, Heading, HStack, Select, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
+import { Button, Center, Checkbox, Heading, HStack, Select, Input, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { useStoreSelector } from 'lib/redux/store';
 import React, { useState } from 'react';
@@ -51,25 +51,22 @@ export default function Upload() {
       setBusy(false);
     }
   };
-  const fg = useColorModeValue('gray.800', 'white');
-  const bg = useColorModeValue('gray.100', 'gray.700');
-  const shadow = useColorModeValue('outline', 'dark-lg');
   return (
     <Center h='92vh'>
       <VStack
         px={2}
         boxShadow='xl'
-        bg={bg}
-        fg={fg}
+        bg={useColorModeValue('gray.100', 'gray.700')}
+        fg={useColorModeValue('gray.800', 'white')}
         p={2}
         borderRadius={4}
-        shadow={shadow}>
+        shadow={useColorModeValue('outline', 'dark-lg')}>
         <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
         <Button m={2} variant='ghost' width='385' height='200'>
           <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
             {({ getRootProps, getInputProps, isDragActive }) => (
               <VStack {...getRootProps()}>
-                <input {...getInputProps()}/>
+                <Input {...getInputProps()}/>
                 <UploadIcon size={56}/>
                 {isDragActive ? (
                   <Text fontSize='xl'>Drop the file here</Text>

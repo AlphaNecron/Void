@@ -88,7 +88,7 @@ export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) =>
       if (!userId) return null;
       const user = await prisma.user.findFirst({
         where: {
-          id: Number(userId)
+          id: +userId
         },
         select: {
           isAdmin: true,

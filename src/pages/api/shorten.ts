@@ -3,6 +3,7 @@ import generate from 'lib/generators';
 import { info } from 'lib/logger';
 import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
+import { hashPassword } from 'lib/utils';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   if (req.method !== 'POST') return res.forbid('Invalid method');
@@ -25,12 +26,14 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     if (existing) return res.error('Vanity is already taken');
   }
   const rand = generate(cfg.shortener.length);
+  if (req.body.password) var password = await hashPassword(req.body.password);
   const url = await prisma.url.create({
     data: {
       short: req.body.vanity ? req.body.vanity : rand,
       destination: req.body.destination,
       userId: user.id,
-    },
+      password
+    }
   });
   info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`); 
   return res.json({

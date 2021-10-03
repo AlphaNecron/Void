@@ -1,16 +1,58 @@
-import { Box, Button, Center, Heading, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Center, Heading, Input, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import FileViewer from 'components/FileViewer';
 import config from 'lib/config';
+import useFetch from 'lib/hooks/useFetch';
 import languages from 'lib/languages';
 import prisma from 'lib/prisma';
 import { bytesToHr } from 'lib/utils';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import fetch from 'node-fetch';
-import React from 'react';
-import { DownloadCloud } from 'react-feather';
+import React, { useState } from 'react';
+import { ArrowRightCircle, DownloadCloud } from 'react-feather';
 
-export default function Embed({ file, embed, username, content = undefined, misc }) {
+export default function Id({ type, data }) {
+  return type === 'file' ? <Preview {...data}/> : type === 'url' ? <Url {...data}/> : null;
+}
+
+function Url({ id }) {
+  const [typed, setTyped] = useState('');
+  const [busy, setBusy] = useState(false);
+  const toast = useToast();
+  const verify = async () => {
+    setBusy(true);
+    const res = await useFetch('/api/validate', 'POST', { id, password: typed });
+    console.log(res);
+    if (res.success) window.location.href = res.destination;
+    else toast({
+      title: 'Wrong password',
+      status: 'error',
+      isClosable: true,
+      duration: 4000
+    });
+    setBusy(false);
+  };
+  return (
+    <Center h='100vh'>
+      <VStack
+        px={4}
+        pt={4}
+        pb={2}
+        boxShadow='xl'
+        bg={useColorModeValue('gray.100', 'gray.700')}
+        fg={useColorModeValue('gray.800', 'white')}
+        borderRadius={5}
+        textAlign='center'
+        shadow={useColorModeValue('outline', 'dark-lg')}>
+        <Heading fontSize='lg'>Please enter the password to continue</Heading>
+        <Input placeholder='Password' value={typed} onChange={p => setTyped(p.target.value)}/>
+        <Button isLoading={busy} colorScheme='purple' rightIcon={<ArrowRightCircle size={24}/>} onClick={() => verify()}>Go</Button>
+      </VStack>
+    </Center>
+  );
+}
+
+function Preview({ file, embed, username, content = undefined, misc }) {
   const handleDownload = () => {
     const a = document.createElement('a');
     a.download = file.origFileName;
@@ -79,6 +121,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
       },
       select: {
         id: true,
+        password: true,
         destination: true
       }
     });
@@ -93,9 +136,20 @@ export const getServerSideProps: GetServerSideProps = async context => {
         }
       }
     });
+    const { destination, password } = url;
+    if (url.password) {
+      return {
+        props: {
+          type: 'url',
+          data: {
+            id: url.id
+          }
+        }
+      };
+    }
     return {
       redirect: {
-        destination: url.destination,
+        destination
       },
       props: undefined,
     };
@@ -173,15 +227,18 @@ export const getServerSideProps: GetServerSideProps = async context => {
     delete file.uploadedAt;
     return {
       props: {
-        file,
-        embed,
-        username,
-        misc: {
-          ext,
-          type,
-          language: isCode ? ext : 'text'
-        },
-        content
+        type: 'file',
+        data: {
+          file,
+          embed,
+          username,
+          misc: {
+            ext,
+            type,
+            language: isCode ? ext : 'text'
+          },
+          content
+        }
       }
     };
   };
@@ -190,13 +247,16 @@ export const getServerSideProps: GetServerSideProps = async context => {
   delete file.uploadedAt;
   return {
     props: {
-      file,
-      embed,
-      username,
-      misc: {
-        ext,
-        type,
-        src
+      type: 'file',
+      data: {
+        file,
+        embed,
+        username,
+        misc: {
+          ext,
+          type,
+          src
+        }
       }
     }
   };
