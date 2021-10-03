@@ -10,7 +10,7 @@ export interface Bot {
   enabled: boolean;
   prefix: string;
   token: string;
-  admin: string[];
+  admins: string[];
   log_channel: string;
   hostname: string;
 }
@@ -22,6 +22,7 @@ export interface Shortener {
 }
 
 export interface Uploader {
+  raw_route: string;
   length: number;
   directory: string;
   blacklisted: string[];

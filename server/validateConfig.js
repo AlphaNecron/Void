@@ -12,7 +12,7 @@ const validator = yup.object({
     enabled: yup.bool().default(false),
     prefix: yup.string().min(1).required(),
     token: yup.string(),
-    admin: yup.array().default([]),
+    admins: yup.array().default([]),
     log_channel: yup.string(),
     hostname: yup.string().required()
   }),
