@@ -25,7 +25,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     if (existing) return res.error('Vanity is already taken');
   }
-  const rand = generate(cfg.shortener.length);
+  const rand = generate(config.shortener.length);
   if (req.body.password) var password = await hashPassword(req.body.password);
   const url = await prisma.url.create({
     data: {
@@ -37,7 +37,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   });
   info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`); 
   return res.json({
-    url: `http${cfg.core.secure ? 's' : ''}://${req.headers.host}${cfg.shortener.route}/${url.short}`
+    url: `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`
   });
 }
 
