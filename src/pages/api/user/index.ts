@@ -50,7 +50,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     const newUser = await prisma.user.findFirst({
       where: {
-        id: +user.id
+        id: Number(user.id)
       },
       select: {
         isAdmin: true,

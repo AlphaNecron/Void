@@ -8,7 +8,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   if (!(req.body.password || !req.body.id)) return res.forbid('No password or ID');
   const url = await prisma.url.findFirst({
     where: {
-      id: +req.body.id
+      id: Number(req.body.id)
     },
     select: {
       password: true,
