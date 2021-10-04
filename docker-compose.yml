@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+    volumes: 
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zipline:
+    image: ghcr.io/AlphaNecron/Void/Void:v0
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    environment: 
+      - SECURE=false
+      - SECRET=changethisplease
+      - HOST=0.0.0.0
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres/
+      - UPLOADER_RAW_ROUTE=/u
+      - UPLOADER_LENGTH=6
+      - UPLOADER_DIRECTORY=./uploads
+      - UPLOADER_BLACKED=
+      - SHORTENER_ROUTE=/go
+      - SHORTENER_LENGTH=6
+      - BOT_ENABLED=false
+      - BOT_TOKEN=
+      - BOT_PREFIX=&
+      - BOT_ADMINS=
+      - BOT_LOG_CHANNEL=
+      - BOT_HOSTNAME=localhost
+    volumes:
+      - '$PWD/uploads:/Void/uploads'
+      - '$PWD/public:/Void/public'
+    depends_on:
+      - 'postgres'
+
+volumes:
+  pg_data:

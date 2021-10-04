@@ -1,6 +1,6 @@
 {
   "name": "void",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "engines": {
     "node": ">=14"
@@ -136,6 +136,7 @@
           "prisma",
           "scripts",
           "server",
+          "docker",
           "pages",
           "config",
           "api",
