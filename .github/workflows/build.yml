@@ -34,7 +34,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
       - name: create config
-        run: echo -e "[uploader]\nlength = 6\ndirectory = './uploads'" > config.toml
+        run: echo -e "[core]\ndatabase_url = postgres://github:github@localhost:5432/github\n[uploader]\nlength = 6\ndirectory = './uploads'" > config.toml
       - name: install deps
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: yarn install

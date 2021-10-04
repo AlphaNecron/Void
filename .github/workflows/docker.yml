@@ -10,7 +10,7 @@ on:
       - 'twilight/**'
       - 'Dockerfile'
       - 'docker-compose.yml'
-    tags:        
+    tags:
       - v0.[0-9]+.[0-9]+$
 
   workflow_dispatch:
