@@ -3,7 +3,7 @@ secure = false
 secret = 'supersecretpassphrase'
 host = '0.0.0.0'
 port = 3000
-database_url = 'postgres://username:password@localhost:5432/db_name'
+database_url = 'postgres://postgres:postgres@postgres/postgres'
 
 [bot]
 enabled = false

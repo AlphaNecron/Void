@@ -26,6 +26,26 @@
   yarn start # or npm start
   ```
 
+### Docker
+```sh
+  git clone https://github.com/AlphaNecron/Void.git
+  cd Void
+  cp config.example.toml config.toml
+  nano config.toml # edit the config file
+  docker pull alphanecron/void:v0
+  docker run -p 3000:3000 -v $PWD/config.toml:/Void/config.toml -d alphanecron/void:v0
+```
+
+### Docker compose
+```sh
+  git clone https://github.com/AlphaNecron/Void.git
+  cd Void
+  cp config.example.toml config.toml
+  nano config.toml # edit the config file
+  docker-compose up --build -d
+```
+
+
 ### Reverse proxy (nginx)
   ```nginx
   server {
@@ -87,11 +107,11 @@
   - Video embed
   - URL shortener
   - Discord bot
+  - Docker support
 
 ### Contribution
-  - All contribution must be made in `dev` branch, contributions in `v0` will be closed.
+  - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
 
 ### Todo
-  - Docker support
   - Discord integration
   - Album / Bulk upload
