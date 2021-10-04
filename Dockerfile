@@ -18,7 +18,7 @@ RUN echo -e "[core]\nsecret = 'dockersecret'\ndatabase_url = 'postgres://postgre
 RUN yarn build
 
 FROM node:fermium-alpine3.14 AS runner
-WORKDIR /Void
+WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules
 

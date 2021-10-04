@@ -13,9 +13,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  zipline:
-    image: ghcr.io/AlphaNecron/Void/Void:v0
+  void:
+    image: ghcr.io/alphanecron/void/void:v0
     ports:
       - '3000:3000'
     restart: unless-stopped
@@ -38,10 +37,9 @@ services:
       - BOT_LOG_CHANNEL=
       - BOT_HOSTNAME=localhost
     volumes:
-      - '$PWD/uploads:/Void/uploads'
-      - '$PWD/public:/Void/public'
+      - '$PWD/uploads:/void/uploads'
+      - '$PWD/public:/void/public'
     depends_on:
       - 'postgres'
-
 volumes:
   pg_data:

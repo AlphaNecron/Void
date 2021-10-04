@@ -33,7 +33,7 @@
   cp config.example.toml config.toml
   nano config.toml # edit the config file
   docker pull alphanecron/void:v0
-  docker run -p 3000:3000 -v $PWD/config.toml:/Void/config.toml -d alphanecron/void:v0
+  docker run -p 3000:3000 -v $PWD/config.toml:/void/config.toml -d alphanecron/void:v0
 ```
 
 ### Docker compose
