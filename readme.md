@@ -97,9 +97,10 @@
 
 ### Features
   - Configurable
-  - Super fast
+  - Fast and reliable
+  - Elegant Web UI
   - Built with Next.js & React
-  - Token protected uploading
+  - Token-protected uploading
   - Easy to setup
   - Invisible URL
   - Emoji URL
@@ -108,6 +109,8 @@
   - URL shortener
   - Discord bot
   - Docker support
+  - Password-protected URL
+  - Embed customization (with variables)
 
 ### Contribution
   - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
