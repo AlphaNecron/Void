@@ -32,7 +32,7 @@ client.once('ready', () => {
 });
 
 client.on('message', (msg: Message) => {
-  if (config.bot.admin.includes(msg.author.id) && msg.content.startsWith(config.bot.prefix)) {
+  if (config.bot.admins.includes(msg.author.id) && msg.content.startsWith(config.bot.prefix)) {
     const args = msg.content.slice(config.bot.prefix.length).trim().split(/ +/g);
     const cmd = args.shift().toString().toLowerCase();
     commands.forEach(command => {
