@@ -32,7 +32,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         id: 'asc',
       }
     });
-    urls.map(url => url.url = `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`);
+    urls.map(url => url['url'] = `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`);
     return res.json(urls);
   }
 }

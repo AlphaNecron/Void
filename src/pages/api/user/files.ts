@@ -26,8 +26,8 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     files.map(file => {
       const baseUrl = `http${config.core.secure ? 's' : ''}://${req.headers.host}/`;
-      file.url = baseUrl + file.slug;
-      file.rawUrl = baseUrl + 'r/' + file.fileName;
+      file['url'] = baseUrl + file.slug;
+      file['rawUrl'] = baseUrl + 'r/' + file.fileName;
     });
     return res.json(files);
   } else {

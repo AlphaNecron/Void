@@ -10,7 +10,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   try {
     const file = await prisma.file.delete({
       where: {
-        deletionToken: req.query.token
+        deletionToken: req.query.token as string
       }
     });
     if (!file) {
