@@ -18,27 +18,10 @@ services:
     ports:
       - '3000:3000'
     restart: unless-stopped
-    environment: 
-      - SECURE=false
-      - SECRET=changethisplease
-      - HOST=0.0.0.0
-      - PORT=3000
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres/
-      - UPLOADER_RAW_ROUTE=/u
-      - UPLOADER_LENGTH=6
-      - UPLOADER_DIRECTORY=./uploads
-      - UPLOADER_BLACKED=
-      - SHORTENER_ROUTE=/go
-      - SHORTENER_LENGTH=6
-      - BOT_ENABLED=false
-      - BOT_TOKEN=
-      - BOT_PREFIX=&
-      - BOT_ADMINS=
-      - BOT_LOG_CHANNEL=
-      - BOT_HOSTNAME=localhost
     volumes:
       - '$PWD/uploads:/void/uploads'
       - '$PWD/public:/void/public'
+      - '$PWD/config.toml':/void/config.toml'
     depends_on:
       - 'postgres'
 volumes:
