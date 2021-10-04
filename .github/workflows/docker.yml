@@ -8,6 +8,8 @@ on:
       - 'server/**'
       - 'prisma/**'
       - '.github/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
   workflow_dispatch:
 jobs:
   push_to_ghcr:
