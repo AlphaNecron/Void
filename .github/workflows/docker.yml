@@ -2,7 +2,7 @@ name: 'docker'
 
 on:
   push:
-    branches: [ v0 ]
+    branches: [ v0, dev ]
     paths:
       - 'src/**'
       - 'server/**'
