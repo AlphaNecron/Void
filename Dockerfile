@@ -7,6 +7,7 @@ COPY src ./src
 COPY server ./server
 COPY scripts ./scripts
 COPY prisma ./prisma
+COPY twilight ./twilight
 
 COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json ./
 
@@ -29,5 +30,6 @@ COPY --from=builder /build/prisma ./prisma
 COPY --from=builder /build/.next ./.next
 COPY --from=builder /build/tsconfig.json ./tsconfig.json
 COPY --from=builder /build/package.json ./package.json
+COPY --from=builder	/build/twilight	./twilight
 
 CMD ["npm", "start"]
