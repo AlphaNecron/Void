@@ -21,7 +21,7 @@ services:
     volumes:
       - '$PWD/uploads:/void/uploads'
       - '$PWD/public:/void/public'
-      - '$PWD/config.toml':/void/config.toml'
+      - '$PWD/config.toml:/void/config.toml'
     depends_on:
       - 'postgres'
 volumes:
