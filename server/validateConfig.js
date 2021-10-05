@@ -10,11 +10,11 @@ const validator = yup.object({
   }).required(),
   bot: yup.object({
     enabled: yup.bool().default(false),
-    prefix: yup.string().min(1).required(),
+    prefix: yup.string().min(1),
     token: yup.string(),
     admins: yup.array().default([]),
     log_channel: yup.string(),
-    hostname: yup.string().required()
+    hostname: yup.string()
   }),
   shortener: yup.object({
     allow_vanity: yup.bool().default(false),

@@ -44,5 +44,8 @@
   "exclude": [
     "node_modules",
     "uploads"
+  ],
+  "collectCoverageFrom": [
+    "!src/lib/config.ts"
   ]
 }

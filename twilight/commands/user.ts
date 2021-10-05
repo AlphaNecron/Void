@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { info } from '../../src/lib/logger';
 import prisma from '../../src/lib/prisma';
-import { createToken, hashPassword } from '../../src/lib/utils';
+import { generateToken, hashPassword } from '../../src/lib/utils';
 import { logger } from '../index';
 
 const user = {
@@ -30,7 +30,7 @@ const user = {
       const newUser = await prisma.user.create({
         data: {
           username,
-          token: createToken(),
+          token: generateToken(),
           password: hashed,
         }
       });

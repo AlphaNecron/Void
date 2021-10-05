@@ -16,6 +16,9 @@
     "prepare": "husky install",
     "lint": "next lint --fix"
   },
+  "prisma": {
+  "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@chakra-ui/react": "^1.6.8",
     "@emotion/react": "^11",

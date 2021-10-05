@@ -32,6 +32,7 @@ module.exports = () => {
     error('CONFIG', 'Config file not found, please create one.');
     return tryReadEnv();
   } else {
+    if (process.env.JEST_WORKER_ID) return;
     info('CONFIG', 'Reading config file');
     const str = readFileSync(join(process.cwd(), 'config.toml'), 'utf8');
     const parsed = require('@iarna/toml/parse-string')(str);

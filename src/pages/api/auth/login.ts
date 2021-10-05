@@ -1,23 +1,11 @@
 import { info } from 'lib/logger';
 import prisma from 'lib/prisma';
-import { verifyPassword, createToken, hashPassword } from 'lib/utils';
+import { verifyPassword } from 'lib/utils';
 import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
   if (req.method !== 'POST') return res.status(405).end();
   const { username, password } = req.body as { username: string, password: string };
-  const users = await prisma.user.findMany();
-  if (users.length === 0) {
-    const user = await prisma.user.create({
-      data: {
-        username: 'admin',
-        password: await hashPassword('voiduser'),
-        token: createToken(),
-        isAdmin: true
-      }
-    });
-    info('SEED', `Created default user with username "${user.username}" and password "voiduser"`);
-  }
   const user = await prisma.user.findFirst({
     where: {
       username 

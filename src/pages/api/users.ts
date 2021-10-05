@@ -1,6 +1,6 @@
 import { info } from 'lib/logger';
 import prisma from 'lib/prisma';
-import { createToken, hashPassword } from 'lib/utils';
+import { generateToken, hashPassword } from 'lib/utils';
 import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
@@ -37,7 +37,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       data: {
         password: hashed,
         username,
-        token: createToken(),
+        token: generateToken(),
         isAdmin
       }
     });
