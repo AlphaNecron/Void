@@ -1,5 +1,6 @@
 FROM node:fermium-alpine3.14 AS builder
 WORKDIR /build
+RUN apk add gcc musl-dev python3-dev libffi-dev openssl-dev
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
