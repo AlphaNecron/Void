@@ -1,7 +1,6 @@
 FROM node:fermium-alpine3.14 AS builder
 WORKDIR /build
-RUN ln -s libssl.so.3 libssl.so
-RUN ldconfig
+RUN apk add libressl
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
