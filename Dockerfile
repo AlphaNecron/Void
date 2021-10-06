@@ -1,6 +1,7 @@
 FROM node:fermium-alpine3.14 AS builder
 WORKDIR /build
-RUN apk add libressl-dev openssl-dev
+RUN ln -s libssl.so.3 libssl.so
+RUN ldconfig
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -33,4 +34,4 @@ COPY --from=builder /build/tsconfig.json ./tsconfig.json
 COPY --from=builder /build/package.json ./package.json
 COPY --from=builder	/build/twilight	./twilight
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
