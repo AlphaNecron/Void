@@ -1,15 +1,15 @@
-const next = require('next');
-const { createServer } = require('http');
-const { stat, mkdir, readFile } = require('fs/promises');
-const { extname } = require('path');
-const { PrismaClient } = require('@prisma/client');
-const validateConfig = require('./validateConfig');
-const { info, error } = require('../src/lib/logger');
-const prismaRun = require('../scripts/prismaRun');
-const configReader = require('../src/lib/configReader');
-const mimes = require('../src/lib/mimetype');
-const deployDb = require('../scripts/deployDb');
-const { join } = require('path');
+import { PrismaClient } from '@prisma/client';
+import { mkdir, readFile, stat } from 'fs/promises';
+import { createServer } from 'http';
+import next from 'next';
+import { extname, join } from 'path';
+import deployDb from '../scripts/deployDb';
+import prismaRun from '../scripts/prismaRun';
+import { error, info } from '../src/lib/logger';
+import mimetypes from '../src/lib/mimetypes';
+import validate from '../src/lib/validateConfig';
+import readConfig from '../src/lib/configReader';
+import start from '../twilight/twilight';
 
 info('SERVER', 'Starting Void server');
 
@@ -17,22 +17,26 @@ const dev = process.env.NODE_ENV === 'development';
 
 (async () => {
   try {
-    const config = await validateConfig(configReader());
+    const config = await validate(readConfig());
     const data = await prismaRun(config.core.database_url, ['migrate', 'status'], true);
     if (data.match(/Following migrations? have not yet been applied/)) {
       info('DB', 'Some migrations are not applied, applying them now...');
       await deployDb(config);
       info('DB', 'Finished applying migrations');
-      await prismaRun(config.core.database_url, ['db', 'seed'], false)
+      await prismaRun(config.core.database_url, ['db', 'seed'])
     }
     process.env.DATABASE_URL = config.core.database_url;
+    if (config.bot.enabled) {
+      if (!config.bot.token) error('BOT', 'Token is not specified');
+      else start(config);
+    }
     await stat('./.next');
     await mkdir(config.uploader.directory, { recursive: true });
     const app = next({
       dir: '.',
       dev,
       quiet: dev
-    }, config.core.port, config.core.host);
+    });
     await app.prepare();
     const handle = app.getRequestHandler();
     const prisma = new PrismaClient();
@@ -58,7 +62,7 @@ const dev = process.env.NODE_ENV === 'development';
           if (file) {
             res.setHeader('Content-Type', file.mimetype);
           } else {
-            const mimetype = mimes[extname(parts[2])] ?? 'application/octet-stream';
+            const mimetype = mimetypes[extname(parts[2])] ?? 'application/octet-stream';
             res.setHeader('Content-Type', mimetype);
           }
           res.setHeader('Content-Length', data.byteLength);
@@ -78,9 +82,10 @@ const dev = process.env.NODE_ENV === 'development';
     srv.on('listening', async () => {
       info('SERVER', `Listening on ${config.core.host}:${config.core.port}`);
     });
-    srv.listen(config.core.port, config.core.host ?? '0.0.0.0');
+    srv.listen(config.core.port, config.core.host);
   } catch (e) {
     if (e.message && e.message.startsWith('Could not find a production')) {
+      console.log(e.message);
       error('WEB', 'There is no production build - run yarn build');
     } else if (e.code && e.code === 'ENOENT') {
       if (e.path === './.next') error('WEB', 'There is no production build - run yarn build');

@@ -1,4 +1,4 @@
-const yup = require('yup');
+import * as yup from 'yup';
 
 const validator = yup.object({
   core: yup.object({
@@ -14,7 +14,8 @@ const validator = yup.object({
     token: yup.string(),
     admins: yup.array().default([]),
     log_channel: yup.string(),
-    hostname: yup.string()
+    default_uid: yup.number().default(1),
+    hostname: yup.string().default('localhost')
   }),
   shortener: yup.object({
     allow_vanity: yup.bool().default(false),
@@ -29,7 +30,7 @@ const validator = yup.object({
   }).required(),
 });
 
-module.exports = async config => {
+export default async function validate(config) {
   try {
     return await validator.validate(config, { abortEarly: false });
   } catch (e) {

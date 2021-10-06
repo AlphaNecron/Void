@@ -3,7 +3,7 @@ import cfg from 'lib/config';
 import generate, { emoji, zws } from 'lib/generators';
 import { info } from 'lib/logger';
 import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
-import mimetypes from 'lib/mimetype';
+import mimetypes from 'lib/mimetypes';
 import prisma from 'lib/prisma';
 import multer from 'multer';
 import { join } from 'path';

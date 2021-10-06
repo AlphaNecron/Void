@@ -1,7 +1,7 @@
-const { spawn } = require('child_process');
-const { join } = require('path');
+import { spawn } from 'child_process';
+import { join } from 'path';
 
-module.exports = (url, args, nostdout = false) => {
+export default function run(url: string, args: string[], nostdout?: boolean): Promise<string> {
   return new Promise((res, rej) => {
     const proc = spawn(join(process.cwd(), 'node_modules', '.bin', 'prisma'), args, {
       env: {
@@ -9,9 +9,7 @@ module.exports = (url, args, nostdout = false) => {
         ...process.env
       },
     });
-
     let a = '';
-
     proc.stdout.on('data', d => {
       if (!nostdout) console.log(d.toString());
       a += d.toString();

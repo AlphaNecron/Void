@@ -1,6 +1,7 @@
-const { join } = require('path');
-const { info, error } = require('./logger');
-const { existsSync, readFileSync } = require('fs');
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { error, info } from './logger';
+import parse from '@iarna/toml/parse-string';
 
 const e = (val, type, fn) => ({ val, type, fn });
 
@@ -21,13 +22,14 @@ const envValues = [
   e('BOT_TOKEN', 'string', (c, v) => c.bot.token = v),
   e('BOT_ADMINS', 'array', (c, v) => v ? c.bot.admins = v : c.bot.admins = []),
   e('BOT_LOG_CHANNEL', 'string', (c, v) => c.bot.log_channel = v),
+  e('BOT_DEFAULT_UID', 'string', (c, v) => c.bot.default_uid = v),
   e('BOT_HOSTNAME', 'string', (c, v) => c.bot.hostname = v),
 
   e('SHORTENER_ROUTE', 'string', (c, v) => c.shortener.route = v),
   e('SHORTENER_LENGTH', 'number', (c, v) => c.shortener.length = v)
 ];
 
-module.exports = () => {
+export default function readConfig() {
   if (!existsSync(join(process.cwd(), 'config.toml'))) {
     error('CONFIG', 'Config file not found, please create one.');
     return tryReadEnv();
@@ -35,7 +37,7 @@ module.exports = () => {
     if (process.env.JEST_WORKER_ID) return;
     info('CONFIG', 'Reading config file');
     const str = readFileSync(join(process.cwd(), 'config.toml'), 'utf8');
-    const parsed = require('@iarna/toml/parse-string')(str);
+    const parsed = parse(str);
     return parsed;
   }
 };
@@ -60,6 +62,7 @@ function tryReadEnv() {
       prefix: undefined,
       admins: undefined,
       log_channel: undefined,
+      default_uid: undefined,
       hostname: undefined
     },
     shortener: {
@@ -70,7 +73,7 @@ function tryReadEnv() {
 
   for (let i = 0, L = envValues.length; i !== L; ++i) {
     const envValue = envValues[i];
-    let value = process.env[envValue.val];
+    let value = process.env[envValue.val] as any;
     if (!value) {
       envValues[i].fn(config, undefined);
     } else {

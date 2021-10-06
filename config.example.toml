@@ -11,6 +11,7 @@ prefix = '&'
 token = ''
 admin = ['']
 log_channel = ''
+default_uid = 1
 hostname = 'example.com'
 
 [shortener]

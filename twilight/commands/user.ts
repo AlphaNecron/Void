@@ -2,7 +2,6 @@ import { Message, MessageEmbed } from 'discord.js';
 import { info } from '../../src/lib/logger';
 import prisma from '../../src/lib/prisma';
 import { generateToken, hashPassword } from '../../src/lib/utils';
-import { logger } from '../index';
 
 const user = {
   command: 'user',
@@ -42,7 +41,7 @@ const user = {
           { name: 'id', value: newUser.id },
           { name: 'Username', value: newUser.username }
         );
-      logger.log(embed);
+      global.logger.log(embed);
       msg.channel.send(embed.addField('Token', newUser.token));
       info('USER',`${msg.author.username}#${msg} created a user: ${newUser.username}`);
     }
@@ -63,7 +62,7 @@ const user = {
         .setColor('#B794F4')
         .setFooter(`By: ${msg.author.username}#${msg.author.discriminator}`)
         .addField('Username', userToDelete.username, true);
-      logger.log(embed);
+      global.logger.log(embed);
       msg.channel.send(embed);
       info('USER',`${msg.author.username}#${msg} created a user: ${userToDelete.username}`);
     }

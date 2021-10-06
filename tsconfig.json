@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
@@ -32,7 +32,8 @@
       "hooks/*": [
         "hooks/*"
       ]
-    }
+    },
+    "allowJs": true
   },
   "include": [
     "next-env.d.ts",
@@ -44,8 +45,5 @@
   "exclude": [
     "node_modules",
     "uploads"
-  ],
-  "collectCoverageFrom": [
-    "!src/lib/config.ts"
   ]
 }

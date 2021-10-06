@@ -1,7 +1,7 @@
-const { error } = require('../src/lib/logger');
-const prismaRun = require('./prismaRun');
+import { error } from '../src/lib/logger';
+import prismaRun from './prismaRun';
 
-module.exports = async (config) => {
+export default async function(config) {
   try {
     await prismaRun(config.core.database_url, ['migrate', 'deploy']);
     await prismaRun(config.core.database_url, ['generate'], true);

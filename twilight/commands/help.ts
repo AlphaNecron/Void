@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js';
 import config from '../../src/lib/config';
-import { commands } from '../index';
+import { commands } from '../twilight';
 
 const help = {
   command: 'help',

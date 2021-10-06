@@ -35,10 +35,11 @@ const shorten = {
       data: {
         short: vanity ? vanity : rand,
         destination: schemify(dest),
-        userId: user.id,
+        userId: config.bot.default_uid,
       },
     });
-    info('URL', `User shortened a URL: ${url.destination} (${url.id})`);
+    info('URL', `User ${msg.author.username}#${msg.author.discriminator} shortened a URL: ${url.destination} (${url.id})`);
+    global.logger.log(`User ${msg.author.username}#${msg.author.discriminator} shortened a URL: ${url.destination} (${url.id})`);
     msg.channel.send(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}${config.shortener.route}/${url.short}`);
   }
 };

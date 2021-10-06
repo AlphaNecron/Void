@@ -1,15 +1,9 @@
 import Discord, { Message, MessageEmbed } from 'discord.js';
 import { readdir } from 'fs';
-import { exit } from 'process';
-import config from '../src/lib/config';
 import { error, info } from '../src/lib/logger';
 import { Logger } from './utils/logger';
 
-if (!config.bot.enabled) exit(0);
-process.env.DATABASE_URL = config.core.database_url;
-if (!config.bot.token) exit(1);
-
-export let logger;
+let config;
 
 const client = new Discord.Client();
 
@@ -17,23 +11,23 @@ export const commands = [];
 
 client.once('ready', () => {
   info('BOT', 'Twilight is ready');
-  logger = new Logger(client);
-  logger.log(new MessageEmbed()
+  global.logger = new Logger(client);
+  global.logger.log(new MessageEmbed()
     .setTitle('Twilight is ready')
     .setColor('#B794F4'));
   readdir(`${__dirname}/commands`, (err, files) => {
     if(err) error('BOT', err.message);
     files.forEach(file => {
       if (file.toString().includes('.ts')) {
-        commands.push(require(`${__dirname}/commands/${file.toString()}`).default);
+        import(`${__dirname}/commands/${file.toString()}`).then(command => commands.push(command.default));
         info('COMMAND', `Loaded command: ${file.toString().split('.').slice(0, -1)}`);}
     });
   });
 });
 
 client.on('message', (msg: Message) => {
-  if (config.bot.admins.includes(msg.author.id) && msg.content.startsWith(config.bot.prefix)) {
-    const args = msg.content.slice(config.bot.prefix.length).trim().split(/ +/g);
+  if ((config.admins).includes(msg.author.id) && msg.content.startsWith(config.prefix)) {
+    const args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
     const cmd = args.shift().toString().toLowerCase();
     commands.forEach(command => {
       if (command.command === cmd)
@@ -44,4 +38,7 @@ client.on('message', (msg: Message) => {
   }
 });
 
-client.login(config.bot.token);
+export default function start({ bot }) {
+  config = bot;
+  client.login(config.token);
+}

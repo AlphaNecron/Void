@@ -3,7 +3,7 @@ export interface Core {
   secret: string;
   host: string;
   port: number;
-  database_url: string
+  database_url: string;
 }
 
 export interface Bot {
@@ -12,6 +12,7 @@ export interface Bot {
   token: string;
   admins: string[];
   log_channel: string;
+  default_uid: number;
   hostname: string;
 }
 
