@@ -81,6 +81,7 @@
   token = '' # Bot's token
   admin = [''] # Admin ids
   log_channel = '' # The channel where logs are sent, leave blank to disable logging
+  default_uid = 1 # The default user id used to shorten and upload
   hostname = 'example.com' # The hostname shortened urls should use in Twilight
 
   [shortener]

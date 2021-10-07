@@ -1,7 +1,6 @@
 FROM node:14-bullseye AS builder
 WORKDIR /build
 
-
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY src ./src
@@ -20,7 +19,7 @@ RUN echo -e "[core]\nsecret = 'dockersecret'\n[uploader]\nraw_route = '/r'\ndire
 
 RUN yarn build
 
-FROM node:fermium-alpine3.14 AS runner
+FROM node:14-bullseye AS runner
 WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules
