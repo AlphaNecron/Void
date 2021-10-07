@@ -1,6 +1,6 @@
-FROM node:fermium-alpine3.14 AS builder
+FROM node:14-bullseye AS builder
 WORKDIR /build
-RUN apk add libressl
+
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -10,12 +10,13 @@ COPY scripts ./scripts
 COPY prisma ./prisma
 COPY twilight ./twilight
 
-COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json ./
+COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json .eslintrc.js ./
 
 RUN yarn install
 
-# create a mock config.toml to spoof next build!
-RUN echo -e "[core]\nsecret = 'dockersecret'\ndatabase_url = 'postgres://postgres:postgres@postgres/postgres'\n[uploader]\nraw_route = '/r'\ndirectory = './uploads'\n[shortener]\nroute = '/go'" > config.toml
+ENV DATABASE_URL=postgres://postgres:postgres@postgres/postgres
+
+RUN echo -e "[core]\nsecret = 'dockersecret'\n[uploader]\nraw_route = '/r'\ndirectory = './uploads'\n[shortener]\nroute = '/go'" > config.toml
 
 RUN yarn build
 
@@ -29,6 +30,7 @@ COPY --from=builder /build/server ./server
 COPY --from=builder /build/scripts ./scripts
 COPY --from=builder /build/prisma ./prisma
 COPY --from=builder /build/.next ./.next
+COPY --from=builder /build/.eslintrc.js ./.eslintrc.js
 COPY --from=builder /build/tsconfig.json ./tsconfig.json
 COPY --from=builder /build/package.json ./package.json
 COPY --from=builder	/build/twilight	./twilight
