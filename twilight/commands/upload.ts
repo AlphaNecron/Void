@@ -59,7 +59,7 @@ const upload = {
         slug,
         origFileName: fileName.split('/').pop(),
         fileName: `${rand}${ext}`,
-        mimetype: getMimetype(res.headers.get('Content-Type'), ext),
+        mimetype: getMimetype(res.headers.get('Content-Type').split(';').shift(), ext),
         userId: config.bot.default_uid,
         deletionToken
       }
