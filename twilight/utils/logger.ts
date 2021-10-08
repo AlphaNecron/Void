@@ -11,6 +11,6 @@ export class Logger {
 
   log(msg: MessageEmbed | string) {
     if (!this.channel) return;
-    this.channel.send(msg);
+    this.channel.send(typeof msg === 'string' ? new MessageEmbed().setTitle(msg).setColor('#B794F4').setTimestamp() : msg);
   }
 }
