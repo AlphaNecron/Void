@@ -11,8 +11,7 @@ const shorten = {
   syntax: '{PREFIX}shorten <url> [vanity]',
   scopes: ['dm', 'text'],
   execute: async (msg: Message, args: string[]) => {
-    const dest = args[0];
-    const vanity = args[1];
+    const [dest, vanity] = args;
     if (!dest) return msg.channel.send('Please specify a URL to shorten');
     if (!dest.includes('.')) return msg.channel.send('Please specify a valid URL.');
     if (vanity) {
@@ -38,8 +37,8 @@ const shorten = {
         userId: config.bot.default_uid,
       },
     });
-    info('URL', `User ${msg.author.username}#${msg.author.discriminator} shortened a URL: ${url.destination} (${url.id})`);
-    global.logger.log(`User ${msg.author.username}#${msg.author.discriminator} shortened a URL: ${url.destination} (${url.id})`);
+    info('URL', `User ${msg.author.tag} shortened a URL: ${url.destination} (${url.id})`);
+    global.logger.log(`User ${msg.author.tag} shortened a URL: ${url.destination} (${url.id})`);
     msg.channel.send(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}${config.shortener.route}/${url.short}`);
   }
 };

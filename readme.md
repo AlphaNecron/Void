@@ -27,24 +27,23 @@
   ```
 
 ### Docker
-```sh
+  ```sh
   git clone https://github.com/AlphaNecron/Void.git
   cd Void
   cp config.example.toml config.toml
   nano config.toml # edit the config file
   docker pull alphanecron/void:v0
   docker run -p 3000:3000 -v $PWD/config.toml:/void/config.toml -d alphanecron/void:v0
-```
+  ```
 
 ### Docker compose
-```sh
+  ```sh
   git clone https://github.com/AlphaNecron/Void.git
   cd Void
   cp config.example.toml config.toml
   nano config.toml # edit the config file
   docker-compose up --build -d
-```
-
+  ```
 
 ### Reverse proxy (nginx)
   ```nginx
@@ -115,6 +114,14 @@
 
 ### Contribution
   - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
+
+### Bot permissions
+  These permissions are required for the bot to work properly (27712):
+    - Add reactions
+    - Read messages
+    - Send messages 
+    - Manage messages
+    - Embed links
 
 ### Todo
   - Discord integration

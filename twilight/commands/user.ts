@@ -15,8 +15,7 @@ const user = {
     }
     switch (action) {
     case 'create': {
-      const username = args[1];
-      const password = args[2];
+      const [_, username, password] = args;
       const existing = await prisma.user.findFirst({
         where: {
           username
@@ -64,7 +63,7 @@ const user = {
         .addField('Username', userToDelete.username, true);
       global.logger.log(embed);
       msg.channel.send(embed);
-      info('USER',`${msg.author.username}#${msg} created a user: ${userToDelete.username}`);
+      info('USER',`${msg.author.tag} created a user: ${userToDelete.username}`);
     }
     }
   }

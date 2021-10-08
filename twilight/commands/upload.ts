@@ -65,8 +65,8 @@ const upload = {
       }
     });
     await writeFile(join(process.cwd(), config.uploader.directory, file.fileName), buffer);
-    info('FILE', `User ${msg.author.username}#${msg.author.discriminator} uploaded a file: ${file.fileName} (${file.id})`);
-    global.logger.log(`User ${msg.author.username}#${msg.author.discriminator} uploaded a file: ${file.fileName}`);
+    info('FILE', `User ${msg.author.tag} uploaded a file: ${file.fileName} (${file.id})`);
+    global.logger.log(`User ${msg.author.tag} uploaded a file: ${file.fileName}`);
     msg.channel.send(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}/${file.slug}`);
   }
 };

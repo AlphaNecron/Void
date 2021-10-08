@@ -12,15 +12,13 @@ export const commands = [];
 client.once('ready', () => {
   info('BOT', 'Twilight is ready');
   global.logger = new Logger(client);
-  global.logger.log(new MessageEmbed()
-    .setTitle('Twilight is ready')
-    .setColor('#B794F4'));
+  global.logger.log('Twilight is ready');
   readdir(`${__dirname}/commands`, (err, files) => {
     if(err) error('BOT', err.message);
     files.forEach(file => {
       if (file.toString().includes('.ts')) {
         import(`${__dirname}/commands/${file.toString()}`).then(command => commands.push(command.default));
-        info('COMMAND', `Loaded command: ${file.toString().split('.').slice(0, -1)}`);}
+        info('COMMAND', `Loaded command: ${file.toString().split('.').shift()}`);}
     });
   });
 });
@@ -33,7 +31,7 @@ client.on('message', (msg: Message) => {
       if (command.command === cmd)
         if (command.scopes.includes(msg.channel.type))
           command.execute(msg, args, client);
-        else msg.channel.send(`This command can only be executed in ${command.scopes.join(' or ')}`);
+        else msg.channel.send(`This command can only be executed in ${command.scopes.map(scope => `\`${scope}\``).join(' or ')}`);
     });
   }
 });
