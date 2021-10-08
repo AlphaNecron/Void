@@ -1,4 +1,4 @@
-FROM node:14-bullseye AS builder
+FROM node:14-alpine3.14 AS builder
 WORKDIR /build
 
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -19,7 +19,7 @@ RUN echo -e "[core]\nsecret = 'dockersecret'\n[uploader]\nraw_route = '/r'\ndire
 
 RUN yarn build
 
-FROM node:14-bullseye AS runner
+FROM node:14-alpine3.14 AS runner
 WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules
