@@ -3,6 +3,7 @@ import { join } from 'path';
 import config from '../../src/lib/config';
 import prisma from '../../src/lib/prisma';
 import { bytesToHr, sizeOfDir } from '../../src/lib/utils';
+import { defaultEmbed } from '../utils/utils';
 
 const stats = {
   command: 'stats',
@@ -20,14 +21,14 @@ const stats = {
         views: true
       }
     });
-    await msg.channel.send(new MessageEmbed().addFields(
+    await msg.channel.send(defaultEmbed().setTitle('Stats').addFields(
       { name: 'Size', value: bytesToHr(size) },
       { name: 'Average size', value: bytesToHr(isNaN(size / fcount) ? 0 : size / fcount) },
       { name: 'File count', value: fcount },
       { name: 'URL count', value: ucount },
       { name: 'User count', value: userCount },
       { name: 'View count', value: viewCount[0]?._sum?.views ?? 0 }
-    ).setAuthor('Server stats').setTimestamp().setColor('#B794F4'));
+    ));
   }
 };
 

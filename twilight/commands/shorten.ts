@@ -13,7 +13,7 @@ const shorten = {
   execute: async (msg: Message, args: string[]) => {
     const [dest, vanity] = args;
     if (!dest) return msg.channel.send('Please specify a URL to shorten');
-    if (!dest.includes('.')) return msg.channel.send('Please specify a valid URL.');
+    if (!dest.match(/((?:(?:http?|ftp)[s]*:\/\/)?[a-z0-9-%\/\&=?\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?)/i)) return msg.channel.send('Please specify a valid URL.');
     if (vanity) {
       const existing = await prisma.url.findFirst({
         where: {

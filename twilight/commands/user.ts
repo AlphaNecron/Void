@@ -2,6 +2,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { info } from '../../src/lib/logger';
 import prisma from '../../src/lib/prisma';
 import { generateToken, hashPassword } from '../../src/lib/utils';
+import { defaultEmbed } from '../utils/utils';
 
 const user = {
   command: 'user',
@@ -32,10 +33,7 @@ const user = {
           password: hashed,
         }
       });
-      const embed = new MessageEmbed()
-        .setTitle('Created a new user')
-        .setColor('#B794F4')
-        .setFooter(`By: ${msg.author.username}#${msg.author.discriminator}`)
+      const embed = defaultEmbed()
         .addFields(
           { name: 'id', value: newUser.id },
           { name: 'Username', value: newUser.username }
@@ -56,14 +54,13 @@ const user = {
         });
       }
       catch (err) { return msg.channel.send(`Failed to delete user with id: ${id}\nError: ${err.meta?.cause}`); }
-      const embed = new MessageEmbed()
-        .setTitle('Deleted user')
-        .setColor('#B794F4')
-        .setFooter(`By: ${msg.author.username}#${msg.author.discriminator}`)
-        .addField('Username', userToDelete.username, true);
-      global.logger.log(embed);
-      msg.channel.send(embed);
-      info('USER',`${msg.author.tag} created a user: ${userToDelete.username}`);
+      global.logger.log(`User deleted: ${userToDelete.username} (${userToDelete.id})`);
+      msg.channel.send(defaultEmbed()
+        .setTitle('User deleted')
+        .setFooter(`By: ${msg.author.tag}`)
+        .setFooter(`By: ${msg.author.tag}`)
+        .addField('Username', userToDelete.username, true));
+      info('USER',`${msg.author.tag} deleted a user: ${userToDelete.username} (${userToDelete.id})`);
     }
     }
   }

@@ -7,10 +7,13 @@ let config;
 
 const client = new Discord.Client();
 
+export let avatarUrl = '';
+
 export const commands = [];
 
 client.once('ready', () => {
   info('BOT', 'Twilight is ready');
+  avatarUrl = client.user.displayAvatarURL();
   global.logger = new Logger(client);
   global.logger.log('Twilight is ready');
   readdir(`${__dirname}/commands`, (err, files) => {

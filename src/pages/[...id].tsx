@@ -204,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const ext = file.fileName.split('.').pop();
   const type = file.mimetype.split('/').shift();
   const src = `${config.uploader.raw_route}/${file.fileName}`;
-  const url = `http${config.core.secure ? 's' : ''}://${context.req.headers.host}/${config.uploader.raw_route}`;
+  const url = `http${config.core.secure ? 's' : ''}://${context.req.headers.host}${config.uploader.raw_route}`;
   const isCode = Object.keys(languages).some(name => languages[name] === ext);
   const replace = size => {
     const time = new Date(file.uploadedAt);

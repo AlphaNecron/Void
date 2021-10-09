@@ -10,8 +10,9 @@ import mimetypes from '../src/lib/mimetypes';
 import validate from '../src/lib/validateConfig';
 import readConfig from '../src/lib/configReader';
 import start from '../twilight/twilight';
+import { name, version } from '../package.json';
 
-info('SERVER', 'Starting Void server');
+info('SERVER', `Starting ${name}@${version}`);
 
 const dev = process.env.NODE_ENV === 'development';
 

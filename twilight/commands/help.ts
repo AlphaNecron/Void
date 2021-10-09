@@ -1,6 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import config from '../../src/lib/config';
 import { commands } from '../twilight';
+import { defaultEmbed } from '../utils/utils';
 
 const help = {
   command: 'help',
@@ -8,7 +9,7 @@ const help = {
   syntax: '{PREFIX}help',
   scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
-    const embed = new MessageEmbed().setTimestamp().setTitle('Help').setColor('#B794F4');
+    const embed = defaultEmbed().setTitle('Help');
     commands.forEach(command =>
       embed.addField(command.syntax.replace(/{PREFIX}/g, config.bot.prefix),
         command.description));

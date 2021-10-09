@@ -14,7 +14,7 @@ export default function URLs() {
   const [busy, setBusy] = useState(false);
   const toast = useToast();
   const schema = yup.object({
-    destination: yup.string().matches(/((?:(?:http?|ftp)[s]*:\/\/)?[a-z0-9-%\/\&=?\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?)/gi).min(3).required(),
+    destination: yup.string().matches(/((?:(?:http?|ftp)[s]*:\/\/)?[a-z0-9-%\/\&=?\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?)/i).min(3).required(),
     vanity: yup.string(),
     urlPassword: yup.string()
   });
