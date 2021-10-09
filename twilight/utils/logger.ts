@@ -19,13 +19,13 @@ export class Logger {
     if (!this.channel) return;
     this.channel.send(defaultEmbed(`By ${username}`)
       .setTitle('File uploaded')
-      .setThumbnail(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}/${file.fileName}`)
+      .setThumbnail(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}${config.uploader.raw_route}/${file.fileName}`)
       .addField('ID', file.id)
       .addField('File name', file.fileName)
       .addField('Original file name', file.origFileName || 'None')
       .addField('Mime type', file.mimetype)
       .addField('Uploaded at', file.uploadedAt)
-      .addField('View', `http${config.core.secure ? 's' : ''}://${config.bot.hostname}${config.uploader.raw_route}/${file.fileName}`));
+      .addField('View', `http${config.core.secure ? 's' : ''}://${config.bot.hostname}/${file.slug}`));
   }
 
   logUser(action: 'create' | 'update' | 'delete', user: { id, username, isAdmin }) {
