@@ -53,6 +53,7 @@ export default function URLs() {
       showToast('error', 'Couldn\'t shorten the url', res.error);
     else
       copyUrl(res);
+    updateUrls();
     setBusy(false);
     actions.setSubmitting(false);
   };

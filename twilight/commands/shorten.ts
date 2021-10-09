@@ -9,7 +9,6 @@ const shorten = {
   command: 'shorten',
   description: 'Shorten a URL',
   syntax: '{PREFIX}shorten <url> [vanity]',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message, args: string[]) => {
     const [dest, vanity] = args;
     if (!dest) return msg.channel.send('Please specify a URL to shorten');
@@ -27,7 +26,7 @@ const shorten = {
     const user = await prisma.user.findFirst({
       where: {
         id: 1
-      },
+      }
     });
     const rand = generate(config.shortener.length);
     const url = await prisma.url.create({
@@ -35,10 +34,10 @@ const shorten = {
         short: vanity ? vanity : rand,
         destination: schemify(dest),
         userId: config.bot.default_uid,
-      },
+      }
     });
     info('URL', `User ${msg.author.tag} shortened a URL: ${url.destination} (${url.id})`);
-    global.logger.log(`User ${msg.author.tag} shortened a URL: ${url.destination} (${url.id})`);
+    global.logger.logUrl(url, msg.author.tag);
     msg.channel.send(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}${config.shortener.route}/${url.short}`);
   }
 };

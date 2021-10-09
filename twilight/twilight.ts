@@ -32,9 +32,7 @@ client.on('message', (msg: Message) => {
     const cmd = args.shift().toString().toLowerCase();
     commands.forEach(command => {
       if (command.command === cmd)
-        if (command.scopes.includes(msg.channel.type))
-          command.execute(msg, args, client);
-        else msg.channel.send(`This command can only be executed in ${command.scopes.map(scope => `\`${scope}\``).join(' or ')}`);
+        command.execute(msg, args, client);
     });
   }
 });

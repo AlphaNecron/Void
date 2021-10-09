@@ -8,17 +8,17 @@ import generate, { emoji, zws } from '../../src/lib/generators';
 import { info, error } from '../../src/lib/logger';
 import mimetypes from '../../src/lib/mimetypes';
 import prisma from '../../src/lib/prisma';
+import schemify from 'url-schemify';
 
 const upload = {
   command: 'upload',
   description: 'Upload a new file',
   syntax: '{PREFIX}upload <url> [generator]',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message, args: string[]) => {
     if (!args[0]) return msg.channel.send('No URL.');
     let buffer, res;
     try {
-      res = await fetch(args[0]);
+      res = await fetch(schemify(args[0]));
       if (!res.ok) return msg.channel.send('Unable to fetch the file.');
       buffer = await res.buffer();
     }
@@ -66,7 +66,7 @@ const upload = {
     });
     await writeFile(join(process.cwd(), config.uploader.directory, file.fileName), buffer);
     info('FILE', `User ${msg.author.tag} uploaded a file: ${file.fileName} (${file.id})`);
-    global.logger.log(`User ${msg.author.tag} uploaded a file: ${file.fileName}`);
+    global.logger.logFile(file, msg.author.tag);
     msg.channel.send(`http${config.core.secure ? 's' : ''}://${config.bot.hostname}/${file.slug}`);
   }
 };

@@ -7,7 +7,6 @@ const help = {
   command: 'help',
   description: 'Show this message',
   syntax: '{PREFIX}help',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
     const embed = defaultEmbed().setTitle('Help');
     commands.forEach(command =>

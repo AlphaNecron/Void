@@ -14,13 +14,15 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         id: req.body.id
       }
     });
-    if (!userToDelete) return res.status(404).end(JSON.stringify({ error: 'User not found' }));
+    if (!userToDelete) return res.error('User not found');
     await prisma.user.delete({
       where: {
         id: userToDelete.id
       }
     });
     delete userToDelete.password;
+    info('USER', `Deleted user ${userToDelete.username} (${userToDelete.id})`);
+    global.logger.logUser('delete', userToDelete);
     return res.json(userToDelete);
   } else if (req.method === 'POST') {
     const { username, password, isAdmin } = req.body as { username: string, password: string, isAdmin: boolean };
@@ -43,6 +45,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     delete newUser.password;
     info('USER', `Created user ${newUser.username} (${newUser.id})`);
+    global.logger.logUser('create', newUser);
     return res.json(newUser);
   } else {
     const all = await prisma.user.findMany({

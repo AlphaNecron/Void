@@ -7,9 +7,8 @@ export function pagify(title: string, items: any[], msg: Message): Function {
 	const pages: MessageEmbed[] = [];
 	for (let i = 0; i < items.length; i += 6) {
 		const sliced = items.slice(i, i + 6);
-		const embed = defaultEmbed()
+		const embed = defaultEmbed(`Page ${i / 6 + 1}/${Math.ceil(items.length / 6)} | Total: ${items.length}`)
 			.setTitle(title)
-			.setFooter(`${name}@${version} | Page ${i / 6 + 1}/${Math.ceil(items.length / 6)} | Total: ${items.length}`, `http${config.core.secure ? 's' : ''}://${config.bot.hostname}/logo.png`);
 		sliced.forEach(item =>
 			embed.addField(item.name, item.value)
 		);
@@ -36,5 +35,5 @@ export function pagify(title: string, items: any[], msg: Message): Function {
 	};
 }
 
-export const defaultEmbed = () => new MessageEmbed().setColor('#B794F4')
-	.setAuthor('Twilight', avatarUrl).setTimestamp().setFooter(`${name}@${version}`, `http${config.core.secure ? 's' : ''}://${config.bot.hostname}/logo.png`);
+export const defaultEmbed = (footer?: string) => new MessageEmbed().setColor('#B794F4')
+	.setAuthor('Twilight', avatarUrl).setTimestamp().setFooter(`${name}@${version}${footer ? ` | ${footer}` : ''}`, `http${config.core.secure ? 's' : ''}://${config.bot.hostname}/logo.png`);

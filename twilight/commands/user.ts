@@ -8,7 +8,6 @@ const user = {
   command: 'user',
   description: 'Create a new user or delete an existing user',
   syntax: '{PREFIX}user create <username> <password>\n{PREFIX}user delete <id>',
-  scopes: ['dm'],
   execute: async (msg: Message, args: string[]) => {
     const action = args[0];
     if (!['create','delete'].includes(action)) {
@@ -33,14 +32,12 @@ const user = {
           password: hashed,
         }
       });
-      const embed = defaultEmbed()
-        .addFields(
-          { name: 'id', value: newUser.id },
-          { name: 'Username', value: newUser.username }
-        );
-      global.logger.log(embed);
-      msg.channel.send(embed.addField('Token', newUser.token));
-      info('USER',`${msg.author.username}#${msg} created a user: ${newUser.username}`);
+      msg.channel.send(defaultEmbed()
+        .setTitle('User created')
+        .addField('ID', newUser.id)
+        .addField('Username', newUser.username));
+      info('USER',`${msg.author.tag} created a user: ${newUser.username}`);
+      return global.logger.logUser(action, newUser);
     }
     case 'delete': {
       const id = parseInt(args[1]);
@@ -54,13 +51,12 @@ const user = {
         });
       }
       catch (err) { return msg.channel.send(`Failed to delete user with id: ${id}\nError: ${err.meta?.cause}`); }
-      global.logger.log(`User deleted: ${userToDelete.username} (${userToDelete.id})`);
       msg.channel.send(defaultEmbed()
         .setTitle('User deleted')
-        .setFooter(`By: ${msg.author.tag}`)
-        .setFooter(`By: ${msg.author.tag}`)
-        .addField('Username', userToDelete.username, true));
+        .addField('ID', userToDelete.id)
+        .addField('Username', userToDelete.username));
       info('USER',`${msg.author.tag} deleted a user: ${userToDelete.username} (${userToDelete.id})`);
+      return global.logger.logUser(action, userToDelete);
     }
     }
   }

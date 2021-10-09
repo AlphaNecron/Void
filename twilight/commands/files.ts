@@ -7,7 +7,6 @@ const files = {
   command: 'files',
   description: 'View files',
   syntax: '{PREFIX}files',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
     const all = (await prisma.file.findMany({
       select: {

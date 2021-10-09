@@ -7,7 +7,6 @@ const urls = {
   command: 'urls',
   description: 'View urls',
   syntax: '{PREFIX}urls',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
     const all = (await prisma.url.findMany({
       select: {

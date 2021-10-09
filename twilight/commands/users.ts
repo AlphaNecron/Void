@@ -7,7 +7,6 @@ const users = {
   command: 'users',
   description: 'View users',
   syntax: '{PREFIX}users',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
     const all = (await prisma.user.findMany({
       select: {

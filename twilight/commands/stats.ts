@@ -9,7 +9,6 @@ const stats = {
   command: 'stats',
   description: 'View server stats',
   syntax: '{PREFIX}stats',
-  scopes: ['dm', 'text'],
   execute: async (msg: Message) => {
     const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
     const userCount = await prisma.user.count();

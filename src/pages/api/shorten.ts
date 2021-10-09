@@ -35,7 +35,8 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       password
     }
   });
-  info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`); 
+  info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`);
+  global.logger.logUrl(url, user.username);
   return res.json({
     url: `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`
   });
