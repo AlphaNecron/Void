@@ -116,7 +116,7 @@
   - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
 
 ### Bot permissions
-  These permissions are required for the bot to work properly (27712):
+  #### These permissions are required for the bot to work properly (27712):
     - Add reactions
     - Read messages
     - Send messages 
