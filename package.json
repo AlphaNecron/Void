@@ -6,11 +6,11 @@
     "node": ">=14"
   },
   "scripts": {
-    "dev": "NODE_ENV=development ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server",
+    "dev": "NODE_ENV=development ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server.ts",
     "build": "npm-run-all build:schema build:next",
     "build:next": "next build",
     "build:schema": "prisma generate --schema=prisma/schema.prisma",
-    "start": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server",
+    "start": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server.ts",
     "prepare": "husky install",
     "lint": "next lint --fix"
   },
