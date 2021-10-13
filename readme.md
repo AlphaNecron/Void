@@ -125,3 +125,7 @@
 ### Todo
   - Discord integration
   - Album / Bulk upload
+
+### Credits
+  - Most of source code and API from `diced/zipline`
+  - Logo and favicon from `icons8`
