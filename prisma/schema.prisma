@@ -8,20 +8,18 @@ generator client {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  username        String
-  password        String
-  token           String    @unique
-  isAdmin         Boolean   @default(false)
-  useEmbed        Boolean?  @default(false)
-  embedSiteName   String?   @default("Void")
-  embedTitle      String?
-  embedColor      String    @default("#B794F4")
-  embedDesc       String?
-  discordUsername String?
-  discordId       String?
-  files           File[]
-  urls            Url[]
+  id            Int       @id @default(autoincrement())
+  username      String
+  password      String
+  token         String    @unique
+  isAdmin       Boolean   @default(false)
+  useEmbed      Boolean?  @default(false)
+  embedSiteName String?   @default("Void")
+  embedTitle    String?
+  embedColor    String    @default("#B794F4")
+  embedDesc     String?
+  files         File[]
+  urls          Url[]
 }
 
 model Url {
