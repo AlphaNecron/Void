@@ -26,6 +26,7 @@ export interface Uploader {
   raw_route: string;
   length: number;
   directory: string;
+  max_size: number;
   blacklisted: string[];
 }
 

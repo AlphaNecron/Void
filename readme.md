@@ -91,7 +91,8 @@
   raw_route = '/r' # Route to serve raw contents
   length = 6 # Slug length
   directory = './uploads' # The directory where images are stored
-  blacklisted = ['exe'] # Blacklisted extensions
+  max_size = 104857600 # Max upload size (users only), in bytes
+  blacklisted = ['exe'] # Blacklisted file extensions (users only)
   ```
 
 ### Features

@@ -1,5 +1,5 @@
 import Discord, { Message, MessageEmbed } from 'discord.js';
-import { readdir } from 'fs';
+import { readdirSync } from 'fs';
 import { error, info } from '../src/lib/logger';
 import { Logger } from './utils/logger';
 
@@ -16,14 +16,13 @@ client.once('ready', () => {
   avatarUrl = client.user.displayAvatarURL();
   global.logger = new Logger(client);
   global.logger.log('Twilight is ready');
-  readdir(`${__dirname}/commands`, (err, files) => {
-    if(err) error('BOT', err.message);
-    files.forEach(file => {
-      if (file.toString().includes('.ts')) {
-        import(`${__dirname}/commands/${file.toString()}`).then(command => commands.push(command.default));
-        info('COMMAND', `Loaded command: ${file.toString().split('.').shift()}`);}
+  readdirSync(`${__dirname}/commands`)
+    .map(file => file.toString())
+    .filter(file => file.endsWith('.ts'))
+    .forEach(file => {
+      import(`${__dirname}/commands/${file.toString()}`).then(command => commands.push(command.default));
+      info('COMMAND', `Loaded command: ${file.toString().split('.').shift()}`);
     });
-  });
 });
 
 client.on('message', (msg: Message) => {

@@ -1,5 +1,5 @@
-import { default as config } from 'lib/config';
-import generate from 'lib/generators';
+import config from 'lib/config';
+import generate, { emoji, zws } from 'lib/generators';
 import { info } from 'lib/logger';
 import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
@@ -25,11 +25,12 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     if (existing) return res.error('Vanity is already taken');
   }
-  const rand = generate(config.shortener.length);
+  const generator = req.headers.generator || req.body.generator;
+  const rand = generator === 'zws' ? zws(config.shortener.length) : generator === 'emoji' ? emoji(config.shortener.length) : generate(config.shortener.length);
   if (req.body.password) var password = await hashPassword(req.body.password);
   const url = await prisma.url.create({
     data: {
-      short: req.body.vanity ? req.body.vanity : rand,
+      short: req.body.vanity || rand,
       destination: req.body.destination,
       userId: user.id,
       password

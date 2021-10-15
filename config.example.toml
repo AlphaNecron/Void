@@ -23,4 +23,5 @@ route = '/go'
 raw_route = '/r'
 length = 6
 directory = './uploads'
+max_size = 104857600
 blacklisted = ['exe']

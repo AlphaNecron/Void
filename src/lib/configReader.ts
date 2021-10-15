@@ -15,6 +15,7 @@ const envValues = [
   e('UPLOADER_RAW_ROUTE', 'string', (c, v) => c.uploader.raw_route = v),
   e('UPLOADER_LENGTH', 'number', (c, v) => c.uploader.length = v),
   e('UPLOADER_DIRECTORY', 'string', (c, v) => c.uploader.directory = v),
+  e('UPLOADER_MAX_SIZE', 'number', (c, v) => c.uploader.max_size = v),
   e('UPLOADER_BLACKLISTED', 'array', (c, v) => v ? c.uploader.blacklisted = v : c.uploader.blacklisted = []),
 
   e('BOT_ENABLED', 'boolean', (c, v) => c.bot.enabled = v),

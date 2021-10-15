@@ -4,7 +4,7 @@ import { verifyPassword } from 'lib/utils';
 import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
 
 async function handler(req: NextApiReq, res: NextApiRes) {
-  if (req.method !== 'POST') return res.status(405).end();
+  if (req.method !== 'POST') return res.forbid('Invalid method');
   const { username, password } = req.body as { username: string, password: string };
   const user = await prisma.user.findFirst({
     where: {

@@ -115,6 +115,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const slug = context.params.id[0];
   if (slug === config.shortener.route.split('/').pop()) {
     const short = context.params.id[1];
+    if ((short ?? '').trim() === '') return { notFound: true };
     const url = await prisma.url.findFirst({
       where: {
         short

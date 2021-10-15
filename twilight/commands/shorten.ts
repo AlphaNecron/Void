@@ -28,10 +28,9 @@ const shorten = {
         id: 1
       }
     });
-    const rand = generate(config.shortener.length);
     const url = await prisma.url.create({
       data: {
-        short: vanity ? vanity : rand,
+        short: vanity ?? generate(config.shortener.length),
         destination: schemify(dest),
         userId: config.bot.default_uid,
       }

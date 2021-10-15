@@ -29,21 +29,7 @@ const upload = {
     const fileName = url.parse(args[0]).pathname;
     const ext = extname(fileName);
     const rand = generate(config.uploader.length);
-    let slug;
-    switch (args[1] ?? 'normal') {
-      case 'zws': {
-        slug = zws(config.uploader.length);
-        break;
-      }
-      case 'emoji': {
-        slug = emoji(config.uploader.length);
-        break;
-      }
-      default: {
-        slug = rand;
-        break;
-      }
-    }
+    const slug = args[1] === 'zws' ? zws(config.uploader.length) : args[1] === 'emoji' ? emoji(config.uploader.length) : rand;
     const deletionToken = generate(15);
     function getMimetype(current, ext) {
       if (current === 'application/octet-stream') {

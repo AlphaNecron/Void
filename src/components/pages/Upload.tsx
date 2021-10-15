@@ -36,13 +36,13 @@ export default function Upload() {
         body
       });
       const json = await res.json();
-      if (res.ok && !json.error) {
+      if (!json.error) {
         showToast('success', 'File uploaded', json.url);
         if (copy(json.url))
           showToast('info', 'Copied the URL to your clipboard');
-        else
-          showToast('error', 'Couldn\'t upload the file', json.error);
       }
+      else
+        showToast('error', 'Couldn\'t upload the file', json.error);
     }
     catch (error) {
       showToast('error', 'Error while uploading the file', error.message);

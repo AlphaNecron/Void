@@ -23,23 +23,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   if (!user) return res.forbid('Unauthorized');
   if (!req.file) return res.error('No file specified');
   const ext = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : req.file.originalname;
-  if (cfg.uploader.blacklisted.includes(ext)) return res.error('Blacklisted extension received: ' + ext);
+  if (cfg.uploader.blacklisted.includes(ext) && !user.isAdmin) return res.error(`Blacklisted extension received: ${ext}`);
+  if (req.file.size > cfg.uploader.max_size && !user.isAdmin) return res.error('The file is too big');
   const rand = generate(cfg.uploader.length);
-  let slug;
-  switch (req.headers.generator) {
-  case 'zws': {
-    slug = zws(cfg.uploader.length);
-    break;
-  }
-  case 'emoji': {
-    slug = emoji(cfg.uploader.length);
-    break;
-  }
-  default: {
-    slug = rand;
-    break;
-  }
-  }
+  const slug = req.headers.generator === 'zws' ? zws(cfg.uploader.length) : req.headers.generator === 'emoji' ? emoji(cfg.uploader.length) : rand;
   const deletionToken = generate(15);
   function getMimetype(current, ext) {
     if (current === 'application/octet-stream') {
