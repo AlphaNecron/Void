@@ -1,5 +1,5 @@
 import { Select, VStack } from '@chakra-ui/react';
-import languages from 'lib/languages';
+import { languages } from 'lib/constants';
 import React, { useState } from 'react';
 import { Prism as Code } from 'react-syntax-highlighter';
 import theme from 'react-syntax-highlighter/dist/cjs/styles/prism/coldark-dark';

@@ -6,7 +6,7 @@ import url from 'url';
 import config from '../../src/lib/config';
 import generate, { emoji, zws } from '../../src/lib/generators';
 import { info, error } from '../../src/lib/logger';
-import mimetypes from '../../src/lib/mimetypes';
+import { mimetypes } from '../../src/lib/constants';
 import prisma from '../../src/lib/prisma';
 import schemify from 'url-schemify';
 

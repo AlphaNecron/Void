@@ -2,7 +2,7 @@ import { Box, Button, Center, Heading, Input, useColorModeValue, useToast, VStac
 import FileViewer from 'components/FileViewer';
 import config from 'lib/config';
 import useFetch from 'lib/hooks/useFetch';
-import languages from 'lib/languages';
+import { languages } from 'lib/constants';
 import prisma from 'lib/prisma';
 import { bytesToHr } from 'lib/utils';
 import { GetServerSideProps } from 'next';

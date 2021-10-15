@@ -84,7 +84,7 @@ export default function URLs() {
               </PopoverHeader>
               <PopoverArrow/>
               <PopoverCloseButton/>
-              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '', generator: 'random', urlPassword: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
+              <Formik validationSchema={schema} initialValues={{ destination: '', vanity: '', generator: 'plain', urlPassword: '' }} onSubmit={(values, actions) => { handleSubmit(values, actions); }}>
                 {props => (
                   <Form>
                     <PopoverBody>
@@ -109,7 +109,7 @@ export default function URLs() {
                           <FormControl>
                             <FormLabel htmlFor='generator'>URL generator</FormLabel>
                             <Select {...field} size='sm' id='generator' mb={2}>
-                              <option value='random'>Random</option>
+                              <option value='plain'>Plain</option>
                               <option value='zws'>Invisible</option>
                               <option value='emoji'>Emoji</option>
                             </Select>

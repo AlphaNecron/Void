@@ -5,7 +5,7 @@ import { Download, X } from 'react-feather';
 export default function ShareXDialog({ open, onClose, token }) {
   const ref = React.useRef();
   const [name, setName] = useState('Void');
-  const [generator, setGenerator] = useState('random');
+  const [generator, setGenerator] = useState('plain');
   const [tab, setTab] = useState(0);
   const [usePassword, setUsePassword] = useState(false);
   const [preserveFileName, setPreserveFileName] = useState(false);
@@ -84,7 +84,7 @@ export default function ShareXDialog({ open, onClose, token }) {
                   onChange={g => setGenerator(g.target.value)}
                   size='sm'
                 >
-                  <option value='random'>Random</option>
+                  <option value='plain'>Plain</option>
                   <option value='zws'>Invisible</option>
                   <option value='emoji'>Emoji</option>
                 </Select>
@@ -105,7 +105,7 @@ export default function ShareXDialog({ open, onClose, token }) {
                   onChange={g => setGenerator(g.target.value)}
                   size='sm'
                 >
-                  <option value='random'>Random</option>
+                  <option value='plain'>Plain</option>
                   <option value='zws'>Invisible</option>
                   <option value='emoji'>Emoji</option>
                 </Select>

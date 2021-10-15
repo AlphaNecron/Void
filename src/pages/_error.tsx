@@ -32,10 +32,11 @@ export default function Error({ code }) {
     '504': 'Gateway Timeout',
     '505': 'HTTP Version Not Supported'
   };
+  this.title = `${code} ${errors[String(code)]}`
   return (
     <Center h='100vh'>
       <VStack>
-        <Heading>{code}: {errors[String(code)]}</Heading>
+        <Heading>{code} {errors[String(code)]}</Heading>
         <Link href='/dash' passHref>
           <Button justifyContent='flex-start' colorScheme='purple' leftIcon={<ArrowLeftCircle/>}>Go back</Button>
         </Link>

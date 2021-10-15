@@ -9,7 +9,7 @@ export default function Upload() {
   const { token } = useStoreSelector(state => state.user);
   const toast = useToast();
   const [preserve, setPreserve] = useState(true);
-  const [generator, setGenerator] = useState('random');
+  const [generator, setGenerator] = useState('plain');
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState(false);
   const showToast = (srv, title, description?) => {
@@ -81,7 +81,7 @@ export default function Upload() {
         <HStack justify='stretch' width='385'>
           <Checkbox width='160' isChecked={preserve} colorScheme='purple' onChange={p => setPreserve(p.target.checked)}>Preserve filename</Checkbox>
           <Select size='sm' variant='filled' width='110' value={generator} onChange={selection => setGenerator(selection.target.value)}>
-            <option value='random'>Random</option>
+            <option value='plain'>Plain</option>
             <option value='zws'>Invisible</option>
             <option value='emoji'>Emoji</option>
           </Select>

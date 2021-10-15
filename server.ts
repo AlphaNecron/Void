@@ -6,7 +6,7 @@ import { extname, join } from 'path';
 import deployDb from './scripts/deployDb';
 import prismaRun from './scripts/prismaRun';
 import { error, info } from './src/lib/logger';
-import mimetypes from './src/lib/mimetypes';
+import { mimetypes } from './src/lib/constants';
 import validate from './src/lib/validateConfig';
 import readConfig from './src/lib/configReader';
 import start from './twilight/twilight';
