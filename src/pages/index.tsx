@@ -11,6 +11,7 @@ export default function Index() {
     <Head>
       <meta property='og:title' content='Void'/>
       <meta property='og:description' content='Free and open source file hosting service.'/>
+      <meta property='theme-color' content='#B794F4'/>
     </Head>
   );
 }
