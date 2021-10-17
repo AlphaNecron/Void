@@ -94,6 +94,7 @@ export default function ManageAccountDialog({ onClose, open, user }) {
                           <p>{'{orig}: original file name'}</p>
                           <p>{'{date}: date uploaded'}</p>
                           <p>{'{time}: time uploaded'}</p>
+                          <p>{'{mimetype}: file\'s mimetype'}</p>
                           <p>{'{author}: uploader\'s username'}</p>
                         </>
                       )} bg={useColorModeValue('purple.500', 'purple.200')} isOpen={tooltipOpen}>

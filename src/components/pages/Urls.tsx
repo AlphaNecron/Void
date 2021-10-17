@@ -1,9 +1,9 @@
-import { Button, ButtonGroup, FormControl, FormLabel, HStack, Select, IconButton, Input, Link, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Skeleton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, ButtonGroup, FormControl, FormLabel, HStack, IconButton, Input, Link, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Select, Skeleton, Table, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from '@chakra-ui/react';
 import copy from 'copy-to-clipboard';
 import { Field, Form, Formik } from 'formik';
 import useFetch from 'lib/hooks/useFetch';
 import React, { useEffect, useState } from 'react';
-import { ExternalLink, Scissors, Trash2, X } from 'react-feather';
+import { Copy, ExternalLink, Scissors, Trash2, X } from 'react-feather';
 import schemify from 'url-schemify';
 import * as yup from 'yup';
 
@@ -166,10 +166,11 @@ export default function URLs() {
                   <Td>{u.views}</Td>
                   <Td>
                     <ButtonGroup>
+                      <IconButton aria-label='Delete' size='sm' colorScheme='red' onClick={() => handleDelete(u)} icon={<Trash2 size={16}/>}/>
                       <Link href={u.url} isExternal>
                         <IconButton aria-label='Open in new tab' size='sm' colorScheme='purple' icon={<ExternalLink size={16}/>}/>
                       </Link>
-                      <IconButton aria-label='Delete' size='sm' colorScheme='red' onClick={() => handleDelete(u)} icon={<Trash2 size={16}/>}/>
+                      <IconButton aria-label='Copy' size='sm' colorScheme='purple' onClick={() => copy(u.url)} icon={<Copy size={16}/>}/>
                     </ButtonGroup>
                   </Td>
                 </Tr>

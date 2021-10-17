@@ -215,6 +215,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
         .replace(/{orig}/ig, file.origFileName)
         .replace(/{date}/ig, time.toLocaleDateString())
         .replace(/{time}/ig, time.toLocaleTimeString())
+        .replace(/{mime(type)?}/ig, file.mimetype)
         .replace(/{author}/ig, username);
     };
     ['siteName', 'title', 'desc'].forEach(prop => embed[prop] = replace(embed[prop]));
