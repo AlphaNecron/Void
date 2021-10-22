@@ -45,9 +45,11 @@ const dev = process.env.NODE_ENV === 'development';
       if (req.url.startsWith(config.uploader.raw_route)) {
         const parts = req.url.split('/');
         if (!parts[2] || parts[2] === '') return;
+        const fileName = parts[2].replace(/[\#\?].*$/ig, '');
+        if (!fileName || fileName === '') return;
         let data;
         try {
-          data = await readFile(join(process.cwd(), config.uploader.directory, parts[2]));
+          data = await readFile(join(process.cwd(), config.uploader.directory, fileName));
         }
         catch {
           app.render404(req, res);
@@ -57,13 +59,13 @@ const dev = process.env.NODE_ENV === 'development';
         } else {
           let file = await prisma.file.findFirst({
             where: {
-              fileName: parts[2],
+              fileName,
             }
           });
           if (file) {
             res.setHeader('Content-Type', file.mimetype);
           } else {
-            const mimetype = mimetypes[extname(parts[2])] ?? 'application/octet-stream';
+            const mimetype = mimetypes[extname(fileName)] ?? 'application/octet-stream';
             res.setHeader('Content-Type', mimetype);
           }
           res.setHeader('Content-Length', data.byteLength);
