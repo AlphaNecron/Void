@@ -69,6 +69,7 @@ const dev = process.env.NODE_ENV === 'development';
             res.setHeader('Content-Type', mimetype);
           }
           res.setHeader('Content-Length', data.byteLength);
+          res.setHeader('Content-Disposition', `filename="${file.origFileName}"`);
           res.end(data);
         }
       } else {

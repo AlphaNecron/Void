@@ -224,7 +224,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const res = await fetch(`${url}/${file.fileName}`);
     if (!res.ok) return { notFound: true };
     const content = await res.text();
-    const size = bytesToHr(res.headers.get('content-length'));
+    const size = bytesToHr(+res.headers.get('content-length'));
     replace(size);
     delete file.uploadedAt;
     return {
