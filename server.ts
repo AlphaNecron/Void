@@ -43,9 +43,7 @@ const dev = process.env.NODE_ENV === 'development';
     const prisma = new PrismaClient();
     const srv = createServer(async (req, res) => {
       if (req.url.startsWith(config.uploader.raw_route)) {
-        const parts = req.url.split('/');
-        if (!parts[2] || parts[2] === '') return;
-        const fileName = parts[2].replace(/[\#\?].*$/ig, '');
+        const fileName = req.url.split('/').replace(/[\#\?].*$/ig, '');
         if (!fileName || fileName === '') return;
         let data;
         try {
