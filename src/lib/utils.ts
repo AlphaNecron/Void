@@ -64,5 +64,5 @@ export function bytesToHr(bytes: number) {
     bytes /= 1024;
     ++num;
   }
-  return `${bytes.toFixed(1)} ${units[num]}`;
+  return `${(isNaN(+bytes) ? 0 : +bytes).toFixed(1)} ${units[num]}`;
 }
