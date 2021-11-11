@@ -20,7 +20,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
           username: req.body.username
         }
       });
-      if (existing && user.username !== req.body.username) { 
+      if (existing && user.username !== req.body.username) {
         return res.forbid('Username is already taken');
       }
       await prisma.user.update({

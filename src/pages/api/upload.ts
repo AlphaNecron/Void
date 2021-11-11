@@ -49,7 +49,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
   });
   await writeFile(join(process.cwd(), cfg.uploader.directory, file.fileName), req.file.buffer);
   info('FILE', `User ${user.username} (${user.id}) uploaded a file: ${file.fileName} (${file.id})`);
-  global.logger.logFile(file, user.username);
+  try {
+    global.logger.logFile(file, user.username);
+  }
+  catch {}
   const baseUrl = `http${cfg.core.secure ? 's' : ''}://${req.headers.host}`;
   return res.json({
     url: `${baseUrl}/${file.slug}`,

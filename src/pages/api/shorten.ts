@@ -37,7 +37,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     }
   });
   info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`);
+  try {
   global.logger.logUrl(url, user.username);
+  }
+  catch {}
   return res.json({
     url: `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`
   });

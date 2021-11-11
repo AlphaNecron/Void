@@ -2,11 +2,11 @@ version: '3'
 services:
   postgres:
     image: postgres
-    environment: 
+    environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DATABASE=postgres
-    volumes: 
+    volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
@@ -19,9 +19,9 @@ services:
       - '3000:3000'
     restart: unless-stopped
     volumes:
-      - '$PWD/uploads:/void/uploads'
-      - '$PWD/public:/void/public'
-      - '$PWD/config.toml:/void/config.toml'
+      - './uploads:/void/uploads'
+      - './public:/void/public'
+      - './config.toml:/void/config.toml'
     depends_on:
       - 'postgres'
 volumes:

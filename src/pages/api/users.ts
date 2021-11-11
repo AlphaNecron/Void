@@ -22,7 +22,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     delete userToDelete.password;
     info('USER', `Deleted user ${userToDelete.username} (${userToDelete.id})`);
-    global.logger.logUser('delete', userToDelete);
+    try {
+      global.logger.logUser('delete', userToDelete);
+    }
+    catch {}
     return res.json(userToDelete);
   } else if (req.method === 'POST') {
     const { username, password, isAdmin } = req.body as { username: string, password: string, isAdmin: boolean };
@@ -45,7 +48,10 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     });
     delete newUser.password;
     info('USER', `Created user ${newUser.username} (${newUser.id})`);
-    global.logger.logUser('create', newUser);
+    try {
+      global.logger.logUser('create', newUser);
+    }
+    catch {}
     return res.json(newUser);
   } else {
     const all = await prisma.user.findMany({
