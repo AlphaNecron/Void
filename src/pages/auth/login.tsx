@@ -62,7 +62,7 @@ export default function Login() {
           {props => (
             <Form>
               <VStack>
-                <Heading fontSize='xl' mb={2} align='center'>Void</Heading>
+                <Heading fontSize='xl' mb={2} textAlign='center'>Void</Heading>
                 <Field name='username'>
                   {({ field, form }) => (
                     <FormControl isInvalid={form.errors.username && form.touched.username} isRequired mb={4}>

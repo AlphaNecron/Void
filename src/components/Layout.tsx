@@ -54,7 +54,7 @@ export default function Layout({ children, id, user }) {
   return (
     <>
       {busy ? (
-        <Skeleton r={4} l={4} t={4} b={4} height='96%' width='98%' m={4} pos='fixed'/>
+        <Skeleton mr={4} ml={4} mt={4} mb={4} height='96%' width='98%' m={4} pos='fixed'/>
       ) : (
         <>
           <Box h='48px' bg={useColorModeValue('gray.100', 'gray.900')} sx={{ zIndex: 100, position: 'sticky' }} top={0} right={0} left={0} p={1} boxShadow='base'>

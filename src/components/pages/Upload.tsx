@@ -57,11 +57,11 @@ export default function Upload() {
         px={2}
         boxShadow='xl'
         bg={useColorModeValue('gray.100', 'gray.700')}
-        fg={useColorModeValue('gray.800', 'white')}
+        color={useColorModeValue('gray.800', 'white')}
         p={2}
         borderRadius={4}
         shadow={useColorModeValue('outline', 'dark-lg')}>
-        <Heading fontSize='lg' m={1} align='left'>Upload a file</Heading>
+        <Heading fontSize='lg' m={1} textAlign='left'>Upload a file</Heading>
         <Button m={2} variant='ghost' width='385' height='200'>
           <Dropzone disabled={busy} onDrop={acceptedFiles => setFile(acceptedFiles[0])}>
             {({ getRootProps, getInputProps, isDragActive }) => (

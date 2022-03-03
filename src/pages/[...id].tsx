@@ -40,7 +40,7 @@ function Url({ id }) {
         pb={2}
         boxShadow='xl'
         bg={useColorModeValue('gray.100', 'gray.700')}
-        fg={useColorModeValue('gray.800', 'white')}
+        color={useColorModeValue('gray.800', 'white')}
         borderRadius={5}
         textAlign='center'
         shadow={useColorModeValue('outline', 'dark-lg')}>
@@ -96,7 +96,7 @@ function Preview({ file, embed, username, content = undefined, misc }) {
           m={4}
           boxShadow='xl'
           bg={useColorModeValue('gray.100', 'gray.700')}
-          fg={useColorModeValue('gray.800', 'white')}
+          color={useColorModeValue('gray.800', 'white')}
           p={1}
           borderRadius={5}
           textAlign='center'
