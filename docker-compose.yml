@@ -2,6 +2,7 @@ version: '3'
 services:
   postgres:
     image: postgres
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
