@@ -1,21 +1,19 @@
-import config from 'lib/config';
 import prisma from 'lib/prisma';
-import { bytesToHr, sizeOfDir } from 'lib/utils';
-import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
-import { join } from 'path';
+// import { bytesToHr, sizeOfDir } from 'lib/utils';
+import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
-async function handler(req: NextApiReq, res: NextApiRes) {
-  const user = await req.user();
+async function handler(req: VoidRequest, res: VoidResponse) {
+  const user = await req.getUser(req.headers.authorization);
   if (!user) return res.forbid('Unauthorized');
-  const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
+  // const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
   const userCount = await prisma.user.count();
   const fileCount = await prisma.file.count();
   const urlCount = await prisma.url.count();
   if (fileCount === 0 && urlCount === 0) {
     return res.json({
-      size: bytesToHr(0),
+      // size: bytesToHr(0),
       sizeRaw: 0,
-      avgSize: bytesToHr(0),
+      // avgSize: bytesToHr(0),
       fileCount,
       urlCount,
       viewCount: 0,
@@ -57,9 +55,9 @@ async function handler(req: NextApiReq, res: NextApiRes) {
     countByType.push({ mimetype: typesCount[i].mimetype, count: typesCount[i]._count.mimetype });
   }
   return res.json({
-    size: bytesToHr(size),
-    sizeRaw: size,
-    avgSize: bytesToHr(isNaN(size / fileCount) ? 0 : size / fileCount),
+    // size: bytesToHr(size),
+    // sizeRaw: size,
+    // avgSize: bytesToHr(isNaN(size / fileCount) ? 0 : size / fileCount),
     fileCount,
     urlCount,
     countByUser: countByUser,

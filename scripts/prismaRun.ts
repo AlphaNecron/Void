@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
-import { join } from 'path';
+import {spawn} from 'child_process';
+import {join} from 'path';
 
 export default function run(url: string, args: string[], nostdout?: boolean): Promise<string> {
   return new Promise((res, rej) => {
@@ -21,4 +21,4 @@ export default function run(url: string, args: string[], nostdout?: boolean): Pr
     proc.stdout.on('end', () => res(a));
     proc.stdout.on('close', () => res(a));
   });
-};
+}

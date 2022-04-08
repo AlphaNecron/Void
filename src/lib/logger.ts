@@ -8,22 +8,21 @@ const colors = {
   reset: '\x1b[0m',
   black: '\x1b[30m'
 };
-
-enum Severity { Debug = 'DEBUG', Warn = 'WARN', Error = 'ERR', Info = 'INFO' };
-
-function log(color: string, type: string, msg, srv = '') {
-  console.log(`${colors.blue}${colors.black} ${(new Date()).toLocaleTimeString()} ${color} ${srv}/${type} ${colors.reset} ${msg}`);
+export function logEvent(event: 'upload' | 'shorten' | 'new_user' | 'user_delete' | 'user_update' | 'token_regenerate', data) {
+  info(event, data);
 }
-
+function log(color: string, type: string, msg) {
+  console.log(`${colors.magenta}${colors.black} ${(new Date()).toLocaleTimeString()} ${color} ${type} ${colors.reset} ${msg}`);
+}
 export function debug(type, msg) {
-  log(colors.magenta, type, msg, Severity.Debug);
+  log(colors.blue, type, msg);
 };
 export function warn(type, msg) {
-  log(colors.yellow, type, msg, Severity.Warn);
+  log(colors.yellow, type, msg);
 };
 export function error(type, msg) {
-  log(colors.red, type, msg, Severity.Error);
+  log(colors.red, type, msg);
 };
 export function info(type, msg) {
-  log(colors.cyan, type, msg, Severity.Info);
+  log(colors.cyan, type, msg);
 };

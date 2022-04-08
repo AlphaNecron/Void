@@ -1,11 +1,13 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 export default function Index() {
   const router = useRouter();
+  const { data: session } = useSession();
   useEffect(() => {
-    router.push('/dash');
+    router.push(session ? '/dash' : '/auth/login');
   }, [router]);
   return (
     <Head>
@@ -15,3 +17,5 @@ export default function Index() {
     </Head>
   );
 }
+
+Index.title = 'Index';

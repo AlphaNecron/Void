@@ -1,64 +1,77 @@
-import { writeFile } from 'fs/promises';
+import {writeFile} from 'fs/promises';
 import cfg from 'lib/config';
-import generate, { emoji, zws } from 'lib/generators';
-import { info } from 'lib/logger';
-import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
-import { mimetypes } from 'lib/constants';
+import generate from 'lib/urlGenerator';
+import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
 import multer from 'multer';
-import { join } from 'path';
+import {join, resolve} from 'path';
+import {hasPermission, Permission} from 'lib/permission';
+import {getMimetype} from 'lib/mime';
+import {logEvent} from 'lib/logger';
+import {mkdirSync} from 'fs';
 
-const uploader = multer({
-  storage: multer.memoryStorage(),
-});
+const uploader = multer();
 
-async function handler(req: NextApiReq, res: NextApiRes) {
-  if (req.method !== 'POST') return res.forbid('Invalid method');
-  if (!req.headers.authorization) return res.forbid('Unauthorized');
-  const user = await prisma.user.findFirst({
-    where: {
-      token: req.headers.authorization
-    }
-  });
-  if (!user) return res.forbid('Unauthorized');
-  if (!req.file) return res.error('No file specified');
-  const ext = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : req.file.originalname;
-  if (cfg.uploader.blacklisted.includes(ext) && !user.isAdmin) return res.error(`Blacklisted extension received: ${ext}`);
-  if (req.file.size > cfg.uploader.max_size && !user.isAdmin) return res.error('The file is too big');
-  const rand = generate(cfg.uploader.length);
-  const slug = req.headers.generator === 'zws' ? zws(cfg.uploader.length) : req.headers.generator === 'emoji' ? emoji(cfg.uploader.length) : rand;
-  const deletionToken = generate(15);
-  function getMimetype(current, ext) {
-    if (current === 'application/octet-stream') {
-      if (mimetypes[`.${ext}`]) {
-        return mimetypes[`.${ext}`];
-      }
-      return current;
-    }
-    return current;
+async function handler(req: VoidRequest, res: VoidResponse) {
+  if (req.method === 'GET') {
+    const user = await req.getUser(req.headers.authorization);
+    if (!user || !user.role) return res.unauthorized();
+    const quota = await req.getUserQuota(user);
+    const bypass = [Permission.BYPASS_LIMIT, Permission.ADMINISTRATION, Permission.OWNER].some(perm => hasPermission(user.role.permissions, perm));
+    return res.json({
+      bypass,
+      blacklistedExtensions: cfg.void.file.blacklistedExtensions,
+      maxSize: Number(user.role.maxFileSize),
+      maxFileCount: user.role.maxFileCount,
+      quota
+    });
   }
-  const file = await prisma.file.create({
-    data: {
-      slug,
-      origFileName: req.headers.preservefilename ? req.file.originalname : `${rand}.${ext}`,
-      fileName: `${rand}.${ext}`,
-      mimetype: getMimetype(req.file.mimetype, ext),
-      userId: user.id,
-      deletionToken
+  else if (req.method === 'POST') {
+    const user = await req.getUser(req.headers.authorization);
+    if (!user || !user.role) return res.unauthorized();
+    if (!req.files || req.files.length === 0) return res.bad('No files uploaded.');
+    const quota = await req.getUserQuota(user);
+    if (!hasPermission(user.role.permissions, Permission.BYPASS_LIMIT)) {
+      if (req.files.some(file => file.size > user.role.maxFileSize || cfg.void.file.blacklistedExtensions.includes(file.originalname.split('.').pop())))
+        return res.forbid('Blacklisted extension or file size exceeds allowed.');
+      if (req.files.length > user.role.maxFileCount)
+        return res.forbid('File count exceeds maximum.');
+      if (req.files.map(f => f.size).reduce((x, y) => x + y) > quota.remaining)
+        return res.forbid('File size exceeds storage quota.');
     }
-  });
-  await writeFile(join(process.cwd(), cfg.uploader.directory, file.fileName), req.file.buffer);
-  info('FILE', `User ${user.username} (${user.id}) uploaded a file: ${file.fileName} (${file.id})`);
-  try {
-    global.logger.logFile(file, user.username);
+    let responses = [];
+    for (const f of req.files) {
+      let slug = generate('alphanumeric', cfg.void.url.length);
+      if (req.headers.url && ['emoji', 'invisible'].includes(req.headers.url.toString()))
+        slug = generate(req.headers.url.toString() as 'invisible' | 'emoji', cfg.void.url.length);
+      const deletionToken = generate('alphanumeric', cfg.void.url.length * 2);
+      const ext = f.originalname.split('.').pop();
+      const file = await prisma.file.create({
+        data: {
+          slug,
+          fileName: f.originalname,
+          mimetype: f.mimetype || getMimetype(ext) || 'application/octet-stream',
+          isExploding: (req.headers.exploding || 'false') === 'true',
+          isPrivate: (req.headers.private || 'false') === 'true',
+          size: f.size,
+          userId: user.id,
+          deletionToken
+        }
+      });
+      const path = resolve(cfg.void.file.outputDirectory, user.id);
+      mkdirSync(path, { recursive: true });
+      await writeFile(join(path, file.id), f.buffer);
+      logEvent('upload', `${file.fileName} (${file.id}) by "${user.username || user.name}" (${user.id})`);
+      const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
+      responses.push({
+        url: `${baseUrl}/${file.slug}`,
+        deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
+        thumbUrl: `${baseUrl}/api/file/${file.id}`
+      });
+    }
+    return res.json(responses);
   }
-  catch {}
-  const baseUrl = `http${cfg.core.secure ? 's' : ''}://${req.headers.host}`;
-  return res.json({
-    url: `${baseUrl}/${file.slug}`,
-    deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
-    thumbUrl: `${baseUrl}/${cfg.uploader.raw_route}/${file.fileName}`
-  });
+  return res.notAllowed();
 }
 
 function run(middleware: any) {
@@ -71,8 +84,8 @@ function run(middleware: any) {
     });
 }
 
-export default async function handlers(req, res) {
-  await run(uploader.single('file'))(req, res);
+export default async function handlers(req: VoidRequest, res: VoidResponse) {
+  await run(uploader.array('files'))(req, res);
   return withVoid(handler)(req, res);
 };
 

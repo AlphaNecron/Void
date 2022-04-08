@@ -1,102 +1,127 @@
-import { Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Heading, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
-import IconTextbox from 'components/IconTextbox';
-import PasswordBox from 'components/PasswordBox';
-import { Field, Form, Formik } from 'formik';
-import useFetch from 'lib/hooks/useFetch';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
-import { LogIn, User } from 'react-feather';
-import * as yup from 'yup';
+import {
+  ActionIcon,
+  Affix,
+  Avatar,
+  Badge,
+  Button, Checkbox,
+  Group,
+  Paper,
+  PasswordInput,
+  TextInput,
+  Title,
+  Tooltip,
+  Transition,
+  useMantineColorScheme
+} from '@mantine/core';
+import {useForm} from '@mantine/form';
+import {SiDiscord} from 'react-icons/si';
+import Container from 'components/Container';
+import {FiEdit, FiLock, FiLogIn, FiUser} from 'react-icons/fi';
+import React, {useEffect, useState} from 'react';
+import {RiCheckFill, RiErrorWarningFill, RiKeyFill, RiMoonClearFill, RiSunFill} from 'react-icons/ri';
+import {getProviders, signIn, useSession} from 'next-auth/react';
+import router from 'next/router';
+import {showNotification, useNotifications} from '@mantine/notifications';
 
-export default function Login() {
-  const router = useRouter();
-  const toast = useToast();
-  const schema = yup.object({
-    username: yup
-      .string()
-      .required('Username is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-  });
+export default function LoginPage({ providers }) {
+  const { data: session } = useSession();
+  const [mount, setMount] = useState(false);
   useEffect(() => {
-    (async () => {
-      const a = await fetch('/api/user');
-      if (a.ok) router.push('/dash');
-    })();
-  }, []);
-
-  const onSubmit = async (actions, values) => {
-    const username = values.username.trim();
-    const password = values.password.trim();
-    const res = await useFetch('/api/auth/login', 'POST', {
-      username, password
-    });
-    if (res.error) {
-      showToast('error', res.error);
-    } else {
-      showToast('success', 'Logged in');
-      router.push('/dash');
+    if (session) router.push('/dash');
+    setMount(true);
+  }, [router]);
+  const providersStyle = {
+    'discord': {
+      icon: <SiDiscord />,
+      color: '#7289DA'
     }
-    actions.setSubmitting(false);
   };
-  const showToast = (srv, content) => {
-    toast({
-      title: content,
-      status: srv,
-      duration: 5000,
-      isClosable: true,
-    });
-  };
+  const form = useForm({
+    initialValues: {
+      username: '',
+      password: '',
+      rememberMe: true
+    }
+  });
+  const authProviders = Object.values(providers);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   return (
-    <Center h='100vh'>
-      <Box
-        borderRadius={6}
-        p={4}
-        w={300}
-        bg={useColorModeValue('gray.100', 'gray.700')}
-        boxShadow={useColorModeValue('outline', 'dark-lg')}>
-        <Formik initialValues={{ username: '', password: '' }} validationSchema={schema}
-          onSubmit={(values, actions) => onSubmit(actions, values)}
-        >
-          {props => (
-            <Form>
-              <VStack>
-                <Heading fontSize='xl' mb={2} textAlign='center'>Void</Heading>
-                <Field name='username'>
-                  {({ field, form }) => (
-                    <FormControl isInvalid={form.errors.username && form.touched.username} isRequired mb={4}>
-                      <FormLabel htmlFor='username'>Username</FormLabel>
-                      <IconTextbox icon={User} {...field} id='username' placeholder='Username'/>
-                      <FormErrorMessage>{form.errors.username}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Field name='password'>
-                  {({ field, form }) => (
-                    <FormControl isInvalid={form.errors.password && form.touched.password} isRequired>
-                      <FormLabel htmlFor='password'>Password</FormLabel>
-                      <PasswordBox {...field} id='password' mb={4} placeholder='Password'/>
-                    </FormControl>
-                  )}
-                </Field>
-                <Button
-                  colorScheme='purple'
-                  isLoading={props.isSubmitting}
-                  loadingText='Logging in'
-                  type='submit'
-                  width='full'
-                >
-                  <LogIn size={16}/>
-                  <Text ml={2}>Login</Text>
-                </Button>
-              </VStack>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Center>
+    <Paper component='body' style={{ height: '100vh' }}>
+      <Transition transition='slide-right' duration={600} mounted={mount}>
+        {styles => (
+          <Container style={{ width: '375px', ...styles }}>
+            {authProviders.length === 0 ? <Title order={5} align='center'>No available provider to login.</Title> :
+              authProviders.find((x: { id }) => x.id === 'credentials') && (
+                <form onSubmit={form.onSubmit(async values => {
+                  const res = await signIn('credentials', { username: values.username, password: values.password, callbackUrl: '/dash', redirect: false, rememberMe: values.rememberMe });
+                  console.log(res);
+                  if (res.error) {
+                    if (res.error === 'CredentialsSignin')
+                      return showNotification({
+                        title: 'Username not found or wrong password',
+                        color: 'red',
+                        icon: <RiKeyFill/>,
+                        message: ''
+                      });
+                    else return showNotification({ title: 'Failed to signin', color: 'red', icon: <RiErrorWarningFill/>, message: res.error });
+                  }
+                  else {
+                    showNotification({ title: 'Login successfully, redirecting to Dashboard', message: '', icon: <RiCheckFill/>, color: 'green' });
+                    router.push('/dash');
+                  }
+                })}>
+                  <TextInput
+                    required
+                    icon={<FiUser />}
+                    label='Username'
+                    {...form.getInputProps('username')}
+                  />
+                  <PasswordInput
+                    required
+                    icon={<FiLock />}
+                    label='Password'
+                    {...form.getInputProps('password')}>
+                  </PasswordInput>
+                  <Checkbox mt='md' label='Remember me' {...form.getInputProps('rememberMe', { type: 'checkbox' })}/>
+                  <Group position='apart' mt='md'>
+                    <Group spacing={4}>
+                      {authProviders.filter((x: { id }) => x.id !== 'credentials').map((x: { id, name }, i) => (
+                        <Tooltip key={i} label={`Login with ${x.name}`}>
+                          <ActionIcon size='lg' onClick={() => signIn(x.id, { callbackUrl: '/dash' })}
+                            style={{ background: providersStyle[x.id] && providersStyle[x.id].color }} variant='filled'>
+                            {providersStyle[x.id] ? providersStyle[x.id].icon : <FiLock />}
+                          </ActionIcon>
+                        </Tooltip>
+                      ))}
+                    </Group>
+                    <div>
+                      <Button leftIcon={<FiEdit />} variant='subtle'>Register</Button>
+                      <Button ml={4} leftIcon={<FiLogIn />} type='submit'>Login</Button>
+                    </div>
+                  </Group>
+                </form>
+              )}
+          </Container>
+        )}
+      </Transition>
+      <Affix position={{ bottom: '2%', right: '2% ' }}>
+        <Badge leftSection={
+          <Avatar size={16} mx={0} src='/logo.png' />
+        } rightSection={
+          <ActionIcon variant='transparent' mx='-sm' onClick={() => toggleColorScheme()} size='lg'>
+            {colorScheme === 'dark' ? <RiSunFill /> : <RiMoonClearFill />}
+          </ActionIcon>
+        }>{process.env.NEXT_PUBLIC_VOID_VERSION}</Badge>
+      </Affix>
+    </Paper>
   );
 }
 
-Login.title = 'Login';
+export async function getServerSideProps() {
+  const providers = await getProviders();
+  return {
+    props: { providers },
+  };
+}
+
+LoginPage.title = 'Login';

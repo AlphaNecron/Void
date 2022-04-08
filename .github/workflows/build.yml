@@ -1,44 +1,40 @@
-name: 'build'
+name: "Build"
 on:
   push:
-    branches: [ dev, v0 ]
+    branches: [ dev, v0, v1 ]
     paths-ignore:
-      - 'readme.md'
-      - 'LICENSE'
-      - 'config.example.toml'
-      - '.gitignore'
+      - "readme.md"
+      - "LICENSE"
+      - "config.example.json"
+      - ".gitignore"
   pull_request:
     branches: [ dev ]
     paths-ignore:
-      - 'readme.md'
-      - 'LICENSE'
-      - 'config.example.toml'
-      - '.gitignore'
+      - "readme.md"
+      - "LICENSE"
+      - "config.example.json"
+      - ".gitignore"
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 'checkout'
+      - name: "Checkout repository"
         uses: actions/checkout@v2
         with:
           ref: ${{ github.sha }}
-      - name: 'setup node 14'
+      - name: "Setup Node environment"
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
-      - name: 'restore deps'
+          node-version: "16.x"
+      - name: "Restore dependencies"
         id: cache-restore
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
-      - name: create config
-        run: echo -e "[uploader]\nlength = 6\ndirectory = './uploads'" > config.toml
-      - name: install deps
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: yarn install
-      - name: build
+          key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles("**/yarn.lock") }}
+      - name: "Install dependencies"
+        if: steps.cache-restore.outputs.cache-hit != "true"
+        run: yarn install --immutable --immutable-cache --check-cache
+      - name: "Build"
         run: yarn build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}

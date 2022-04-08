@@ -1,38 +1,30 @@
-export interface Core {
-  secure: boolean;
-  secret: string;
+export interface Void {
+  useHttps: boolean;
   host: string;
   port: number;
-  database_url: string;
+  databaseUrl: string;
+  url: Url;
+  defaultRole: string;
+  domains?: string[];
+  authProviders: Record<string, Provider>;
+  file: File;
 }
 
-export interface Bot {
-  enabled: boolean;
-  prefix: string;
-  token: string;
-  admins: string[];
-  log_channel: string;
-  default_uid: number;
-  hostname: string;
+export interface Provider {
+  clientId: string;
+  clientSecret: string;
 }
 
-export interface Shortener {
-  allow_vanity: boolean;
+export interface Url {
+  allowVanityUrl: boolean;
   length: number;
-  route: string;
 }
 
-export interface Uploader {
-  raw_route: string;
-  length: number;
-  directory: string;
-  max_size: number;
-  blacklisted: string[];
+export interface File {
+  outputDirectory: string;
+  blacklistedExtensions: string[];
 }
 
 export interface Config {
-  core: Core;
-  bot: Bot;
-  shortener: Shortener;
-  uploader: Uploader;
+  void: Void;
 }

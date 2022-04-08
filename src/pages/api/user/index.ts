@@ -1,21 +1,20 @@
-import { info } from 'lib/logger';
+import {info} from 'lib/logger';
 import prisma from 'lib/prisma';
-import { hashPassword } from 'lib/utils';
-import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
+// import { hashPassword } from 'lib/utils';
+import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import {hash} from 'argon2';
+import {validateHex} from 'lib/utils';
 
-async function handler(req: NextApiReq, res: NextApiRes) {
-  const user = await req.user();
-  if (!user) return res.forbid('Unauthorized');
+async function handler(req: VoidRequest, res: VoidResponse) {
+  const user = await req.getUser();
+  if (!user) return res.unauthorized();
   if (req.method === 'PATCH') {
+    let data = {};
     if (req.body.password) {
-      const hashed = await hashPassword(req.body.password);
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashed }
-      });
+      data['password'] = await hash(req.body.password);
     }
     if (req.body.username) {
-      const existing = await prisma.user.findFirst({
+      const existing = await prisma.user.findUnique({
         where: {
           username: req.body.username
         }
@@ -23,55 +22,58 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       if (existing && user.username !== req.body.username) {
         return res.forbid('Username is already taken');
       }
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { username: req.body.username }
-      });
+      data['username'] = req.body.username;
     }
-    if (req.body.useEmbed) await prisma.user.update({
-      where: { id: user.id },
-      data: { useEmbed: req.body.useEmbed === 'true' }
-    });
-    if (req.body.embedSiteName) await prisma.user.update({
-      where: { id: user.id },
-      data: { embedSiteName: req.body.embedSiteName }
-    });
-    if (req.body.embedTitle) await prisma.user.update({
-      where: { id: user.id },
-      data: { embedTitle: req.body.embedTitle }
-    });
-    if (req.body.embedColor) await prisma.user.update({
-      where: { id: user.id },
-      data: { embedColor: req.body.embedColor }
-    });
-    if (req.body.embedDesc) await prisma.user.update({
-      where: { id: user.id },
-      data: { embedDesc: req.body.embedDesc }
-    });
-    const newUser = await prisma.user.findFirst({
-      where: {
-        id: Number(user.id)
-      },
-      select: {
-        isAdmin: true,
-        useEmbed: true,
-        embedSiteName: true,
-        embedColor: true,
-        embedTitle: true,
-        embedDesc: true,
-        id: true,
-        files: false,
-        password: false,
-        token: true,
-        username: true
-      }
-    });
-    info('USER', `User ${user.username} (${newUser.username}) (${newUser.id}) was updated`);
-    return res.json(newUser);
-  } else {
-    delete user.password;
-    return res.json(user);
+    console.log(req.body);
+    if (req.body.name)
+      data['name'] = req.body.name;
+    if ('embedEnabled' in req.body)
+      data['embedEnabled'] = req.body.embedEnabled === true;
+    if (req.body.embedSiteName)
+      data['embedSiteName'] = req.body.embedSiteName;
+    if (req.body.embedSiteNameUrl)
+      data['embedSiteNameUrl'] = req.body.embedSiteNameUrl;
+    if (req.body.embedTitle)
+      data['embedTitle'] = req.body.embedTitle;
+    if (req.body.embedColor && validateHex(req.body.embedColor))
+      data['embedColor'] = req.body.embedColor;
+    if (req.body.embedDescription)
+      data['embedDescription'] = req.body.embedDescription;
+    if (req.body.embedAuthor)
+      data['embedAuthor'] = req.body.embedAuthor;
+    if (req.body.embedAuthorUrl)
+      data['embedAuthorUrl'] = req.body.embedAuthorUrl;
+    if (data !== {}) {
+      console.log(data);
+      const updated = await prisma.user.update({
+        where: {
+          id: user.id
+        },
+        data,
+        select: {
+          username: true,
+          name: true,
+          embedEnabled: true,
+          embedSiteName: true,
+          embedSiteNameUrl: true,
+          embedTitle: true,
+          embedColor: true,
+          embedDescription: true,
+          embedAuthor: true,
+          embedAuthorUrl: true
+        }
+      });
+      info('USER', `User ${user.username} (${updated.username}) (${user.id}) was updated`);
+      return res.json(updated);
+    }
+    return res.bad('Nothing was updated.');
   }
+  else if (req.method === 'GET') {
+    delete user.email;
+    delete user.privateToken;
+    delete user.role;
+    return res.json(user);
+  } else return res.notAllowed();
 }
 
 export default withVoid(handler);

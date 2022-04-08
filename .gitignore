@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/.yarn
 
 # testing
 /coverage
@@ -39,7 +40,7 @@ package.lock.json
 # void
 .vscode/
 .idea/
-config.toml
+config.json
 uploads/
 .vscode/settings.json
 **/.fuse_hidden*

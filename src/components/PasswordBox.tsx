@@ -1,22 +1,61 @@
-import { Icon, IconButton, Input, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/react';
-import React from 'react';
-import { Eye, EyeOff, Lock } from 'react-feather';
+import React, {useState} from 'react';
+import {BiCheck, BiX} from 'react-icons/bi';
+import {Box, PasswordInput, Popover, Progress, Text} from '@mantine/core';
 
-export default function PasswordBox(props) {
-  const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
+function PasswordRequirement({ meets, label }: { meets: boolean; label: string }) {
   return (
-    <InputGroup size='md'>
-      <InputLeftElement pointerEvents='none' width='4.5rem'>
-        <Icon as={Lock} mr={8} mb={2}/>
-      </InputLeftElement>
-      <Input
-        pr='4.5rem' size='sm'
-        type={show ? 'text' : 'password'} {...props}
-      />
-      <InputRightElement width='4.5rem'>
-        <IconButton aria-label='Reveal' colorScheme='purple' icon={<Icon as={show ? EyeOff : Eye}/>} h='1.5rem' mt={-2} mr={-8} size='sm' onClick={handleClick}/>
-      </InputRightElement>
-    </InputGroup>
+    <Text
+      color={meets ? 'teal' : 'red'}
+      sx={{ display: 'flex', alignItems: 'center' }}
+      mt={7}
+      size='sm'
+    >
+      {meets ? <BiCheck /> : <BiX />} <Box ml={10}>{label}</Box>
+    </Text>
+  );
+}
+
+const requirements = [
+  { re: /[0-9]/, label: 'Includes number' },
+  { re: /[a-z]/, label: 'Includes lowercase letter' },
+  { re: /[A-Z]/, label: 'Includes uppercase letter' },
+  { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol' },
+];
+
+function getStrength(password: string) {
+  return Math.max(100 - (100 / (requirements.length + 1)) * ((password.length > 5 ? 0 : 1) + requirements.filter(req => !req.re.test(password)).length), 10);
+}
+
+export default function PasswordBox({ value = '', ...props }) {
+  const [popoverOpened, setPopoverOpened] = useState(false);
+  const checks = requirements.map((requirement, index) => (
+    <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)} />
+  ));
+
+  const strength = getStrength(value);
+  const color = strength === 100 ? 'teal' : strength > 50 ? 'yellow' : 'red';
+
+  return (
+    <Popover
+      opened={popoverOpened}
+      position='top'
+      placement='start'
+      withArrow
+      styles={{ popover: { width: '100%' } }}
+      trapFocus={false}
+      transition='pop-top-left'
+      onFocusCapture={() => setPopoverOpened(true)}
+      onBlurCapture={() => setPopoverOpened(false)}
+      target={
+        <PasswordInput
+          {...props}
+          value={value}
+        />
+      }
+    >
+      <Progress color={color} value={strength} size={5} style={{ marginBottom: 10 }} />
+      <PasswordRequirement label='Includes at least 6 characters' meets={value.length > 5} />
+      {checks}
+    </Popover>
   );
 }

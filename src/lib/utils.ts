@@ -1,26 +1,19 @@
-import { hash, verify } from 'argon2';
-import { createHmac, timingSafeEqual } from 'crypto';
-import { readdir, stat } from 'fs/promises';
-import { join } from 'path';
-import generate from './generators';
+import {createHmac, timingSafeEqual} from 'crypto';
+import generate from './urlGenerator';
 
-export async function hashPassword(s: string): Promise<string> {
-  return await hash(s);
-}
-
-export function verifyPassword(s: string, hash: string): Promise<boolean> {
-  return verify(hash, s);
-}
 
 export function generateToken() {
-  return generate(24) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
+  return generate('alphanumeric', 16) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
 }
 
-export function generateUuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
+  if(color.substring(0, 1) === '#') color = color.substring(1);
+  switch(color.length) {
+  case 3: return /^[0-9A-F]{3}$/i.test(color);
+  case 6: return /^[0-9A-F]{6}$/i.test(color);
+  case 8: return /^[0-9A-F]{8}$/i.test(color);
+  default: return false;
+  }
 }
 
 export function sign(value: string, secret: string): string {
@@ -47,22 +40,31 @@ export function unsign64(value: string, secret: string): string {
   return unsign(Buffer.from(value, 'base64').toString(), secret);
 }
 
-export async function sizeOfDir(directory: string): Promise<number> {
-  const files = await readdir(directory);
-  let size = 0;
-  for (let i = 0, L = files.length; i !== L; ++i) {
-    const stats = await stat(join(directory, files[i]));
-    size += stats.size;
-  }
-  return size;
-}
+// export async function sizeOfDir(directory: string): Promise<number> {
+//   const files = await readdir(directory);
+//   let size = 0;
+//   for (let i = 0, L = files.length; i !== L; ++i) {
+//     const stats = await stat(join(directory, files[i]));
+//     size += stats.size;
+//   }
+//   return size;
+// }
 
-export function bytesToHr(bytes: number) {
+export function parseByte(bytes: number) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
   let num = 0;
+  let isNegative = false;
+  if (bytes < 0) {
+    bytes *= -1;
+    isNegative = true;
+  }
   while (bytes > 1024) {
     bytes /= 1024;
     ++num;
   }
-  return `${(isNaN(+bytes) ? 0 : +bytes).toFixed(1)} ${units[num]}`;
+  if (num >= units.length) {
+    bytes *= (1024 ** (units.length - num + 1));
+    num = units.length - 1;
+  }
+  return `${+(isNaN(bytes) ? 0 : isNegative ? -bytes : bytes).toFixed(1)} ${units[num]}`;
 }

@@ -1,7 +1,7 @@
-name: 'docker'
+name: 'Push to GitHub Packages and Docker Hub'
 on:
   push:
-    branches: [ v0, dev ]
+    branches: [ v1, dev ]
     paths:
       - 'src/**'
       - 'server/**'
@@ -13,11 +13,10 @@ on:
   create:
     tags:
       - v*
-
   workflow_dispatch:
 jobs:
   push_to_ghcr:
-    name: push to github packages
+    name: Push to GitHub Packages
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -32,7 +31,7 @@ jobs:
           dockerfile: Dockerfile
           tag_with_ref: true
   push_to_dockerhub:
-    name: push to dockerhub
+    name: Push to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: checkout

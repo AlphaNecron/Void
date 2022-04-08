@@ -6,7 +6,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": false,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
@@ -33,14 +32,15 @@
         "hooks/*"
       ]
     },
-    "allowJs": true
+    "allowJs": true,
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
     "void-env.d.ts",
+    "next-auth.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "twilight/**/*.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules",

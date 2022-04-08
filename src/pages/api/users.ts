@@ -1,12 +1,14 @@
-import { info } from 'lib/logger';
+import {info} from 'lib/logger';
+import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
-import { generateToken, hashPassword } from 'lib/utils';
-import { NextApiReq, NextApiRes, withVoid } from 'middleware/withVoid';
+// import { generateToken, hashPassword } from 'lib/utils';
+import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
-async function handler(req: NextApiReq, res: NextApiRes) {
-  const user = await req.user();
-  if (!user) return res.forbid('Unauthorized');
-  if (!user.isAdmin) return res.forbid('You aren\'t an administrator');
+async function handler(req: VoidRequest, res: VoidResponse) {
+  const user = await req.getUser(req.headers.authorization);
+  if (!user || user.role) return res.unauthorized();
+  const isAdmin = hasPermission(user.role.permissions, Permission.ADMINISTRATION);
+  if (isAdmin) return res.forbid('You aren\'t an administrator');
   if (req.method === 'DELETE') {
     if (req.body.id === user.id) return res.forbid('You can\'t delete your own account');
     const userToDelete = await prisma.user.findFirst({
@@ -14,7 +16,7 @@ async function handler(req: NextApiReq, res: NextApiRes) {
         id: req.body.id
       }
     });
-    if (!userToDelete) return res.error('User not found');
+    if (!userToDelete) return res.notFound('User not found');
     await prisma.user.delete({
       where: {
         id: userToDelete.id
@@ -37,13 +39,13 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       }
     });
     if (existing) return res.forbid('Username is already taken');
-    const hashed = await hashPassword(password);
+    // const hashed = await hashPassword(password);
     const newUser = await prisma.user.create({
       data: {
-        password: hashed,
+        // password: hashed,
         username,
-        token: generateToken(),
-        isAdmin
+        // token: generateToken(),
+        roleName: 'User'
       }
     });
     delete newUser.password;
@@ -58,13 +60,9 @@ async function handler(req: NextApiReq, res: NextApiRes) {
       select: {
         username: true,
         id: true,
-        isAdmin: true,
-        token: true,
-        useEmbed: true,
         embedSiteName: true,
         embedColor: true,
         embedTitle: true,
-        embedDesc: true
       }
     });
     return res.json(all);

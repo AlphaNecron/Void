@@ -1,0 +1,22 @@
+{
+    "void": {
+        "useHttps": false,
+        "host": "0.0.0.0",
+        "port": 3000,
+        "databaseUrl": "postgres://postgres:postgres@postgres/postgres",
+        "url": {
+            "allowVanityUrl": true,
+            "length": 6
+        },
+        "authProviders": {
+          "discord": {
+            "clientId": "YOUR DISCORD CLIENT ID",
+            "clientSecret": "YOUR DISCORD CLIENT SECRET"
+          },
+        },
+        "file": {
+            "outputDirectory": "./uploads",
+            "blacklistedExtensions": [ ".zip", ".exe" ]
+        }
+    }
+}

@@ -1,48 +1,49 @@
 import config from 'lib/config';
-import generate, { emoji, zws } from 'lib/generators';
-import { info } from 'lib/logger';
-import { NextApiReq, NextApiRes, withVoid } from 'lib/middleware/withVoid';
+import cfg from 'lib/config';
+import {logEvent} from 'lib/logger';
+import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
-import { hashPassword } from 'lib/utils';
+import generate from 'lib/urlGenerator';
+import {hash} from 'argon2';
+import {hasPermission, Permission} from 'lib/permission';
 
-async function handler(req: NextApiReq, res: NextApiRes) {
-  if (req.method !== 'POST') return res.forbid('Invalid method');
-  const usr = await req.user();
-  if (!(req.headers.authorization || usr)) return res.forbid('Unauthorized');
-  if (!config.shortener.allow_vanity) return res.forbid('Vanity URLs are not allowed');
-  const user = req.headers.authorization ? (await prisma.user.findFirst({
-    where: {
-      token: req.headers.authorization
+async function handler(req: VoidRequest, res: VoidResponse) {
+  if (req.method !== 'POST') return res.notAllowed();
+  const usr = await req.getUser(req.headers.authorization);
+  if (!usr) return res.unauthorized();
+  if (!hasPermission(usr.role.permissions, Permission.SHORTEN)) {
+    return res.noPermission(Permission.SHORTEN);
+  }
+  if (!req.body['Destination']) return res.forbid('No URL specified');
+  if (req.body['Vanity']) {
+    if (!config.void.url.allowVanityUrl) return res.forbid('Vanity URLs are not allowed.');
+    if (!hasPermission(usr.role.permissions, Permission.VANITY)) {
+      return res.noPermission(Permission.VANITY);
     }
-  })) : usr;
-  if (!user) return res.forbid('Unauthorized');
-  if (!req.body.destination) return res.error('No URL specified');
-  if (req.body.vanity) {
     const existing = await prisma.url.findFirst({
       where: {
-        short: req.body.vanity
+        short: req.body['Vanity']
       }
     });
-    if (existing) return res.error('Vanity is already taken');
+    if (existing) return res.forbid('Vanity is already taken');
   }
-  const generator = req.headers.generator || req.body.generator;
-  const rand = generator === 'zws' ? zws(config.shortener.length) : generator === 'emoji' ? emoji(config.shortener.length) : generate(config.shortener.length);
-  if (req.body.password) var password = await hashPassword(req.body.password);
+  let rand = generate('alphanumeric', cfg.void.url.length);
+  if (req.body['URL'] && ['emoji', 'invisible', 'alphanumeric'].includes(req.body['URL'].toString())) {
+    rand = generate(req.body['URL'].toString() as 'alphanumeric' | 'invisible' | 'emoji', cfg.void.url.length);
+  }
+  let password;
+  if (req.body['Password']) password = await hash(req.body['Password']);
   const url = await prisma.url.create({
     data: {
-      short: req.body.vanity || rand,
-      destination: req.body.destination,
-      userId: user.id,
+      short: req.body['Vanity'] || rand,
+      destination: req.body['Destination'],
+      userId: usr.id,
       password
     }
   });
-  info('URL', `User ${user.username} (${user.id}) shortened a URL: ${url.destination} (${url.id})`);
-  try {
-    global.logger.logUrl(url, user.username);
-  }
-  catch {}
+  logEvent('shorten', `${url.short} by "${usr.username || usr.name}" (${usr.id})`);
   return res.json({
-    url: `http${config.core.secure ? 's' : ''}://${req.headers.host}${config.shortener.route}/${url.short}`
+    url: `http${config.void.useHttps ? 's' : ''}://${req.headers.host}/${url.short}`
   });
 }
 

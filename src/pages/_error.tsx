@@ -1,9 +1,10 @@
-import { Button, Center, Heading, VStack } from '@chakra-ui/react';
+import { Center, Button, Title } from '@mantine/core';
 import { errors } from 'lib/constants';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
-import { ArrowLeftCircle } from 'react-feather';
+import { IoIosArrowBack } from 'react-icons/io';
+import Container from 'components/Container';
 
 export default function Error({ title }) {
   return (
@@ -13,20 +14,22 @@ export default function Error({ title }) {
         <meta property='og:title' content={title}/>
         <meta property='theme-color' content='#FC8181'/>
       </Head>
-      <Center h='100vh'>
-        <VStack>
-          <Heading>{title}</Heading>
-          <Link href='/dash' passHref>
-            <Button justifyContent='flex-start' colorScheme='purple' leftIcon={<ArrowLeftCircle/>}>Go back</Button>
-          </Link>
-        </VStack>
-      </Center>
+      <Container py={64} px={96}>
+        <Title order={2} mb='xl'>{title}</Title>
+        <Link href='/dash' passHref>
+          <Button fullWidth leftIcon={<IoIosArrowBack/>}>Go back</Button>
+        </Link>
+      </Container>
     </>
   );
 }
 
-Error.getInitialProps = ({ res, err }) => {
+export async function getServerSideProps({ res, err }) {
   const code = res ? res.statusCode : err ? err.statusCode : 404;
   const title = `${code} ${errors[String(code)]}`;
-  return { title };
+  return {
+    props: {
+      title
+    }
+  };
 };

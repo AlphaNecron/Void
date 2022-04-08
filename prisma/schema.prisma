@@ -8,40 +8,87 @@ generator client {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  username      String
-  password      String
-  token         String    @unique
-  isAdmin       Boolean   @default(false)
-  useEmbed      Boolean?  @default(false)
-  embedSiteName String?   @default("Void")
-  embedTitle    String?
-  embedColor    String    @default("#B794F4")
-  embedDesc     String?
-  files         File[]
-  urls          Url[]
+  id               String    @id      @default(cuid())
+  username         String?   @unique
+  name             String?
+  password         String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  privateToken     String?   @unique
+  roleName         String    @default("User")
+  role             Role?     @relation(fields: [roleName], references: [name])
+  embedEnabled     Boolean   @default(true)
+  embedSiteName    String    @default("Void")
+  embedSiteNameUrl String?
+  embedTitle       String?
+  embedColor       String    @default("#B794F4")
+  embedDescription String?
+  embedAuthor      String?
+  embedAuthorUrl   String?
+  domains          Domain[]
+  files            File[]
+  urls             Url[]
+}
+
+model Account {
+  id                String  @id      @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text @map("refreshToken")
+  access_token      String? @db.Text @map("accessToken")
+  expires_at        Int?             @map("expiresAt")
+  token_type        String?          @map("tokenType")
+  scope             String?
+  idToken           String? @db.Text @map("idToken")
+  session_state     String?          @map("sessionState")
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Url {
-  id          Int           @id @default(autoincrement())
+  id          String   @id    @default(cuid())
   destination String
-  short       String
-  createdAt   DateTime      @default(now())
+  short       String   @unique
+  createdAt   DateTime        @default(now())
   password    String?
-  views       Int           @default(0)
-  user        User          @relation(fields: [userId], references: [id])
-  userId      Int
+  views       Int      @default(0)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+}
+
+model Domain {
+  name    String   @id
+  addedAt DateTime @default(now())
+  private Boolean  @default(false)
+  Users   User[]   @relation(references: [id])
+}
+
+model Role {
+  name              String  @id
+  rolePriority      Int     @default(100)
+  permissions       Int     @default(0)
+  maxFileSize       BigInt  @default(104857600)
+  maxFileCount      Int     @default(5)
+  storageQuota      BigInt  @default(5368709120)
+  users             User[]
 }
 
 model File {
-  id              Int             @id @default(autoincrement())
-  fileName        String
-  origFileName    String
-  mimetype        String          @default("image/png")
-  slug            String
-  uploadedAt      DateTime        @default(now())
-  deletionToken   String	        @unique
-  views           Int             @default(0)
-  user            User            @relation(fields: [userId], references: [id])
-  userId          Int
+  id            String   @id @default(uuid())
+  fileName      String
+  mimetype      String   @default("image/png")
+  isExploding   Boolean  @default(false)
+  isPrivate     Boolean  @default(false)
+  size          BigInt   @default(0)
+  slug          String   @unique
+  uploadedAt    DateTime @default(now())
+  deletionToken String   @unique
+  views         Int      @default(0)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
 }

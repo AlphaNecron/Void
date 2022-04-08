@@ -1,130 +1,138 @@
-import type { CookieSerializeOptions } from 'cookie';
-import { serialize } from 'cookie';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import config from '../config';
+import {Role} from '@prisma/client';
+import type {NextApiRequest, NextApiResponse} from 'next';
+import {getSession} from 'next-auth/react';
 import prisma from '../prisma';
-import { sign64, unsign64 } from '../utils';
+import {Permission} from 'lib/permission';
 
-export interface NextApiFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  buffer: string;
+export interface VoidFile {
+  fieldname: string,
+  originalname: string,
+  encoding: string,
+  mimetype: string,
+  buffer: Buffer,
   size: number;
 }
 
-export type NextApiReq = NextApiRequest & {
-  user: () => Promise<{
-    username: string;
-    token: string;
-    useEmbed: boolean;
-    embedSiteName: string;
-    embedTitle: string;
-    embedColor: string;
-    embedDesc: string;
-    isAdmin: boolean;
-    id: number;
-    password: string;
-  } | null | void>;
-  getCookie: (name: string) => string | null;
-  cleanCookie: (name: string) => void;
-  file?: NextApiFile;
+export type VoidUser = {
+  id: string,
+  username?: string,
+  name?: string,
+  email?: string,
+  role: Role,
+  embedEnabled: boolean;
+  embedSiteName: string,
+  embedTitle?: string,
+  embedColor: string,
+  embedDescription?: string,
+  embedAuthor?: string,
+  embedAuthorUrl?: string,
+  privateToken?: string
 }
 
-export type NextApiRes = NextApiResponse & {
-  error: (message: string) => void;
+export type VoidRequest = NextApiRequest & {
+  getUser: (privateToken?: string) => Promise<VoidUser | null>;
+  getUserQuota: (user: VoidUser) => Promise<{
+    role: string;
+    used: number;
+    remaining: number;
+    total: number;
+  } | null>;
+  files?: VoidFile[];
+}
+
+export type VoidResponse = NextApiResponse & {
+  error: (message: string, code?: number) => void;
   forbid: (message: string) => void;
+  notFound: (message: string) => void;
+  notAllowed: () => void;
+  unauthorized: () => void;
+  noPermission: (permission: Permission) => void;
   bad: (message: string) => void;
   json: (json: any) => void;
-  setCookie: (name: string, value: unknown, options: CookieSerializeOptions) => void;
 }
 
-export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: NextApiReq, res: NextApiRes) => {
-  res.error = (message: string) => {
+export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: VoidRequest, res: VoidResponse) => {
+  res.error = (message: string, code?: number) => {
     res.setHeader('Content-Type', 'application/json');
-    res.status(400);
+    res.status(code || 400);
     res.json({
-      code: 400,
+      code: code || 400,
       error: message
     });
   };
-  res.forbid = (message: string) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(403);
-    res.json({
-      code: 403,
-      error: message
-    });
-  };
-  res.bad = (message: string) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(401);
-    res.json({
-      code: 401,
-      error: message
-    });
-  };
+  res.forbid = (message: string) => res.error(message, 403);
+  res.bad = (message: string) => res.error(message, 401);
+  res.notFound = (message: string) => res.error(message, 404);
+  res.notAllowed = () => res.error('Method is not allowed', 405);
+  res.unauthorized = () => res.forbid('Unauthorized');
+  res.noPermission = (permission: Permission) => res.forbid(`Current user does not have ${Permission[permission]} permission.`);
   res.json = (json: any) => {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(json));
   };
-  req.getCookie = (name: string) => {
-    const cookie = req.cookies[name];
-    if (!cookie) return null;
-    const unsigned = unsign64(cookie, config.core.secret);
-    return unsigned ? unsigned : null;
+  req.getUserQuota = async (user: VoidUser) => {
+    const agg = await prisma.file.aggregate({
+      where: {
+        userId: user.id
+      },
+      _sum: {
+        size: true
+      }
+    });
+    return {
+      role: user.role.name,
+      used: Number(agg._sum.size) || 0,
+      remaining: Number(user.role.storageQuota) - Number(agg._sum.size),
+      total: Number(user.role.storageQuota)
+    };
   };
-  req.cleanCookie = (name: string) => {
-    res.setHeader('Set-Cookie', serialize(name, '', {
-      path: '/',
-      expires: new Date(),
-      maxAge: undefined
-    }));
-  };
-  req.user = async () => {
-    try {
-      const userId = req.getCookie('user');
-      if (!userId) return null;
-      const user = await prisma.user.findFirst({
+  req.getUser = async (privateToken?: string) => {
+    if (privateToken) {
+      return await prisma.user.findUnique({
         where: {
-          id: Number(userId)
+          privateToken
         },
         select: {
-          isAdmin: true,
-          useEmbed: true,
-          embedSiteName: true,
-          embedColor: true,
-          embedTitle: true,
-          embedDesc: true,
           id: true,
-          password: true,
-          token: true,
-          username: true
+          username: true,
+          name: true,
+          email: true,
+          embedEnabled: true,
+          embedSiteName: true,
+          embedSiteNameUrl: true,
+          embedTitle: true,
+          embedColor: true,
+          embedDescription: true,
+          embedAuthor: true,
+          embedAuthorUrl: true,
+          role: true,
+          privateToken: true
         }
       });
-      if (!user) return null;
-      return user;
-    } catch (e) {
-      if (e.code && e.code === 'ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH') {
-        req.cleanCookie('user');
-        return null;
-      }
     }
+    const session = await getSession({ req });
+    if (!session) return null;
+    return await prisma.user.findUnique({
+      where: {
+        id: session.user.id
+      },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        email: true,
+        embedEnabled: true,
+        embedSiteName: true,
+        embedSiteNameUrl: true,
+        embedTitle: true,
+        embedColor: true,
+        embedDescription: true,
+        embedAuthor: true,
+        embedAuthorUrl: true,
+        role: true,
+        privateToken: true
+      }
+    });
   };
-  res.setCookie = (name: string, value: unknown, options?: CookieSerializeOptions) => setCookie(res, name, value, options || {});
   return handler(req, res);
-};
-
-export const setCookie = (
-  res: NextApiResponse,
-  name: string,
-  value: unknown,
-  options: CookieSerializeOptions = {}
-) => {
-  if ('maxAge' in options) {
-    options.expires = new Date(Date.now() + options.maxAge * 1000);
-  }
-  const signed = sign64(String(value), config.core.secret);
-  res.setHeader('Set-Cookie', serialize(name, signed, options));
 };

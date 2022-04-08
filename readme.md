@@ -1,16 +1,18 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/dev/public/banner.png" width="480" height="270"/>
+  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v1/public/banner.png" width="480" height="270"/>
 
-  A self-hosted file hosting service based on Zipline with many features. 
-
-  ![Build stable](https://img.shields.io/github/workflow/status/AlphaNecron/Void/CI:%20Build/v0?color=%2368D391&label=stable&logo=github&style=for-the-badge)
+  A self-hosted file hosting service based on Zipline with many features.
+  ![Build v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=68D391&label=V1&logo=github&style=for-the-badge)
+  ![Docker v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=0db7ed&label=DOCKER&logo=docker&style=for-the-badge)
   ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
-  ![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v0?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
-  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/dev?color=%234FD1C5&logo=github&style=for-the-badge)
+  ![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v1?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
+  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
+> Void is being rewritten, it's highly unrecommended to try this branch, and it's corresponding Docker image at the moment as this build is extremely buggy and incomplete. 
+
 ### Requirements
-  - `node` >= 14
+  - `node` >= 16
   - PostgreSQL
   - Either `yarn` or `npm`
 
@@ -27,20 +29,20 @@
 
 ### Docker
   ```sh
-  git clone https://github.com/AlphaNecron/Void.git
+  git clone https://github.com/AlphaNecron/Void.git --branch=v1
   cd Void
-  cp config.example.toml config.toml
-  nano config.toml # edit the config file
+  cp config.example.json config.json
+  nano config.json # edit the config file
   docker pull alphanecron/void:v0
-  docker run -p 3000:3000 -v $PWD/config.toml:/void/config.toml -d alphanecron/void:v0
+  docker run -p 3000:3000 -v $PWD/config.json:/void/config.json -d alphanecron/void:v1
   ```
 
 ### Docker compose
   ```sh
-  git clone https://github.com/AlphaNecron/Void.git
+  git clone https://github.com/AlphaNecron/Void.git --branch=v1
   cd Void
-  cp config.example.toml config.toml
-  nano config.toml # edit the config file
+  cp config.example.json config.json
+  nano config.json # edit the config file
   docker-compose up --build -d
   ```
 
@@ -65,67 +67,54 @@
   ```
 
 ### Config schema
-  ```toml
-  [core]
-  secure = false # Whether to use https or not
-  secret = 'supersecretpassphrase' # The secret used to sign cookie
-  host = '0.0.0.0' # The host Void should run on
-  port = 3000 # The port Void should run on
-  database_url = 'postgres://username:password@localhost:5432/db_name' # PostgreSQL database url
+  ```json
+{
+    "void": {
+        "useHttps": false, // Whether to enable HTTPS for URLs created returned by API.
+        "host": "0.0.0.0", // The host Void should run on.
+        "port": 3000, // The port Void should run on.
+        "databaseUrl": "postgres://postgres:postgres@postgres/postgres", // The Postgres database URL.
+        "url": {
+            "allowVanityUrl": true, // Whether to allow users to shorten with vanity URLs.
+            "length": 6 // The maximum length for URLs generated with shortener and uploader.
+        },
+        "authProviders": { // You can add more providers here, as long as you provide the client ID, client secret add them to [...nextauth].ts.
+          "discord": {
+            "clientId": "YOUR DISCORD CLIENT ID", // Discord client id, you can grab one in the Application dashboard.
+            "clientSecret": "YOUR DISCORD CLIENT SECRET" // Discord client sercet, you can grab one in the Application dashboard as well.
+          }
+        },
+        "file": {
+            "outputDirectory": "./uploads", // The directory to save upload files.
+            "blacklistedExtensions": [ ".zip", ".exe" ] // Prevent users from uploading files with certain extensions.
+        }
+    }
+}
 
-  [bot]
-  enabled = false # Whether to enable the bot or not
-  prefix = '&' # Bot's prefix
-  token = '' # Bot's token
-  admin = [''] # Admin ids
-  log_channel = '' # The channel where logs are sent, leave blank to disable logging
-  default_uid = 1 # The default user id used to shorten and upload
-  hostname = 'example.com' # The hostname shortened urls should use in Twilight
-
-  [shortener]
-  allow_vanity = true # Whether to allow vanity urls or not
-  length = 6 # Slug length
-  route = '/go' # Route to serve shortened urls
-
-  [uploader]
-  raw_route = '/r' # Route to serve raw contents
-  length = 6 # Slug length
-  directory = './uploads' # The directory where images are stored
-  max_size = 104857600 # Max upload size (users only), in bytes
-  blacklisted = ['exe'] # Blacklisted file extensions (users only)
   ```
 
 ### Features
   - Configurable
   - Fast and reliable
   - Elegant Web UI
-  - Built with Next.js & React
+  - Built with Next.js, React and Mantine
   - Token-protected uploading
   - Easy to setup
   - Invisible URL
   - Emoji URL
   - Text previewing (with syntax highlighting)
   - Video embed
+  - Role-based permissions
   - URL shortener
   - Discord bot
+  - Login with social media
   - Docker support
+  - Exploding and private images
   - Password-protected URL
   - Embed customization (with variables)
 
 ### Contribution
-  - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
-
-### Bot permissions
-  #### These permissions are required for the bot to work properly (27712):
-    - Add reactions
-    - Read messages
-    - Send messages 
-    - Manage messages
-    - Embed links
-
-### Todo
-  - Discord integration
-  - Album / Bulk upload
+  - All pull requests must be made in `dev` branch, pull requests in other branches will be rejected.
 
 ### Credits
   - Source code and API from `diced/zipline`

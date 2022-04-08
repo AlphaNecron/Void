@@ -2,6 +2,7 @@ version: '3'
 services:
   postgres:
     image: postgres
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -14,14 +15,14 @@ services:
       timeout: 5s
       retries: 5
   void:
-    image: ghcr.io/alphanecron/void/void:v0
+    image: ghcr.io/alphanecron/void/void:v1
     ports:
       - '3000:3000'
     restart: unless-stopped
     volumes:
       - './uploads:/void/uploads'
       - './public:/void/public'
-      - './config.toml:/void/config.toml'
+      - './config.toml:/void/config.json'
     depends_on:
       - 'postgres'
 volumes:

@@ -1,33 +1,32 @@
-import { rm } from 'fs/promises';
-import { join } from 'path';
+import {rm} from 'fs/promises';
+import {resolve} from 'path';
 import cfg from '../../lib/config';
-import { info } from '../../lib/logger';
-import { NextApiReq, NextApiRes, withVoid } from '../../lib/middleware/withVoid';
+import {info} from '../../lib/logger';
+import {VoidRequest, VoidResponse, withVoid} from '../../lib/middleware/withVoid';
 import prisma from '../../lib/prisma';
 
-async function handler(req: NextApiReq, res: NextApiRes) {
+async function handler(req: VoidRequest, res: VoidResponse) {
   if (!req.query.token) return res.forbid('No deletion token provided');
   try {
     const file = await prisma.file.delete({
       where: {
         deletionToken: req.query.token as string
+      },
+      include: {
+        user: true
       }
     });
     if (!file) {
-      return res.json({
-        success: false
-      });
+      return res.forbid('File not found');
     }
-    await rm(join(process.cwd(), cfg.uploader.directory, file.fileName));
+    await rm(resolve(cfg.void.file.outputDirectory, file.user.id, file.id));
     info('USER', `Deleted ${file.fileName} (${file.id})`);
     return res.json({
       success: true
     });
   }
   catch {
-    return res.json({
-      success: false
-    });
+    return res.forbid('Failed to delete the file');
   }
 }
 

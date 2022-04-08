@@ -1,16 +1,13 @@
 import Layout from 'components/Layout';
-import UserPage from 'components/pages/Users';
-import useLogin from 'lib/hooks/useLogin';
 import React from 'react';
 
-export default function Users() {
-  const { user, isLoading } = useLogin();
-  if (isLoading) return null;
+export default function Page_Users() {
   return (
-    <Layout user={user} id={4}>
-      <UserPage/>
+    <Layout id={5}>
+      Users
     </Layout>
   );
 }
 
-Users.title = 'Users';
+Page_Users.title = 'Users';
+Page_Users.adminOnly = true;

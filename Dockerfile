@@ -6,7 +6,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY src ./src
 COPY scripts ./scripts
 COPY prisma ./prisma
-COPY twilight ./twilight
+# COPY twilight ./twilight
 
 COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json .eslintrc.js server.ts ./
 
@@ -31,6 +31,6 @@ COPY --from=builder /build/.next ./.next
 COPY --from=builder /build/.eslintrc.js ./.eslintrc.js
 COPY --from=builder /build/tsconfig.json ./tsconfig.json
 COPY --from=builder /build/package.json ./package.json
-COPY --from=builder	/build/twilight	./twilight
+# COPY --from=builder	/build/twilight	./twilight
 
 CMD ["yarn", "start"]
