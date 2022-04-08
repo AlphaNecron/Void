@@ -1,4 +1,4 @@
-FROM node:14-alpine3.14 AS builder
+FROM node:16-alpine3.14 AS builder
 WORKDIR /build
 
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -14,11 +14,9 @@ RUN yarn install
 
 ENV DATABASE_URL=postgres://postgres:postgres@postgres/postgres
 
-RUN echo -e "[core]\nsecret = 'dockersecret'\n[uploader]\nraw_route = '/r'\ndirectory = './uploads'\n[shortener]\nroute = '/go'" > config.toml
-
 RUN yarn build
 
-FROM node:14-alpine3.14 AS runner
+FROM node:16-alpine3.14 AS runner
 WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules
