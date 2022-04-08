@@ -8,7 +8,7 @@ COPY scripts ./scripts
 COPY prisma ./prisma
 # COPY twilight ./twilight
 
-COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json .eslintrc.js server.ts ./
+COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts next-auth.d.ts tsconfig.json .eslintrc.js server.ts ./
 
 RUN yarn install
 
