@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles("**/yarn.lock") }}
+          key: ${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
       - name: "Install dependencies"
         if: steps.cache-restore.outputs.cache-hit != "true"
         run: yarn install --immutable --immutable-cache --check-cache
