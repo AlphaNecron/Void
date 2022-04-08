@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v1/public/banner.png" width="480" height="270"/>
 
-  A self-hosted file hosting service based on Zipline with many features.
+  A self-hosted file hosting service based on Zipline with many features.  
   ![Build v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=68D391&label=V1&logo=github&style=for-the-badge)
   ![Docker v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=0db7ed&label=DOCKER&logo=docker&style=for-the-badge)
   ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
