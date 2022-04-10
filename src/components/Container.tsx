@@ -1,4 +1,4 @@
-import { Box, Center, useMantineTheme } from '@mantine/core';
+import {Box, BoxProps, Center, useMantineTheme} from '@mantine/core';
 import React from 'react';
 
 export default function Container({ height = '100vh', children, center = true, ...props }) {

@@ -54,7 +54,6 @@ export default function LoginPage({ providers }) {
               authProviders.find((x: { id }) => x.id === 'credentials') && (
                 <form onSubmit={form.onSubmit(async values => {
                   const res = await signIn('credentials', { username: values.username, password: values.password, callbackUrl: '/dash', redirect: false, rememberMe: values.rememberMe });
-                  console.log(res);
                   if (res.error) {
                     if (res.error === 'CredentialsSignin')
                       return showNotification({
@@ -63,7 +62,7 @@ export default function LoginPage({ providers }) {
                         icon: <RiKeyFill/>,
                         message: ''
                       });
-                    else return showNotification({ title: 'Failed to signin', color: 'red', icon: <RiErrorWarningFill/>, message: res.error });
+                    else return showNotification({ title: 'Failed to sign in', color: 'red', icon: <RiErrorWarningFill/>, message: res.error });
                   }
                   else {
                     showNotification({ title: 'Login successfully, redirecting to Dashboard', message: '', icon: <RiCheckFill/>, color: 'green' });

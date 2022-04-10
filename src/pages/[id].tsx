@@ -233,7 +233,7 @@ export function Url({id}) {
   );
 }
 
-export default function Handler({type, data}) {
+export default function Handler({isPrivate, type, data}) {
   return type === 'url' ? <Url id={data.id}/> : <Preview data={data}/>;
 }
 
@@ -297,7 +297,9 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
     if (!session)
       return {
         props: {
-          isPrivate: true
+          data: {
+            isPrivate: true
+          }
         }
       };
   }

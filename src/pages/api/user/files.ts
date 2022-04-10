@@ -16,7 +16,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filePerPage: +req.query.chunk, files: [] });
     const chunk = Number(req.query.chunk || total);
     const maxPage = Math.ceil(total / chunk);
-    console.log(req.query.page);
     const page = +req.query.page > maxPage ? maxPage : (+req.query.page > 1 ? +req.query.page : 1) || 1;
     const files = await prisma.file.findMany({
       ...(req.query.page && { skip: (page-1)*chunk }),

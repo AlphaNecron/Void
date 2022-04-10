@@ -1,7 +1,8 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v1/public/banner.png" width="480" height="270"/>
 
-  ####A self-hosted file hosting service based on Zipline with many features.
+  <h4> A self-hosted file hosting service based on Zipline with many features.</h4>
+  
   ![Build v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=68D391&label=V1&logo=github&style=for-the-badge)
   ![Docker v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=0db7ed&label=DOCKER&logo=docker&style=for-the-badge)
   ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
@@ -21,8 +22,8 @@
   git clone https://github.com/AlphaNecron/Void.git
   cd Void
   yarn install # or npm install
-  cp config.example.toml config.toml
-  nano config.toml # edit the config file
+  cp config.example.json config.json
+  nano config.json # edit the config file
   yarn build # or npm run build
   yarn start # or npm start
   ```

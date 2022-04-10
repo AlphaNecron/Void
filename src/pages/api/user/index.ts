@@ -24,7 +24,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
       data['username'] = req.body.username;
     }
-    console.log(req.body);
     if (req.body.name)
       data['name'] = req.body.name;
     if ('embedEnabled' in req.body)
@@ -44,7 +43,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (req.body.embedAuthorUrl)
       data['embedAuthorUrl'] = req.body.embedAuthorUrl;
     if (data !== {}) {
-      console.log(data);
       const updated = await prisma.user.update({
         where: {
           id: user.id
