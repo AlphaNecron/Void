@@ -1,12 +1,15 @@
+import logger from 'lib/logger';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 export function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
-  const id = (req.body.id ?? '').toString();
+  const id = (req.body.id || '').toString();
+  const reason = (req.body.reason || '');
   if (id === '') {
     return res.forbid('No ID');
   }
-  console.log(`User reported file: ${id}`);
+  if (reason.length <= 3) return res.forbid('Invalid reason.');
+  logger.info(`User reported file: ${id} for ${reason}`);
   return res.json({
     success: true
   });

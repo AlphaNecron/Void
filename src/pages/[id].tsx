@@ -1,59 +1,46 @@
-// import { Box, Button, Center, Heading, Input, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import {
   ActionIcon,
   Button,
+  Dialog,
   Group,
   Image,
+  Modal,
   PasswordInput,
-  Popover,
-  ScrollArea,
   Select,
   Stack,
   Table,
+  Text,
+  TextInput,
   Title,
   Tooltip
 } from '@mantine/core';
+import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import {Prism} from '@mantine/prism';
 import Container from 'components/Container';
-import {readFileSync} from 'fs';
-import {rm} from 'fs/promises';
-import config from 'lib/config';
 import {highlightLanguages} from 'lib/constants';
-import {getType, isPreviewable, isText, isType} from 'lib/mime';
+import {isPreviewable, isText, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
 import {parseByte} from 'lib/utils';
-// import { ArrowRightCircle, DownloadCloud } from 'react-feather';
 import {GetServerSideProps} from 'next';
 import {getSession} from 'next-auth/react';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
-import {resolve} from 'path';
 import {Language} from 'prism-react-renderer';
-// import FileViewer from 'components/FileViewer';
-// import config from 'lib/config';
-// import useFetch from 'lib/hooks/useFetch';
-// import { languages } from 'lib/constants';
-// import prisma from 'lib/prisma';
-// import { bytesToHr } from 'lib/utils';
-// import { GetServerSideProps } from 'next';
-// import Head from 'next/head';
-// import fetch from 'node-fetch';
 import React, {useEffect, useState} from 'react';
 import {BiNavigation} from 'react-icons/bi';
-import {FiDownload, FiFlag, FiInfo} from 'react-icons/fi';
+import {FiDownload, FiFlag, FiInfo, FiSend} from 'react-icons/fi';
 import {RiErrorWarningFill, RiFlag2Fill, RiNavigationFill} from 'react-icons/ri';
+import {VscWordWrap} from 'react-icons/vsc';
 
-function CustomScrollArea({...props}) {
-  return <ScrollArea style={{height: '66vh', width: '80vw'}} scrollbarSize={4} {...props}/>;
-}
-
-export function Preview({data: {isPrivate = false, buffer = '', properties, embed}}) {
-  const [open, setOpen] = useState(false);
+export function Preview({data: {isPrivate = false, isExploding = false, properties, embed}}) {
+  const [open, handler] = useDisclosure(false);
+  const [dialogOpen, dHandler] = useDisclosure(false);
+  console.log(isExploding);
   if (isPrivate) return (
     <>
       <Head>
-        <title>Private file</title>
+        <title>🔒 Private file</title>
       </Head>
       <Container>
         <Title m='xl' align='center' order={4}>This file is private, please log in to view.</Title>
@@ -62,47 +49,42 @@ export function Preview({data: {isPrivate = false, buffer = '', properties, embe
   );
   const [lang, setLang] = useState(Object.values(highlightLanguages)[0][0]);
   const [mimetype, name] = [properties['Mimetype'], properties['File name']];
+  const [wrap, setWrap] = useState(false);
+  const [reportReason, setReportReason] = useInputState('');
   const [content, setContent] = useState('');
   const detectLanguage = () => {
-    const language = Object.entries(highlightLanguages).find(([_, y]) => y.slice(1).some(z => name.endsWith(z)));
-    setLang(language ? language[1][0] : Object.values(highlightLanguages)[0][0]);
+    const language = Object.values(highlightLanguages).find(x => x.slice(1).some(z => name.endsWith(z)));
+    setLang(lang => language ? language[0] : lang);
   };
-  const [fileSource, setFileSource] = useState(`/api/file/${properties['ID']}`);
+  const src = () => `/api/file/${properties['ID']}`;
   const report = () => {
+    if (reportReason.length <= 3) return;
     fetch('/api/file/report', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        id: properties['ID']
+        id: properties['ID'],
+        reason: reportReason
       })
     }).then(r => r.json()).then(j => {
       if (j.success)
         showNotification({
-          title: 'Reported the file to the staff.',
+          title: 'Reported the file.',
           icon: <RiFlag2Fill/>,
           message: '',
           color: 'green'
         });
     });
-  };
-  const a2b = (a) => {
-    let b, c, d, e = {}, f = 0, g = 0, h = '', i = String.fromCharCode, j = a.length;
-    for (b = 0; 64 > b; b++) e['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.charAt(b)] = b;
-    for (c = 0; j > c; c++) for (b = e[a.charAt(c)], f = (f << 6) + b, g += 6; g >= 8; ) ((d = 255 & f >>> (g -= 8)) || j - 2 > c) && (h += i(d));
-    return h;
+    setReportReason('');
+    dHandler.close();
   };
   useEffect(() => {
-    if (buffer !== '') {
-      if (['image', 'audio', 'video'].some(x => getType(mimetype) === x)) {
-        const raw = a2b(buffer);
-        const b = Uint8Array.from(raw.split('').map(x => x.charCodeAt(0)));
-        const blob = new Blob([b], {type: mimetype});
-        setFileSource(URL.createObjectURL(blob));
-      } else if (isType('text', mimetype)) setContent(a2b(buffer));
-    } else fetch(fileSource).then(r => r.text()).then(setContent);
-    if (isText(mimetype)) detectLanguage();
+    if (isText(mimetype)) {
+      fetch(src()).then(r => r.text()).then(setContent);
+      detectLanguage();
+    }
   }, []);
   const buildOEmbedUrl = (author: string, authorUrl: string, siteName: string, siteNameUrl: string): string => {
     if (typeof window === 'undefined') return;
@@ -113,28 +95,64 @@ export function Preview({data: {isPrivate = false, buffer = '', properties, embe
     if (siteNameUrl) url.searchParams.set('siteNameUrl', siteNameUrl);
     return url.toString();
   };
+  const actions = (fluid = false, float = true) => (
+    <Group position='apart' grow={fluid} style={fluid || !float ? ({}) : ({ position: 'absolute', bottom: 24, right: 24, zIndex: 100 })} spacing={4}>
+      {fluid ? (
+        <Button color='blue' onClick={handler.open} leftIcon={<FiInfo/>}>Info</Button>
+      ) : (
+        <Tooltip label='View properties'>
+          <ActionIcon onClick={handler.open} variant='filled' color='blue'>
+            <FiInfo/>
+          </ActionIcon>
+        </Tooltip>
+      )
+      }
+      {isExploding || (fluid ? (
+        <Button color='green' component='a' href={src()} download={properties['File name']} leftIcon={<FiDownload/>}>
+            Download
+        </Button>
+      ) : (
+        <Tooltip label='Download'>
+          <ActionIcon component='a' href={src()} download={properties['File name']} variant='filled' color='green'>
+            <FiDownload/>
+          </ActionIcon>
+        </Tooltip>
+      ))}
+      {fluid ? (
+        <Button onClick={dHandler.open} color='red' leftIcon={<FiFlag/>}>
+          Report
+        </Button>
+      ) : (
+        <Tooltip label='Report this file'>
+          <ActionIcon onClick={dHandler.open} variant='filled' color='red'>
+            <FiFlag/>
+          </ActionIcon>
+        </Tooltip>
+      )}
+    </Group>
+  );
   return (
     <>
       <Head>
-        <title>{name}</title>
+        <title>{isExploding ? '💣' : ''} {name}</title>
         {embed && (
           <>
             <meta property='og:title' content={embed.title}/>
             <meta property='og:description' content={embed.description}/>
             <meta property='theme-color' content={embed.color}/>
             <link type='application/json+oembed' href={buildOEmbedUrl(embed.author, embed.authorUrl, embed.siteName, embed.siteNameUrl)}/>
-            {buffer !== '' ||
+            {isExploding ||
             isType('image', mimetype) ? (
                 <>
-                  <meta property='og:image' content={fileSource}/>
+                  <meta property='og:image' content={src()}/>
                   <meta property='twitter:card' content='summary_large_image'/>
                 </>
               ) : isType('video', mimetype) ? (
                 <>
                   <meta property='og:type' content='video.other'/>
-                  <meta property='og:video' content={fileSource}/>
-                  <meta property='og:video:url' content={fileSource}/>
-                  <meta property='og:video:secure_url' content={fileSource}/>
+                  <meta property='og:video' content={src()}/>
+                  <meta property='og:video:url' content={src()}/>
+                  <meta property='og:video:secure_url' content={src()}/>
                   <meta property='og:video:type' content={mimetype}/>
                 </>
               ) : (
@@ -143,53 +161,99 @@ export function Preview({data: {isPrivate = false, buffer = '', properties, embe
           </>
         )}
       </Head>
+      <Modal title='File information' transition='slide-up' opened={open} onClose={handler.close} centered>
+        <Table highlightOnHover striped>
+          <tbody>
+            {Object.entries(properties).map(([x, y], i) =>
+              <tr key={i}>
+                <td>
+                  <strong>
+                    {x}
+                  </strong>
+                </td>
+                <td>{y}</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </Modal>
+      <Dialog
+        opened={dialogOpen}
+        withCloseButton
+        transition='slide-left'
+        onClose={dHandler.close}
+        size='lg'
+        radius='md'
+      >
+        <Stack>
+          <Text size='xs' color='dimmed' weight={700}>
+          Why do you want to report this file?
+          </Text>
+          <TextInput value={reportReason} error={reportReason.length <= 3 ? 'Please provide a proper reason!' : null} onChange={setReportReason}/>
+          <Button size='xs' color='red' disabled={reportReason.length <= 3} onClick={report} leftIcon={<FiSend/>}>Submit report</Button>
+        </Stack>
+      </Dialog>
       <Container style={{ position: 'relative' }}>
-        <Group style={{ position: 'absolute', bottom: 24, right: 24, zIndex: 100 }} spacing={4}>
-          <Popover position='top' opened={open} target={
-            <Tooltip label='View properties'>
-              <ActionIcon onClick={() => setOpen(o => !o)} variant='filled' color='blue'>
-                <FiInfo/>
-              </ActionIcon>
-            </Tooltip>
-          }>
-            <Table highlightOnHover striped>
-              <tbody>
-                {Object.entries(properties).map(([x, y], i) =>
-                  <tr key={i}>
-                    <td>{x}</td>
-                    <td>{y}</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          </Popover>
-          {buffer !== '' || (
-            <ActionIcon component='a' href={fileSource} download={properties['File name']} variant='filled' color='green'>
-              <FiDownload/>
-            </ActionIcon>
-          )}
-          <ActionIcon onClick={report} variant='filled' color='red'>
-            <FiFlag/>
-          </ActionIcon>
-        </Group>
-        {isPreviewable(mimetype) && (
+        {isPreviewable(mimetype) ? (
           isType('image', mimetype) ? (
-            <Image alt={name} onLoad={() => buffer === '' || URL.revokeObjectURL(fileSource)} height='88vh' src={fileSource} fit='contain'/>
+            <>
+              {actions()}
+              <Image alt={name} src={src()} styles={{
+                image: {
+                  objectFit: 'contain',
+                  maxWidth: '80vw',
+                  maxHeight: '80vh'
+                }
+              }}/>
+            </>
           ) : isType('audio', mimetype) ? (
-            <audio onLoad={() => buffer === '' || URL.revokeObjectURL(fileSource)} src={fileSource} autoPlay controls/>
+            <>
+              {actions()}
+              <audio src={src()} autoPlay controls/>
+            </>
           ) : isType('video', mimetype) ? (
-            <video onLoad={() => buffer === '' || URL.revokeObjectURL(fileSource)} style={{maxHeight: '60vh'}} src={fileSource} autoPlay
-              controls/>
+            <>
+              {actions()}
+              <video style={{maxHeight: '60vh'}} src={src()} autoPlay
+                controls/>
+            </>
           ) : isText(mimetype) ? (
             <Stack>
-              <Select value={lang} onChange={setLang} variant='default' allowDeselect={false} creatable={false}
-                clearable={false}
-                data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
-              <Prism color='blue' withLineNumbers scrollAreaComponent={CustomScrollArea}
-                language={lang as Language}>{content}</Prism>
+              <div style={{ display: 'flex' }}>
+                <Select size='xs' searchable value={lang} onChange={setLang} style={{ flex: 1 }} variant='default' allowDeselect={false} creatable={false}
+                  clearable={false} mr={4}
+                  data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
+                <Group spacing={4}>
+                  <Tooltip label='Toggle word wrap'>
+                    <ActionIcon variant='filled' color={wrap ? 'void1' : 'gray'} onClick={() => setWrap(w => !w)}>
+                      <VscWordWrap/>
+                    </ActionIcon>
+                  </Tooltip>
+                  {actions(false, false)}
+                </Group>
+              </div>
+              <Prism withLineNumbers styles={
+                {
+                  scrollArea: {
+                    height: '66vh',
+                    width: '66vw'
+                  },
+                  ...(wrap && {
+                    code: {
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                    }
+                  })
+                }}
+              language={lang as Language}>{content}</Prism>
             </Stack>
-          ) : <Title align='center' order={5}>This file cannot be previewed.</Title>
-        )}
+          ) : <></>) : (
+          <Stack>
+            <Title align='center' m={48} order={3}>This file cannot be previewed.</Title>
+            {actions(true)}
+          </Stack>
+        )
+        }
       </Container>
     </>
   );
@@ -222,7 +286,7 @@ export function Url({id}) {
       <Container p={64}>
         <Title mb='xl' order={4}>This URL is password-protected, please enter a password to continue.</Title>
         <div style={{display: 'flex'}}>
-          <PasswordInput onKeyPress={e => e.key === 'Enter' && validate()} value={password}
+          <PasswordInput onKeyDown={e => e.key === 'Enter' && validate()} value={password}
             onChange={e => setPassword(e.target.value)} style={{flex: 1}} autoComplete='off'/>
           <ActionIcon type='submit' onClick={validate} variant='filled' size='lg' mt={1} color='green' ml={4}>
             <BiNavigation/>
@@ -233,12 +297,11 @@ export function Url({id}) {
   );
 }
 
-export default function Handler({isPrivate, type, data}) {
+export default function Handler({type, data}) {
   return type === 'url' ? <Url id={data.id}/> : <Preview data={data}/>;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
-  let buffer;
   const file = await prisma.file.findUnique({
     where: {
       slug: query.id.toString()
@@ -303,32 +366,21 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
         }
       };
   }
-  if (file.isExploding) {
-    const path = resolve(config.void.file.outputDirectory, file.user.id, file.id);
-    buffer = readFileSync(path).toString('base64');
-    await prisma.file.delete({
-      where: {
-        id: file.id,
+  await prisma.file.update({
+    where: {
+      id: file.id
+    },
+    data: {
+      views: {
+        increment: 1
       }
-    });
-    await rm(path);
-  } else {
-    await prisma.file.update({
-      where: {
-        id: file.id
-      },
-      data: {
-        views: {
-          increment: 1
-        }
-      }
-    });
-  }
+    }
+  });
   return {
     props: {
       type: 'file',
       data: {
-        ...(buffer && {buffer}),
+        isExploding: file.isExploding,
         properties: {
           'ID': file.id,
           'File name': file.fileName,

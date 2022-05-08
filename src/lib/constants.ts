@@ -49,7 +49,7 @@ export const highlightLanguages = { // https://gist.github.com/ppisarczyk/43962d
   'JS Templates': ['js-templates'],
   'CoffeeScript': ['coffeescript', 'coffee', '_coffee', 'cake', 'cjsx', 'cson', 'iced'],
   'DIFF': ['diff', '.diff', '.patch'],
-  'Git': ['git'],
+  'Git': ['git', '.git'],
   'Go': ['go', '.go'],
   'GraphQL': ['graphql', '.graphql', '.dot', '.gv'],
   'Handlebars': ['handlebars', '.handlebars', '.hbs'],

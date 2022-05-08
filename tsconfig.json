@@ -17,7 +17,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "noEmit": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
       "components/*": [
         "components/*"
@@ -44,6 +44,7 @@
   ],
   "exclude": [
     "node_modules",
+    "logs",
     "uploads"
   ]
 }

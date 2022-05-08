@@ -20,6 +20,6 @@ export default class _Document extends Document {
         </body>
       </Html>
     );
-  };
+  }
   static getInitialProps = getInitialProps;
 }

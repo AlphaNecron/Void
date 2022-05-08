@@ -1,4 +1,4 @@
-import {info} from 'lib/logger';
+import logger from 'lib/logger';
 import prisma from 'lib/prisma';
 import {generateToken} from 'lib/utils';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
@@ -15,7 +15,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         privateToken: generateToken()
       }
     });
-    info('USER', `User ${user.username} (${user.id}) reset their token`);
+    logger.info(`User ${user.username} (${user.id}) reset their token`);
     return res.json({ success: true, newToken: updated.privateToken });
   }
   else if (req.method === 'GET')

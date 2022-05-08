@@ -12,8 +12,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   });
   if (!user) return res.forbid('Unauthorized');
   if (req.method === 'GET') {
-    const total = await prisma.file.count();
-    if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filePerPage: +req.query.chunk, files: [] });
+    const total = await prisma.file.count({
+      where: {
+        userId: user.id
+      }
+    });
+    if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filesPerPage: +req.query.chunk, files: [] });
     const chunk = Number(req.query.chunk || total);
     const maxPage = Math.ceil(total / chunk);
     const page = +req.query.page > maxPage ? maxPage : (+req.query.page > 1 ? +req.query.page : 1) || 1;
@@ -42,7 +46,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       page: page,
       totalPages: maxPage,
       totalFiles: total,
-      filePerPage: chunk,
+      filesPerPage: chunk,
       files
     });
   } else {

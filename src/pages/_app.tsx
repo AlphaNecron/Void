@@ -1,11 +1,12 @@
-import {ColorScheme, ColorSchemeProvider, MantineProvider, Title} from '@mantine/core';
+import {ColorScheme, ColorSchemeProvider, MantineProvider, Title, useMantineTheme} from '@mantine/core';
 import {useLocalStorage} from '@mantine/hooks';
+import {ModalsProvider} from '@mantine/modals';
 import {NotificationsProvider} from '@mantine/notifications';
+import Container from 'components/Container';
+import {hasPermission, isAdmin} from 'lib/permission';
 import {SessionProvider, useSession} from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
-import {hasPermission, isAdmin} from 'lib/permission';
-import Container from 'components/Container';
 
 export default function Void({ Component, pageProps: { session, ...pageProps } }) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -49,19 +50,22 @@ export default function Void({ Component, pageProps: { session, ...pageProps } }
             ],
           }
         }}>
-          <NotificationsProvider>
-            <SessionProvider refetchOnWindowFocus={true} refetchInterval={300} session={session}>
-              {(Component.authRequired || Component.adminOnly) ? (
-                <Auth adminOnly={Component.adminOnly || false} permission={(Component.permission)} >
+          <ModalsProvider>
+            <NotificationsProvider>
+              <SessionProvider refetchOnWindowFocus={true} refetchInterval={300} session={session}>
+                {(Component.authRequired || Component.adminOnly) ? (
+                  <Auth adminOnly={Component.adminOnly} permission={Component.permission} >
+                    <Component {...pageProps} />
+                  </Auth>
+                ) : (
                   <Component {...pageProps} />
-                </Auth>
-              ) : (
-                <Component {...pageProps} />
-              )}
-            </SessionProvider>
-          </NotificationsProvider>
+                )}
+              </SessionProvider>
+            </NotificationsProvider>
+          </ModalsProvider>
         </MantineProvider>
-      </ColorSchemeProvider></>
+      </ColorSchemeProvider>
+    </>
   );
 }
 
@@ -73,7 +77,6 @@ function Auth({ children, permission, adminOnly }) {
         <Head>
           <title>Insufficient permission</title>
         </Head>
-
         <Container>
           <Title order={4} m='xl' align='center'>
       You do not have permission to access this page.

@@ -32,4 +32,4 @@ export async function getServerSideProps({ res, err }) {
       title
     }
   };
-};
+}

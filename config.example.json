@@ -4,6 +4,7 @@
         "host": "0.0.0.0",
         "port": 3000,
         "databaseUrl": "postgres://postgres:postgres@postgres/postgres",
+        "defaultDomain": "http://localhost:3000",
         "url": {
             "allowVanityUrl": true,
             "length": 6
@@ -12,11 +13,11 @@
           "discord": {
             "clientId": "YOUR DISCORD CLIENT ID",
             "clientSecret": "YOUR DISCORD CLIENT SECRET"
-          },
+          }
         },
-        "file": {
+        "upload": {
             "outputDirectory": "./uploads",
-            "blacklistedExtensions": [ ".zip", ".exe" ]
+            "blacklistedExtensions": []
         }
     }
 }

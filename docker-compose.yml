@@ -22,6 +22,7 @@ services:
     volumes:
       - './uploads:/void/uploads'
       - './public:/void/public'
+      - './logs:/void/logs'
       - './config.toml:/void/config.json'
     depends_on:
       - 'postgres'

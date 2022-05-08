@@ -1,3 +1,4 @@
+import {useTheme} from '@emotion/react';
 import {
   ActionIcon,
   Affix,
@@ -7,52 +8,54 @@ import {
   ColorInput,
   Container,
   CSSObject,
-  Divider,
   Group,
   Highlight,
   Image,
   MantineTheme,
   Popover,
-  Select,
   Stack,
   Table,
-  Tabs,
   Textarea,
   TextInput,
-  Title,
   Tooltip
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
+import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure, useSetState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
-import {Prism} from '@mantine/prism';
-import CustomTabs from 'components/CustomTabs';
+import DashboardCard from 'components/DashboardCard';
 import Layout from 'components/Layout';
 import PasswordBox from 'components/PasswordBox';
-import ShareXIcon from 'components/ShareXIcon';
-import {signOut, useSession} from 'next-auth/react';
+import useThemeValue from 'lib/hooks/useThemeValue';
+import {useSession} from 'next-auth/react';
 import React, {useState} from 'react';
-import {FaUserCircle} from 'react-icons/fa';
-import {FiDownload, FiInfo, FiLogOut, FiSave, FiScissors} from 'react-icons/fi';
+import {FaUserCheck, FaUserCircle} from 'react-icons/fa';
+import {FiInfo, FiSave} from 'react-icons/fi';
 import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 'react-icons/io5';
-import {RiBracesFill, RiClipboardFill, RiKey2Fill, RiKeyLine} from 'react-icons/ri';
+import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine} from 'react-icons/ri';
 import useSWR from 'swr';
+import * as yup from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
   const clipboard = useClipboard({ timeout: 500 });
   const [open, handler] = useDisclosure(false);
   const { data: { user }} = useSession();
-  const [ shareXOptions, setShareXOptions ] = useSetState({ name: 'Void', url: 'alphanumeric', askPassword: false });
-  const validateUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-    } catch {
-      return false;
-    }
-    return true;
-  };
+  const fetcher = (url: string) => fetch(url).then(r => r.json());
+  const schema = yup.object({
+    name: yup.string().min(2, { message: 'Display name should be longer than 2 characters.' }),
+    username: yup.string().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, { message: 'Username should be longer than 3 characters.'}),
+    password: yup.string().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, 'Password must match shown criteria.'),
+    embedEnabled: yup.boolean().required(),
+    embedColor: yup.string().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, { excludeEmptyString: false }),
+    embedSiteName: yup.string().nullable(),
+    embedSiteNameUrl: yup.string().url().nullable(),
+    embedTitle: yup.string().nullable(),
+    embedDescription: yup.string().nullable(),
+    embedAuthor: yup.string().nullable(),
+    embedAuthorUrl: yup.string().url().nullable()
+  });
   const form = useForm({
+    schema: yupResolver(schema),
     initialValues: {
       name: '',
       username: '',
@@ -65,22 +68,16 @@ export default function Page_Account() {
       embedDescription: '',
       embedAuthor: '',
       embedAuthorUrl: ''
-    },
-    validate: {
-      embedSiteNameUrl: (value) => (value || '').length === 0 ? null : validateUrl(value) ? null : 'Malformed URL',
-      embedAuthorUrl: (value) => (value || '').length === 0 ? null : validateUrl(value) ? null : 'Malformed URL'
     }
   });
-  const { data: dataToken, mutate: mutateToken } = useSWR('/api/user/token', (url: string) => fetch(url).then(r => r.json()));
-  const { data, mutate } = useSWR('/api/user', (url: string) => fetch(url).then(r => r.json()).then(r => {
-    form.setValues(r);
-    return r;
-  }), {
+  const { data: dataToken, mutate: mutateToken } = useSWR('/api/user/token', fetcher);
+  const { data, mutate } = useSWR('/api/user', (url: string) => fetcher(url).then(r => { form.setValues(r); return r; }), {
     revalidateOnMount: true,
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   });
+  const { value } = useThemeValue();
   const regenToken = () => {
     fetch('/api/user/token', {
       method: 'PATCH',
@@ -106,7 +103,8 @@ export default function Page_Account() {
     boxShadow: theme.shadows.md,
     borderRadius: theme.radius.sm
   });
-  const updateUser = values =>
+  const updateUser = values => {
+    console.log(values);
     fetch('/api/user', {
       method: 'PATCH',
       headers: {
@@ -114,57 +112,35 @@ export default function Page_Account() {
       },
       body: JSON.stringify(values)
     }).then(r => r.json()).then(r => {
-      if (!r.error) mutate();
+      if (!r.error) {
+        return showNotification({
+          title: 'Successfully updated your user.',
+          icon: <FaUserCheck/>,
+          message: '',
+          color: 'green'
+        });
+        mutate();
+      }
+      showNotification({
+        title: 'Failed to update your user.',
+        message: r.error,
+        color: 'red',
+        icon: <RiErrorWarningFill/>
+      });
     });
-  const uploaderConfig = {
-    Version: '13.2.1',
-    Name: shareXOptions.name,
-    DestinationType: 'ImageUploader, FileUploader, TextUploader',
-    RequestMethod: 'POST',
-    RequestURL: `${window.location.origin}/api/upload`,
-    Headers: {
-      Authorization: dataToken?.privateToken,
-      URL: shareXOptions.url
-    },
-    URL: '$json:[0].url$',
-    ThumbnailURL: '$json:thumbUrl$',
-    DeletionURL: '$json:deletionUrl$',
-    ErrorMessage: '$json:error$',
-    Body: 'MultipartFormData',
-    FileFormName: 'files'
-  };
-  const shortenerConfig = {
-    Version: '13.2.1',
-    Name: shareXOptions.name,
-    DestinationType: 'URLShortener, URLSharingService',
-    RequestMethod: 'POST',
-    RequestURL: `${window.location.origin}/api/shorten`,
-    Headers: {
-      Authorization: dataToken?.privateToken
-    },
-    Body: 'FormURLEncoded',
-    Arguments: {
-      Destination: '$input$',
-      URL: shareXOptions.url,
-      ...(shareXOptions.askPassword && { Password: '$prompt:Password$' })
-    },
-    URL: '$json:url$',
-    ErrorMessage: '$json:error$'
   };
   return (
     <Layout id={9} onReload={mutate}>
       {data && (
-        <form onSubmit={form.onSubmit(updateUser)}>
-          <CustomTabs initialTab={0} position='center'>
-            <Tabs.Tab label='Info' icon={<FaUserCircle/>}>
-              <Title order={3}>Basic information</Title>
-              <Divider mb='md'/>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+        <>
+          <form id='account_form' onSubmit={form.onSubmit(updateUser)}>
+            <DashboardCard icon={<FaUserCircle/>} title='Basic information'>
+              <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
                 <Avatar mr='xl' ml='xs' size={160} radius={100} src={user?.image}/>
                 <Stack style={{ flex: 1 }}>
                   <Group grow>
                     <TextInput label='Display name' description='Can be your real name or whatever you like' placeholder='Display name' {...form.getInputProps('name')}/>
-                    <TextInput required label='Username' description='The unique username used to login to your account' placeholder='Username' {...form.getInputProps('username')}/>
+                    <TextInput label='Username' description='The unique username used to login to your account' placeholder='Username' {...form.getInputProps('username')}/>
                   </Group>
                   <PasswordBox
                     label='Password'
@@ -174,8 +150,10 @@ export default function Page_Account() {
                     {...form.getInputProps('password')}/>
                 </Stack>
               </div>
-              {dataToken && (
-                <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'} label='Token' description='Remember to keep it safe or people can upload on behalf of you' placeholder='Click Regenerate button to generate one.' rightSectionWidth={96} rightSection={
+            </DashboardCard>
+            {dataToken && (
+              <DashboardCard icon={<RiKey2Fill/>} title='Private token' my='md'>
+                <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'} description='Remember to keep it safe or people can upload on behalf of you' placeholder='Click Regenerate button to generate one.' rightSectionWidth={96} rightSection={
                   <>
                     <Tooltip label={reveal ? 'Hide' : 'Show'}>
                       <ActionIcon onClick={() => setReveal(!reveal)}>
@@ -201,83 +179,60 @@ export default function Page_Account() {
                     </Tooltip>
                   </>
                 } readOnly icon={<RiKeyLine/>} autoComplete='one-time-code'/>
-              )}
-            </Tabs.Tab>
-            <Tabs.Tab label='Embed' icon={<RiBracesFill/>}>
-              <Group align='center'>
-                <Title order={3}>Embed</Title>
-                <Popover opened={open} onClose={handler.close} position='right' transition='skew-down' target={
-                  <ActionIcon onClick={handler.toggle} variant='hover' color='blue'>
-                    <FiInfo/>
-                  </ActionIcon>
-                }>
-                  <Table>
-                    <caption>
+              </DashboardCard>
+            )}
+            <DashboardCard icon={<RiBracesFill/>} rightItem={
+              <Popover opened={open} onClose={handler.close} position='right' transition='skew-down' target={
+                <ActionIcon onClick={handler.toggle} variant='hover' color='blue'>
+                  <FiInfo/>
+                </ActionIcon>
+              }>
+                <Table>
+                  <caption>
                         Embed variables
-                    </caption>
-                    <tbody>
-                      {Object.entries(variables).map(([x, y], i) => (
-                        <tr key={i}>
-                          <td>{`{{${x}}}`}</td>
-                          <td>{y}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Popover>
-              </Group>
-              <Divider mb='md'/>
-              <Group grow align='start'>
-                <Stack>
+                  </caption>
+                  <tbody>
+                    {Object.entries(variables).map(([x, y], i) => (
+                      <tr key={i}>
+                        <td>{`{{${x}}}`}</td>
+                        <td>{y}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Popover>
+            } title='Embed'>
+              <div style={{ display: 'flex', marginTop: 8, alignItems: 'center' }}>
+                <Stack style={{ flex: 1 }}>
                   <Checkbox label='Enable embed' {...form.getInputProps('embedEnabled', { type: 'checkbox' })}/>
-                  <ColorInput style={{ flex: 1 }} required label='Color' placeholder='Embed color' {...form.getInputProps('embedColor')}/>
-                  <TextInput maxLength={32} required label='Site name' placeholder='Embed site name' {...form.getInputProps('embedSiteName')}/>
-                  <TextInput maxLength={32} label='Site name URL' placeholder='Embed site name URL' {...form.getInputProps('embedSiteNameUrl')}/>
-                  <TextInput maxLength={32} label='Title' placeholder='Embed title' {...form.getInputProps('embedTitle')}/>
-                  <Textarea label='Description' maxLength={72} placeholder='Embed description' {...form.getInputProps('embedDescription')}/>
-                  <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('embedAuthor')}/>
-                  <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('embedAuthorUrl')}/>
+                  <Group grow>
+                    <TextInput maxLength={32} label='Site name' placeholder='Embed site name' {...form.getInputProps('embedSiteName')}/>
+                    <TextInput maxLength={32} label='Site name URL' placeholder='Embed site name URL' {...form.getInputProps('embedSiteNameUrl')}/>
+                  </Group>
+                  <Group grow>
+                    <TextInput maxLength={32} label='Title' placeholder='Embed title' {...form.getInputProps('embedTitle')}/>
+                    <ColorInput style={{ flex: 1 }} label='Color' placeholder='Embed color' {...form.getInputProps('embedColor')}/>
+                  </Group>
+                  <TextInput label='Description' maxLength={64} placeholder='Embed description' {...form.getInputProps('embedDescription')}/>
+                  <Group grow>
+                    <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('embedAuthor')}/>
+                    <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('embedAuthorUrl')}/>
+                  </Group>
                 </Stack>
-                <Container py={4} ml='md' mt='xl' px={10} style={{ borderLeft: `3px solid ${form.values.embedColor}`, borderRadius: 4, background: '#2F3136', width: 480, maxHeight: 360 }} mb='md'>
+                <Container py={4} ml='md' px={10} style={{ borderLeft: `3px solid ${form.values.embedColor}`, borderRadius: 4, background: '#2F3136', width: 480, maxHeight: 360 }}>
                   <Highlight target='_blank' style={{ fontSize: 12 }} color='dimmed' highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a' variant='link' href={form.values.embedSiteNameUrl}>{form.values.embedSiteName || 'Site name'}</Highlight>
                   <Highlight target='_blank' highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a' variant='link' style={{ fontSize: 14, display: 'block', color: 'white' }} href={form.values.embedAuthorUrl}>{form.values.embedAuthor || 'Author'}</Highlight>
                   <Highlight target='_blank' component='a' href='/random' variant='link' highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} weight={600} color='blue' style={{ fontSize: 16 }}>{form.values.embedTitle || 'Title'}</Highlight>
                   <Highlight style={{ wordWrap: 'break-word', color: '#bbb' }} highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} size='sm' color='white'>{form.values.embedDescription || 'Description'}</Highlight>
                   <Image fit='contain' height={225} src='/banner.png' alt='Preview image'/>
                 </Container>
-              </Group>
-            </Tabs.Tab>
-            <Tabs.Tab label='ShareX' icon={<ShareXIcon size={16}/>}>
-              <Title order={3}>ShareX config builder</Title>
-              <Divider mb='md'/>
-              <Group direction='row' grow align='start'>
-                <Stack spacing={4}>
-                  <TextInput label='Config name' value={shareXOptions.name} onChange={e => setShareXOptions({ name: e.target.value })}/>
-                  <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={shareXOptions.url} onChange={url => setShareXOptions({ url })}/>
-                  <Checkbox label='Ask password when shortening?' mt='xs' checked={shareXOptions.askPassword} onChange={e => setShareXOptions({ askPassword: e.target.checked })}/>
-                  <Group mt='md'>
-                    <Button leftIcon={<FiDownload/>} variant='gradient' gradient={{ from: 'yellow', to: 'red' }} download='Void_Uploader.sxcu' href={URL.createObjectURL(new Blob([JSON.stringify(uploaderConfig,null,'\t')],{type:'application/json'}))} component='a'>Uploader</Button>
-                    <Button leftIcon={<FiDownload/>} variant='gradient' gradient={{ from: 'blue', to: 'green' }} download='Void_Shortener.sxcu' href={URL.createObjectURL(new Blob([JSON.stringify(shortenerConfig,null,'\t')],{type:'application/json'}))} component='a'>Shortener</Button>
-                  </Group>
-                </Stack>
-                <Prism.Tabs>
-                  <Prism.Tab withLineNumbers icon={<FiDownload/>} language='json' noCopy label='Void_Uploader.sxcu'>
-                    {JSON.stringify({...uploaderConfig, Headers: { ...uploaderConfig.Headers, Authorization: '<MASKED>' }}, null, '\t')}
-                  </Prism.Tab>
-                  <Prism.Tab withLineNumbers icon={<FiScissors/>} language='json' noCopy label='Void_Shortener.sxcu'>
-                    {JSON.stringify({...shortenerConfig, Headers: { ...shortenerConfig.Headers, Authorization: '<MASKED>'}}, null, '\t')}
-                  </Prism.Tab>
-                </Prism.Tabs>
-              </Group>
-            </Tabs.Tab>
-          </CustomTabs>
-          <Affix position={{ bottom: 16, right: 16 }}>
-            <Group spacing={4}>
-              <Button leftIcon={<FiLogOut/>} color='red' onClick={() => signOut({ callbackUrl: '/auth/login' })}>Logout</Button>
-              <Button type='submit' color='green' leftIcon={<FiSave/>}>Save</Button>
-            </Group>
+              </div>
+            </DashboardCard>
+          </form>
+          <Affix position={{ bottom: 32, right: 32 }}>
+            <Button size='md' type='submit' form='account_form' color='green' variant={value('outline', 'light')} leftIcon={<FiSave/>}>Save</Button>
           </Affix>
-        </form>
+        </>
       )}
     </Layout>
   );

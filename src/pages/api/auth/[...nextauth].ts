@@ -1,11 +1,13 @@
 import {PrismaAdapter} from '@next-auth/prisma-adapter';
 import {verify} from 'argon2';
 import config from 'lib/config';
+import logger from 'lib/logger';
 import prisma from 'lib/prisma';
 import {NextApiRequest, NextApiResponse} from 'next';
 import NextAuth, {User} from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import DiscordProvider from 'next-auth/providers/discord';
+import GitHubProvider from 'next-auth/providers/github';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res,{
@@ -14,6 +16,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       signIn: '/auth/login',
       signOut: '/auth/logout',
       error: '/auth/error'
+    },
+    logger: {
+      error(code, metadata) {
+        logger.error(code, metadata);
+      },
+      warn(code) {
+        logger.warn(code);
+      },
+      debug(code, metadata) {
+        logger.debug(code, metadata);
+      }
+    },
+    events: {
+      signIn({ user, account, isNewUser }) {
+        logger.info(`User ${user.id} has logged in with ${account.provider}${isNewUser ? ' as a new user' : ''}.`, { meta: { user } });
+      }
     },
     callbacks: {
       async jwt({ token, account, user }) {
@@ -44,7 +62,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     },
     useSecureCookies: process.env.NODE_ENV !== 'development' && config.void.useHttps,
     session: {
-      maxAge: req.body['rememberMe'] ? 30 * 24 * 60 * 60 : 60 * 60,
       strategy: 'jwt'
     },
     debug: process.env.NODE_ENV === 'development',
@@ -62,6 +79,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
               username: credentials.username
             }
           });
+          if (!user) return null;
           if (user.password) {
             const isValid = await verify(user.password, credentials.password);
             return isValid ? ({
@@ -76,6 +94,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       DiscordProvider({
         clientId: config.void.authProviders.discord.clientId,
         clientSecret: config.void.authProviders.discord.clientSecret
+      }),
+      GitHubProvider({
+        clientId: config.void.authProviders.github.clientId,
+        clientSecret: config.void.authProviders.github.clientSecret
       })
     ]
   });

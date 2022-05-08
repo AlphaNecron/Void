@@ -9,7 +9,7 @@ export function getType(mimetype: string): string {
 }
 
 export function isText(mimetype: string): boolean {
-  return isType('text', mimetype) || ['application/json', 'application/xml', 'application/x-sh', 'application/ld+json', 'application/x-csh'].includes(mimetype);
+  return isType('text', mimetype) || ['application/json', 'application/xml', 'application/x-sh', 'application/ld+json', 'application/x-csh', 'application/x-javascript'].includes(mimetype);
 }
 
 export function isPreviewable(mimetype: string): boolean {

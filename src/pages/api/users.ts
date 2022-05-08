@@ -1,4 +1,4 @@
-import {info} from 'lib/logger';
+import logger from 'lib/logger';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 // import { generateToken, hashPassword } from 'lib/utils';
@@ -6,9 +6,9 @@ import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
-  if (!user || user.role) return res.unauthorized();
+  if (!user || !user.role) return res.unauthorized();
   const isAdmin = hasPermission(user.role.permissions, Permission.ADMINISTRATION);
-  if (isAdmin) return res.forbid('You aren\'t an administrator');
+  if (!isAdmin) return res.forbid('You aren\'t an administrator');
   if (req.method === 'DELETE') {
     if (req.body.id === user.id) return res.forbid('You can\'t delete your own account');
     const userToDelete = await prisma.user.findFirst({
@@ -23,7 +23,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     delete userToDelete.password;
-    info('USER', `Deleted user ${userToDelete.username} (${userToDelete.id})`);
+    logger.info(`Deleted user ${userToDelete.username} (${userToDelete.id})`);
     try {
       global.logger.logUser('delete', userToDelete);
     }
@@ -49,7 +49,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     delete newUser.password;
-    info('USER', `Created user ${newUser.username} (${newUser.id})`);
+    logger.info(`Created user ${newUser.username} (${newUser.id})`);
     try {
       global.logger.logUser('create', newUser);
     }
@@ -59,10 +59,16 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     const all = await prisma.user.findMany({
       select: {
         username: true,
+        name: true,
+        email: true,
+        image: true,
         id: true,
+        embedEnabled: true,
         embedSiteName: true,
         embedColor: true,
         embedTitle: true,
+        embedAuthor: true,
+        embedAuthorUrl: true
       }
     });
     return res.json(all);

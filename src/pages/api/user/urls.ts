@@ -1,7 +1,7 @@
-import {info} from 'lib/logger';
+import logger from 'lib/logger';
+import {isAdmin} from 'lib/permission';
 import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {isAdmin} from 'lib/permission';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -15,10 +15,11 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     if (!url) return res.notFound('URL not found');
-    info('URL', `User ${user.username} (${user.id}) deleted a url ${url.destination} (${url.id})`);
+    delete url.password;
+    logger.info(`User ${user.id} deleted a url ${url.id}`, { meta: { url }});
     return res.json(url);
   } else {
-    let urls = await prisma.url.findMany({
+    const urls = await prisma.url.findMany({
       where: {
         userId: user.id
       },

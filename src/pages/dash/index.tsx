@@ -1,41 +1,89 @@
-import {Card, Center, Divider, RingProgress, Text, Title} from '@mantine/core';
+import {LoadingOverlay, ScrollArea, Table, Text} from '@mantine/core';
+import CardGrid from 'components/CardGrid';
+import DashboardCard from 'components/DashboardCard';
 import Layout from 'components/Layout';
-import {parseByte} from 'lib/utils';
+import StatCard from 'components/StatCard';
 import React from 'react';
+import {FiFile, FiLink, FiLink2, FiStar, FiUser} from 'react-icons/fi';
 import useSWR from 'swr';
 
+function Atd({ children, ...props }) {
+  return <td {...props}>{children || <Text weight={700} color='dimmed' size='xs'>Unset</Text>}</td>;
+}
+
 export default function Page_Dashboard() {
-  const { data, error, mutate } = useSWR('/api/upload', (url: string) => fetch(url).then(r => r.json()));
-  const createText = (label: string, value: string, color: string) => (
-    <Text size='md' weight={600} style={{ display: 'block' }}>
-      {label}: <Text size='md' style={{ display: 'inline' }} color={color}>{value}</Text>
-    </Text>
-  );
-  return (
-    <Layout id={0}>
-      {(data && data.quota) && (
-        <Card sx={theme => ({ width: 350, border: `1.5px solid ${theme.colors.dark[3]}` })}>
-          <Card.Section>
-            <Title align='center' order={5} my={6}>User storage</Title>
-            <Divider/>
-          </Card.Section>
-          <Center mt='sm' style={{ display: 'flex' }}>
-            <RingProgress
-              size={100}
-              thickness={8}
-              roundCaps
-              mr='xl'
-              sections={[(percent => ({ value: percent, color: percent >= 90 ? 'red' : percent >= 50 ? 'yellow' : 'green' }))(data.bypass ? 0 : data.quota.used / data.quota.total * 100)]}/>
-            <div>
-              {[createText('Role', data.quota.role, 'red'), createText('Used', parseByte(data.quota.used), 'blue'),
-                createText('Remaining', data.bypass ? 'Unlimited' : parseByte(data.quota.remaining), 'green'), createText('Total', data.bypass ? 'Unlimited' : parseByte(data.quota.total), 'orange')].map((x, i) => x)
-              }
-            </div>
-          </Center>
-        </Card>
-      )}
-    </Layout>
-  );
+  const { data } = useSWR('/api/stats', (url: string) => fetch(url).then(r => r.json()));
+  if (data) {
+    const { user, stats } = data;
+    return (
+      <Layout id={0}>
+        <CardGrid itemSize={250}>
+          <StatCard title='Total files' icon={<FiFile size={14}/>} value={stats.upload.totalFiles} alt={`You have uploaded ${stats.user.files} files in total.`}/>
+          {/*<DashboardCard title='User storage'>*/}
+          {/*  <Group mt='sm' position='apart'>*/}
+          {/*    <Stack spacing={0}>*/}
+          {/*      {[createText('Role', userQuota.role, 'void'), createText('Used', parseByte(userQuota.quota.used)),*/}
+          {/*        createText('Remaining', userQuota.bypass ? 'Unlimited' : parseByte(data.userQuota.quota.remaining)), createText('Total', userQuota.bypass ? 'Unlimited' : parseByte(userQuota.total))]*/}
+          {/*      }*/}
+          {/*    </Stack>*/}
+          {/*    <RingProgress*/}
+          {/*      size={84}*/}
+          {/*      thickness={4}*/}
+          {/*      roundCaps*/}
+          {/*      label={*/}
+          {/*        <Center>*/}
+          {/*          <FiHardDrive size={24}/>*/}
+          {/*        </Center>*/}
+          {/*      }*/}
+          {/*      sections={[(percent => ({*/}
+          {/*        value: percent,*/}
+          {/*        color: percent >= 90 ? 'red' : percent >= 50 ? 'yellow' : 'green'*/}
+          {/*      }))(userQuota.bypass ? 0 : userQuota.used / userQuota.total * 100)]}/>*/}
+          {/*  </Group>*/}
+          {/*</DashboardCard>*/}
+          {/*<DashboardCard title='Upload statistics'>*/}
+          {/*  <Group position='apart' mr='xl' align='center' mt='xl'>*/}
+          {/*    <Stack spacing={0}>*/}
+          {/*      {[createText('Total size', parseByte(uploadStats.totalSize)), createText('Total files', uploadStats.totalFiles), createText('Average size', parseByte(uploadStats.averageSize))]}*/}
+          {/*    </Stack>*/}
+          {/*    <FiFile size={24}/>*/}
+          {/*  </Group>*/}
+          {/*</DashboardCard>*/}
+          <StatCard title='Total users' value={stats.users.count} icon={<FiUser size={14}/>}/>
+          <StatCard title='Total URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have shortened ${stats.user.urls} URLs in total.`}/>
+        </CardGrid>
+        {stats.users.top && (
+          <DashboardCard icon={<FiStar size={14}/>} mt='md' title='Top 10 users' size={0}>
+            <ScrollArea scrollbarSize={4}>
+              <Table striped highlightOnHover>
+                <thead>
+                  <tr>
+                    <th>Index</th>
+                    <th>Username</th>
+                    <th>Display name</th>
+                    <th>Files</th>
+                    <th>URLs</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.users.top.map((user, i) =>
+                    <tr key={i}>
+                      <td>{i}</td>
+                      <Atd>{user.username}</Atd>
+                      <Atd>{user.displayName}</Atd>
+                      <td>{user.files}</td>
+                      <td>{user.urls}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </ScrollArea>
+          </DashboardCard>
+        )}
+      </Layout>
+    );
+  }
+  else return <LoadingOverlay visible={true}/>;
 }
 
 Page_Dashboard.title = 'Dashboard';

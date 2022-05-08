@@ -1,8 +1,8 @@
 import {Role} from '@prisma/client';
+import {Permission} from 'lib/permission';
 import type {NextApiRequest, NextApiResponse} from 'next';
 import {getSession} from 'next-auth/react';
 import prisma from '../prisma';
-import {Permission} from 'lib/permission';
 
 export interface VoidFile {
   fieldname: string,
@@ -83,7 +83,7 @@ export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) =>
       role: user.role.name,
       used: Number(agg._sum.size) || 0,
       remaining: Number(user.role.storageQuota) - Number(agg._sum.size),
-      total: Number(user.role.storageQuota)
+      total: Number(user.role.storageQuota),
     };
   };
   req.getUser = async (privateToken?: string) => {

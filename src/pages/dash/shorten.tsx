@@ -1,36 +1,32 @@
-import React, {useEffect, useState} from 'react';
+import {Anchor, Button, Group, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
+import {useForm, yupResolver} from '@mantine/form';
+import {showNotification} from '@mantine/notifications';
+import Container from 'components/Container';
 import Layout from 'components/Layout';
 import {hasPermission, Permission} from 'lib/permission';
-import Container from 'components/Container';
-import {ActionIcon, Anchor, Button, Group, Menu, PasswordInput, Select, Stack, TextInput, Tooltip} from '@mantine/core';
-import {FiScissors} from 'react-icons/fi';
-import {useForm} from '@mantine/form';
-import {GoSettings} from 'react-icons/go';
 import {useSession} from 'next-auth/react';
-import {showNotification, useNotifications} from '@mantine/notifications';
+import * as yup from 'yup';
+import React, {useEffect, useState} from 'react';
+import {FiScissors} from 'react-icons/fi';
 import {RiClipboardFill, RiErrorWarningFill} from 'react-icons/ri';
-import {validateURL} from 'next/dist/server/web/utils';
 
+// TODO: UNIFY SHORTEN AND URLS
 export default function Page_Shorten() {
+  const schema = yup.object({
+    Destination: yup.string().required().url(),
+    URL: yup.string().oneOf(['alphanumeric', 'emoji', 'invisible'], 'Invalid URL type.').default('alphanumeric'),
+    Vanity: yup.string().nullable().min(4),
+    Password: yup.string().nullable()
+  });
   const form = useForm({
+    schema: yupResolver(schema),
     initialValues: {
       Destination: '',
       URL: 'alphanumeric',
       Vanity: '',
       Password: ''
-    },
-    validate: {
-      Destination: (value: string) => validateUrl(value) ? null : 'Malformed URL'
     }
   });
-  const validateUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-    } catch {
-      return false;
-    }
-    return true;
-  };
   const [canUseVanity, setCanUseVanity] = useState(false);
   const { data } = useSession({ required: true });
   useEffect(() =>

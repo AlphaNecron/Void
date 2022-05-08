@@ -1,14 +1,12 @@
+import {verify} from 'argon2';
 import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
 import prisma from 'lib/prisma';
-import {verify} from 'argon2';
-
-// import { verifyPassword } from 'lib/utils';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
-  if (!req.body) return res.forbid('No body');
-  if (!(req.body.password || !req.body.id)) return res.forbid('No password or ID');
-  const url = await prisma.url.findFirst({
+  if (!req.body.id) return res.forbid('No ID.');
+  if (!req.body.password) return res.forbid('No password.');
+  const url = await prisma.url.findUnique({
     where: {
       id: req.body.id
     },

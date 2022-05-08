@@ -5,12 +5,12 @@ import {
   Box,
   Burger,
   Center,
-  Collapse,
   Divider,
   Group,
   Header,
   Image,
   LoadingOverlay,
+  Menu,
   Navbar,
   Paper,
   ScrollArea,
@@ -21,9 +21,21 @@ import {
   useMantineColorScheme,
   useMantineTheme
 } from '@mantine/core';
+import {useMediaQuery, useSetState} from '@mantine/hooks';
+import {NextLink} from '@mantine/next';
+import ShareX from 'components/dialogs/ShareX';
+import NavigationItem from 'components/NavigationItem';
+import ShareXIcon from 'components/ShareXIcon';
+import useThemeValue from 'lib/hooks/useThemeValue';
+import {hasPermission, isAdmin, Permission} from 'lib/permission';
+import {useSession} from 'next-auth/react';
+import {useRouter} from 'next/router';
+import React, {useState} from 'react';
+import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
   RiArchiveFill,
-  RiDashboardFill,
+  RiDashboard3Fill,
+  RiGlobalFill,
   RiGroupFill,
   RiLink,
   RiMoonClearFill,
@@ -32,22 +44,16 @@ import {
   RiShieldStarFill,
   RiSunFill,
   RiTeamFill,
-  RiTerminalBoxFill,
-  RiUploadCloudFill,
-  RiWindowFill
+  RiTerminalWindowFill,
+  RiUploadCloudFill
 } from 'react-icons/ri';
-import {useRouter} from 'next/router';
-import React, {useState} from 'react';
-import {useSession} from 'next-auth/react';
-import {useMediaQuery} from '@mantine/hooks';
-import {hasPermission, isAdmin, Permission} from 'lib/permission';
-import NavigationItem from 'components/NavigationItem';
 
 function NavigationBar({ user, id, ...props }) {
   const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useSetState({ sharex: false });
   const pages = [
     {
-      icon: <RiDashboardFill />,
+      icon: <RiDashboard3Fill />,
       label: 'Dashboard',
       route: '/dash',
       color: 'void'
@@ -97,82 +103,93 @@ function NavigationBar({ user, id, ...props }) {
           color: 'teal'
         },
         {
-          icon: <RiWindowFill />,
+          icon: <RiGlobalFill />,
           label: 'Domains',
           route: '/dash/domains',
           color: 'grape'
         },
         {
-          icon: <RiTerminalBoxFill />,
-          label: 'Log',
-          route: '/dash/log',
+          icon: <RiTerminalWindowFill />,
+          label: 'Panel',
+          route: '/dash/panel',
           color: 'cyan'
         }
       ]
     }
   ];
-  const [open, setOpen] = useState(id >= pages.length - 1 && id < pages.length + pages[pages.length-1].items.length - 1);
   return (
-    <Navbar {...props}>
-      <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
-        {pages.map((x, i) =>
-          (x.adminRequired && isAdmin(user.permissions) && x.items) ? (
-            <>
-              <NavigationItem onClick={() => setOpen(!open)} color={x.color} label={x.label} icon={x.icon} id={-1} currentPageId={id}/>
-              {open && <Divider m={4}/>}
-              <Collapse in={open} transitionDuration={400}>
-                {x.items.map((z, j) =>
-                  <NavigationItem width='94%' key={j} ml='6%' onClick={() => router.push(z.route)} color={z.color} label={z.label} icon={z.icon} id={i+j} currentPageId={id}/>
-                )}
-              </Collapse>
-            </>
-          ) : ((x.permission ? hasPermission(user.permissions, x.permission) : true) && !x.items) &&
+    <>
+      <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({ sharex: false })}/>
+      <Navbar {...props}>
+        <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
+          {pages.map((x, i) =>
+            (x.adminRequired && isAdmin(user.permissions) && x.items) ? (
+              x.items.map((z, j) =>
+                <NavigationItem key={j} requiresAdmin onClick={() => router.push(z.route)} color={z.color} label={z.label} icon={z.icon} id={i+j} currentPageId={id}/>
+              )
+            ) : ((x.permission ? hasPermission(user.permissions, x.permission) : true) && !x.items) &&
             <NavigationItem onClick={() => router.push(x.route)} color={x.color} label={x.label} icon={x.icon} id={i} currentPageId={id}/>
-        )}
-      </Navbar.Section>
-      <Navbar.Section>
-        <Box
-          sx={theme => ({
-            paddingTop: theme.spacing.sm,
-            marginTop: theme.spacing.sm,
-            borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`
-          })}
-        >
-          <UnstyledButton onClick={() => router.push('/dash/account')}
+          )}
+        </Navbar.Section>
+        <Navbar.Section>
+          <Box
             sx={theme => ({
-              display: 'block',
-              width: '100%',
-              padding: theme.spacing.xs,
-              borderRadius: theme.radius.sm,
-              background: (id === (id < pages.length ? pages.length : pages.length + pages[pages.length-1].items.length-1)) && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
-              color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-              '&:hover': {
-                backgroundColor:
-                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
-              }
+              paddingTop: theme.spacing.sm,
+              marginTop: theme.spacing.sm,
+              borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`
             })}
           >
-            <Group>
-              <Avatar
-                src={user.image}
-                radius='xl'
-              />
-              <Box>
-                <Text size='md' weight={600}>
-                  {user.name}
-                </Text>
-                <Text weight={600} color='void' size='sm'>{user.role}</Text>
-              </Box>
-            </Group>
-          </UnstyledButton>
-        </Box>
-      </Navbar.Section>
-    </Navbar>
+            <Menu styles={{
+              root: {
+                width: '100%'
+              },
+              itemLabel: {
+                fontWeight: 'bold'
+              }
+            }} placement='end' withArrow control={
+              <UnstyledButton
+                sx={theme => ({
+                  display: 'block',
+                  width: '100%',
+                  padding: theme.spacing.xs,
+                  borderRadius: theme.radius.sm,
+                  background: (id === (id < pages.length ? pages.length : pages.length + pages[pages.length - 1].items.length - 1)) && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
+                  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+                  '&:hover': {
+                    backgroundColor:
+                                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
+                  }
+                })}
+              >
+                <Group align='center'>
+                  <Avatar
+                    src={user.image}
+                    radius='xl'
+                  />
+                  <Box>
+                    <Text size='md' weight={600}>
+                      {user.name}
+                    </Text>
+                    <Text weight={600} color='dimmed' size='sm'>{user.role}</Text>
+                  </Box>
+                </Group>
+              </UnstyledButton>
+            }>
+              <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account'>Manage account</Menu.Item>
+              <Menu.Item onClick={() => setDialogOpen({ sharex: true })} icon={<ShareXIcon size={16}/>}>ShareX config</Menu.Item>
+              <Divider/>
+              <Menu.Item icon={<FiLogOut/>} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
+            </Menu>
+          </Box>
+        </Navbar.Section>
+      </Navbar>
+    </>
   );
 }
 
 function AppHeader({ children, onReload, searchBar, rightChildren }) {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { toggleColorScheme } = useMantineColorScheme();
+  const { value } = useThemeValue();
   return (
     <Header height={48} px='sm'>
       <Center style={{ height: 48 }}>
@@ -188,9 +205,9 @@ function AppHeader({ children, onReload, searchBar, rightChildren }) {
                 </ActionIcon>
               </Tooltip>
             )}
-            <Tooltip label={`Toggle ${colorScheme === 'dark' ? 'light' : 'dark'} theme`}>
-              <ActionIcon variant='default' onClick={() => toggleColorScheme()} size='lg'>
-                {colorScheme === 'dark' ? <RiSunFill /> : <RiMoonClearFill />}
+            <Tooltip label={`Toggle ${value('dark', 'light')} theme`}>
+              <ActionIcon variant='hover' color={value('purple', 'yellow')} onClick={() => toggleColorScheme()} size='lg'>
+                {value(<RiMoonClearFill />, <RiSunFill />)}
               </ActionIcon>
             </Tooltip>
           </Group>

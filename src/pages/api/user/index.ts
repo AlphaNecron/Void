@@ -1,15 +1,14 @@
-import {info} from 'lib/logger';
-import prisma from 'lib/prisma';
-// import { hashPassword } from 'lib/utils';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 import {hash} from 'argon2';
+import logger from 'lib/logger';
+import prisma from 'lib/prisma';
 import {validateHex} from 'lib/utils';
+import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
   if (req.method === 'PATCH') {
-    let data = {};
+    const data = {};
     if (req.body.password) {
       data['password'] = await hash(req.body.password);
     }
@@ -24,6 +23,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
       data['username'] = req.body.username;
     }
+    /// TODO: OPTIMIZE THIS SH!T
     if (req.body.name)
       data['name'] = req.body.name;
     if ('embedEnabled' in req.body)
@@ -61,7 +61,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           embedAuthorUrl: true
         }
       });
-      info('USER', `User ${user.username} (${updated.username}) (${user.id}) was updated`);
+      logger.info(`User ${user.id} was updated`, updated);
       return res.json(updated);
     }
     return res.bad('Nothing was updated.');

@@ -11,143 +11,63 @@
     "build:next": "next build",
     "build:schema": "prisma generate --schema=prisma/schema.prisma",
     "start": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server.ts",
+    "prod": "yarn run build && yarn run start",
     "prepare": "husky install",
     "lint": "next lint --fix"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"commonjs\"} prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} --transpile-only prisma/seed.ts"
   },
   "dependencies": {
-    "@mantine/core": "^4.1.2",
-    "@mantine/dropzone": "^4.1.2",
-    "@mantine/form": "^4.1.2",
-    "@mantine/hooks": "^4.1.2",
-    "@mantine/next": "^4.1.2",
-    "@mantine/notifications": "^4.1.2",
-    "@mantine/prism": "^4.1.2",
+    "@mantine/core": "^4.2.1",
+    "@mantine/dropzone": "^4.2.1",
+    "@mantine/form": "^4.2.1",
+    "@mantine/hooks": "^4.2.1",
+    "@mantine/modals": "^4.2.1",
+    "@mantine/next": "^4.2.1",
+    "@mantine/notifications": "^4.2.1",
+    "@mantine/prism": "^4.2.1",
     "@next-auth/prisma-adapter": "^1.0.3",
-    "@prisma/client": "^3.12.0",
+    "@prisma/client": "^3.13.0",
     "argon2": "^0.28.5",
+    "luxon": "^2.3.2",
     "multer": "^1.4.4",
-    "next": "12.1.4",
-    "next-auth": "^4.3.1",
-    "prisma": "^3.12.0",
-    "qrcode.react": "^3.0.1",
-    "react": "17",
-    "react-dom": "17",
+    "next": "12.1.5",
+    "next-auth": "^4.3.4",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-icons": "^4.3.1",
-    "swr": "^1.2.2",
+    "react-qrcode-logo": "^2.7.0",
+    "swr": "^1.3.0",
+    "systeminformation": "^5.11.14",
+    "winston": "^3.7.2",
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
-    "@commitlint/config-conventional": "^16.2.1",
-    "@types/node": "^17.0.23",
-    "@types/react": "^17.0.43",
-    "@types/yup": "^0",
-    "@typescript-eslint/parser": "^5.18.0",
-    "eslint": "8.12.0",
-    "eslint-config-next": "12.1.4",
+    "@types/luxon": "^2.3.1",
+    "@types/node": "^17.0.30",
+    "@types/react": "^17.0.44",
+    "@types/yup": "^0.29.13",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "3.3.0",
+    "eslint": "8.14.0",
+    "eslint-config-next": "12.1.5",
     "husky": "^7.0.4",
+    "prisma": "^3.13.0",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.4"
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ],
-    "parserPreset": "conventional-changelog-conventionalcommits",
-    "rules": {
-      "body-leading-blank": [
-        1,
-        "always"
-      ],
-      "body-max-line-length": [
-        2,
-        "always",
-        100
-      ],
-      "footer-leading-blank": [
-        1,
-        "always"
-      ],
-      "footer-max-line-length": [
-        2,
-        "always",
-        100
-      ],
-      "header-max-length": [
-        2,
-        "always",
-        100
-      ],
-      "subject-case": [
-        2,
-        "never",
-        [
-          "sentence-case",
-          "start-case",
-          "pascal-case",
-          "upper-case"
-        ]
-      ],
-      "subject-empty": [
-        2,
-        "never"
-      ],
-      "subject-full-stop": [
-        2,
-        "never",
-        "."
-      ],
-      "type-case": [
-        2,
-        "always",
-        "lower-case"
-      ],
-      "type-empty": [
-        2,
-        "never"
-      ],
-      "type-enum": [
-        2,
-        "always",
-        [
-          "build",
-          "chore",
-          "ci",
-          "feat",
-          "fix",
-          "perf",
-          "refactor",
-          "revert",
-          "style",
-          "test",
-          "bump"
-        ]
-      ],
-      "scope-enum": [
-        1,
-        "always",
-        [
-          "prisma",
-          "scripts",
-          "server",
-          "docker",
-          "readme",
-          "pages",
-          "config",
-          "api",
-          "hooks",
-          "neutron",
-          "components",
-          "middleware",
-          "redux",
-          "lib",
-          "assets"
-        ]
-      ]
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && yarn cz --hook || true"
     }
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

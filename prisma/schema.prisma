@@ -20,10 +20,10 @@ model User {
   roleName         String    @default("User")
   role             Role?     @relation(fields: [roleName], references: [name])
   embedEnabled     Boolean   @default(true)
-  embedSiteName    String    @default("Void")
+  embedSiteName    String?   @default("Void")
   embedSiteNameUrl String?
   embedTitle       String?
-  embedColor       String    @default("#B794F4")
+  embedColor       String?   @default("#B794F4")
   embedDescription String?
   embedAuthor      String?
   embedAuthorUrl   String?
@@ -33,19 +33,20 @@ model User {
 }
 
 model Account {
-  id                String  @id      @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text @map("refreshToken")
-  access_token      String? @db.Text @map("accessToken")
-  expires_at        Int?             @map("expiresAt")
-  token_type        String?          @map("tokenType")
-  scope             String?
-  idToken           String? @db.Text @map("idToken")
-  session_state     String?          @map("sessionState")
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                        String  @id      @default(cuid())
+  userId                    String
+  type                      String
+  provider                  String
+  providerAccountId         String
+  refresh_token             String? @db.Text @map("refreshToken")
+  refresh_token_expires_in  Int?
+  access_token              String? @db.Text @map("accessToken")
+  expires_at                Int?             @map("expiresAt")
+  token_type                String?          @map("tokenType")
+  scope                     String?
+  idToken                   String? @db.Text @map("idToken")
+  session_state             String?          @map("sessionState")
+  user                      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }

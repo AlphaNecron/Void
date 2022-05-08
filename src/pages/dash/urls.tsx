@@ -1,58 +1,69 @@
-import Layout from 'components/Layout';
-import React from 'react';
-import {Permission} from 'lib/permission';
-import useSWR from 'swr';
-import {ActionIcon, Anchor, Card, CardSection, Group, SimpleGrid, Title, Tooltip} from '@mantine/core';
-import {BiClipboard, BiLinkExternal, BiTrash} from 'react-icons/bi';
+import {Anchor, Title, Text, Stack, Autocomplete} from '@mantine/core';
 import {useClipboard} from '@mantine/hooks';
+import CardGrid from 'components/CardGrid';
+import HiddenQR from 'components/HiddenQR';
+import ItemCard from 'components/ItemCard';
+import Layout from 'components/Layout';
+import useQuery from 'lib/hooks/useQuery';
+import {Permission} from 'lib/permission';
+import React from 'react';
+import {FiClipboard, FiExternalLink, FiSearch, FiTrash} from 'react-icons/fi';
+import useSWR from 'swr';
 
 export default function Page_URLs() {
   const { data, mutate } = useSWR('/api/user/urls', (url: string) => fetch(url).then(r => r.json()));
+  const { query, handler } = useQuery();
   const clipboard = useClipboard();
   return (
-    <Layout onReload={() => mutate()} id={4}>
-      <SimpleGrid cols={1} breakpoints={[
-        { minWidth: 6*300-16, cols: 5 },
-        { minWidth: 5*300-16, cols: 4 },
-        { minWidth: 4*300-16, cols: 3 },
-        { minWidth: 3*300-16, cols: 2 },
-        { minWidth: 2*300-16, cols: 1 }
-      ]}>
-        {data && data.map((x, i) =>
-          <Card key={i}>
-            <CardSection p='sm'>
-              <Title order={6}>ID: {x.id}</Title>
-              <Title order={6}>Created at: {new Date(x.createdAt).toLocaleString()}</Title>
-              <Title order={6}>Destination: <Anchor href={x.destination}>
-                {x.destination}
-              </Anchor>
-              </Title>
-              <Title order={6}>Views: {x.views}</Title>
-              <Title order={6}>Has password: {x.password ? 'Yes' : 'No'}</Title>
-            </CardSection>
-            <Group spacing={0} mr={-6} mb={-10} position='right'>
-              <Tooltip label='Open in new tab'>
-                <ActionIcon color='blue' component='a' target='_blank' href={`/${x.short}`}>
-                  <BiLinkExternal/>
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label='Copy URL' onClick={() => clipboard.copy(`${window.location.origin}/${x.short}`)}>
-                <ActionIcon color='green'>
-                  <BiClipboard/>
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label='Delete'>
-                <ActionIcon color='red'>
-                  <BiTrash/>
-                </ActionIcon>
-              </Tooltip>
-            </Group>
-          </Card>
-        )}
-      </SimpleGrid>
+    <Layout onReload={mutate} id={4}>
+      <Stack>
+        <Autocomplete icon={<FiSearch/>} placeholder='Search something' value={query} onChange={handler.set} data={(data && data.files) ? Array.from(new Set([ ...data.map(url => url.destination), ...data.map(url => url.short) ] )) : []}/>
+        <CardGrid itemSize={375}>
+          {data && handler.filterList(data, ['short', 'destination']).map((url, i) =>
+            <ItemCard key={i} actions={[
+              {
+                label: 'Copy to clipboard',
+                color: 'green',
+                icon: <FiClipboard/>,
+                action: () => clipboard.copy(`${window.location.origin}/${url.short}`)
+              }, {
+                label: 'Open in new tab',
+                color: 'blue',
+                icon: <FiExternalLink/>,
+                action: () => window?.open(`/${url.short}`, '_blank')
+              }, {
+                label: 'Delete',
+                color: 'red',
+                icon: <FiTrash/>,
+                action: () => console.log('del')
+              }
+            ]}>
+              <div style={{ display: 'flex', margin: 16 }}>
+                <HiddenQR value={`${window.location.origin}/${url.short}`}/>
+                <div style={{ flex: 1, marginLeft: 16 }}>
+                  <Text size='sm' weight={700}>
+                  ID: {url.id}
+                    <br/>
+                  Created at: {new Date(url.createdAt).toLocaleString()}
+                    <br/>
+                  Destination: <Anchor size='sm' href={url.destination}>
+                      {url.destination}
+                    </Anchor>
+                    <br/>
+                  Views: {url.views}
+                    <br/>
+                  Has password: {url.password ? 'Yes' : 'No'}
+                  </Text>
+                </div>
+              </div>
+            </ItemCard>
+          )}
+        </CardGrid>
+      </Stack>
     </Layout>
   );
 }
 
 Page_URLs.title = 'URLs';
+Page_URLs.authRequired = true;
 Page_URLs.permission = Permission.SHORTEN;

@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import { info } from '../src/lib/logger';
-import { hash } from 'argon2';
-import { Permission } from '../src/lib/permission';
+import {PrismaClient} from '@prisma/client';
+import {hash} from 'argon2';
+import {fallback} from '../src/lib/logger';
+import {Permission} from '../src/lib/permission';
 
 const prisma = new PrismaClient();
 
@@ -27,7 +27,7 @@ async function main() {
         name: 'User'
       }
     });
-    info('SEED', `Created default user with username "${owner.username}" and password "voiduser"`);
+    fallback.info(`Created default user with username "${owner.username}" and password "voiduser"`);
   }
 }
 

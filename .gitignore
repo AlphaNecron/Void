@@ -46,5 +46,6 @@ package.lock.json
 .idea/
 config.json
 uploads/
+logs/
 .vscode/settings.json
 **/.fuse_hidden*

@@ -3,11 +3,12 @@ export interface Void {
   host: string;
   port: number;
   databaseUrl: string;
-  url: Url;
+  defaultDomain: string;
+  url: UrlOptions;
   defaultRole: string;
   domains?: string[];
   authProviders: Record<string, Provider>;
-  file: File;
+  upload: UploadOptions;
 }
 
 export interface Provider {
@@ -15,12 +16,12 @@ export interface Provider {
   clientSecret: string;
 }
 
-export interface Url {
+export interface UrlOptions {
   allowVanityUrl: boolean;
   length: number;
 }
 
-export interface File {
+export interface UploadOptions {
   outputDirectory: string;
   blacklistedExtensions: string[];
 }

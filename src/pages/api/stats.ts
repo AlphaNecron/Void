@@ -1,27 +1,18 @@
-import prisma from 'lib/prisma';
 // import { bytesToHr, sizeOfDir } from 'lib/utils';
+import {hasPermission, Permission} from 'lib/permission';
+import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
-  if (!user) return res.forbid('Unauthorized');
-  // const size = await sizeOfDir(join(process.cwd(), config.uploader.directory));
-  const userCount = await prisma.user.count();
-  const fileCount = await prisma.file.count();
-  const urlCount = await prisma.url.count();
-  if (fileCount === 0 && urlCount === 0) {
-    return res.json({
-      // size: bytesToHr(0),
-      sizeRaw: 0,
-      // avgSize: bytesToHr(0),
-      fileCount,
-      urlCount,
-      viewCount: 0,
-      userCount
-    });
-  }
+  if (!user || !user.role) return res.unauthorized();
+  const quota = await req.getUserQuota(user);
+  const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT, true);
   const users = await prisma.user.findMany({
-    include: {
+    take: 10,
+    select: {
+      username: true,
+      name: true,
       _count: {
         select: {
           urls: true,
@@ -30,40 +21,64 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     }
   });
-  const countByUser = [];
-  for (let i = 0, L = users.length; i !== L; ++i) {
-    countByUser.push({
-      username: users[i].username,
-      fileCount: users[i]._count.files,
-      urlCount: users[i]._count.urls
-    });
-  }
-  const viewsCount = await prisma.file.groupBy({
-    by: ['views'],
+  const userCount = await prisma.user.count();
+  const urlAgg = await prisma.url.aggregate({
     _sum: {
       views: true
+    },
+    _count: true
+  });
+  const usr = await prisma.user.findUnique({
+    where: {
+      id: user.id
+    },
+    select: {
+      _count: {
+        select: {
+          urls: true,
+          files: true
+        }
+      }
     }
   });
-  const typesCount = await prisma.file.groupBy({
-    by: ['mimetype'],
-    _count: {
-      mimetype: true
-    }
+  const agg = await prisma.file.aggregate({
+    _sum: {
+      size: true,
+      views: true
+    },
+    _avg: {
+      size: true
+    },
+    _count: true
   });
-  const countByType = [];
-  for (let i = 0, L = typesCount.length; i !== L; ++i) {
-    countByType.push({ mimetype: typesCount[i].mimetype, count: typesCount[i]._count.mimetype });
-  }
   return res.json({
-    // size: bytesToHr(size),
-    // sizeRaw: size,
-    // avgSize: bytesToHr(isNaN(size / fileCount) ? 0 : size / fileCount),
-    fileCount,
-    urlCount,
-    countByUser: countByUser,
-    userCount,
-    viewCount: (viewsCount[0]?._sum?.views ?? 0),
-    countByType: countByType.sort((x,y) => x.count - y.count)
+    user: {
+      bypass,
+      role: user.role.name,
+      quota
+    },
+    stats: {
+      urls: urlAgg._count,
+      views: {
+        files: agg._sum.views,
+        urls: urlAgg._sum.views
+      },
+      upload: {
+        totalSize: Number(agg._sum.size),
+        totalFiles: agg._count,
+        averageSize: agg._avg.size,
+      },
+      users: {
+        count: userCount,
+        top: users.map(user => ({
+          username: user.username,
+          displayName: user.name,
+          files: user._count.files,
+          urls: user._count.urls
+        })).sort((a,b) => (b.files + b.urls) - (a.files + a.urls))
+      },
+      user: usr._count
+    }
   });
 }
 

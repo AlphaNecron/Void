@@ -1,11 +1,10 @@
+import {hash} from 'argon2';
 import config from 'lib/config';
 import cfg from 'lib/config';
-import {logEvent} from 'lib/logger';
 import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
+import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import generate from 'lib/urlGenerator';
-import {hash} from 'argon2';
-import {hasPermission, Permission} from 'lib/permission';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
@@ -41,7 +40,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       password
     }
   });
-  logEvent('shorten', `${url.short} by "${usr.username || usr.name}" (${usr.id})`);
   return res.json({
     url: `http${config.void.useHttps ? 's' : ''}://${req.headers.host}/${url.short}`
   });
