@@ -26,6 +26,7 @@ export default function Users() {
       .required('Password is required'),
     isAdmin: yup
       .boolean()
+      .notRequired()
   });
   const updateUsers = async () => {
     setBusy(true);
