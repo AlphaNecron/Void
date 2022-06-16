@@ -119,7 +119,7 @@ export default function Users() {
                   </Field>
                   <Field name='isAdmin' type='checkbox'>
                     {({ field }) => (
-                      <FormControl isRequired>
+                      <FormControl>
                         <FormLabel htmlFor='isAdmin'>Administrator</FormLabel>
                         <Checkbox {...field}/>
                       </FormControl>
