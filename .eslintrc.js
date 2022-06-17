@@ -24,6 +24,7 @@ module.exports = {
     'react/require-render-return': 'error',
     'react/style-prop-object': 'warn',
     '@next/next/no-img-element': 'off',
-    '@typescript-eslint/no-var-requires': 'off'
+    '@typescript-eslint/no-var-requires': 'off',
+    'react/display-name': 'off'
   }
 };

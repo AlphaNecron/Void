@@ -128,9 +128,6 @@ function NavigationBar({user, route, ...props}) {
             <Menu styles={{
               root: {
                 width: '100%'
-              },
-              itemLabel: {
-                fontWeight: 'bold'
               }
             }} placement='end' withArrow control={
               <UnstyledButton

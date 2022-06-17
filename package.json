@@ -6,7 +6,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "dev": "NODE_ENV=development ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" server.ts",
+    "dev": "NODE_ENV=development yarn start",
     "build": "yarn run build:next && yarn run build:schema",
     "build:next": "next build",
     "build:schema": "prisma generate --schema=prisma/schema.prisma",

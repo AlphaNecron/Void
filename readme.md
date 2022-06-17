@@ -10,7 +10,7 @@
   ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
-> Void is being rewritten, it's highly unrecommended to try this branch, and its corresponding Docker image at the moment as this build is extremely buggy and incomplete. 
+> Void is being rewritten, it's highly unrecommended to try this branch, as well as its corresponding Docker image for the time being since this build is extremely buggy and incompleted. 
 
 ### Requirements
   - `node` >= 16
@@ -121,3 +121,7 @@
 ### Credits
   - Some code from `diced/zipline`
   - Logo and favicon from `icons8`
+
+### Default credentials
+- Username: `void`
+- Password: `voiduser`

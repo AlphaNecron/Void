@@ -20,6 +20,7 @@ import {Prism} from '@mantine/prism';
 import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
+import VideoPlayer from 'components/VideoPlayer';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
@@ -143,7 +144,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     {x}
                   </strong>
                 </td>
-                <td>{y}</td>
+                <td style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 200 }}>{y}</td>
               </tr>
             )}
           </tbody>
@@ -184,11 +185,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
               {actions(true, false)}
             </Stack>
           ) : isType('video', mimetype) ? (
-            <>
-              {actions()}
-              <video style={{maxHeight: '60vh'}} src={src()} autoPlay
-                controls/>
-            </>
+            <VideoPlayer style={{maxHeight: '80vh', maxWidth: '80vw'}} src={src()} onReport={dHandler.open} onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
           ) : isText(mimetype) ? (
             <Stack>
               <div style={{ display: 'flex' }}>
