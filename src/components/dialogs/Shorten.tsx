@@ -1,17 +1,14 @@
-import {Anchor, Button, Group, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
+import {Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {showNotification} from '@mantine/notifications';
-import Container from 'components/Container';
-import Layout from 'components/Layout';
 import {hasPermission, Permission} from 'lib/permission';
 import {useSession} from 'next-auth/react';
-import * as yup from 'yup';
 import React, {useEffect, useState} from 'react';
 import {FiScissors} from 'react-icons/fi';
 import {RiClipboardFill, RiErrorWarningFill} from 'react-icons/ri';
+import * as yup from 'yup';
 
-// TODO: UNIFY SHORTEN AND URLS
-export default function Page_Shorten() {
+export default function Dialog_Shorten({ onClose, opened, onShorten, ...props }) {
   const schema = yup.object({
     Destination: yup.string().required().url(),
     URL: yup.string().oneOf(['alphanumeric', 'emoji', 'invisible'], 'Invalid URL type.').default('alphanumeric'),
@@ -45,24 +42,18 @@ export default function Page_Shorten() {
     });
   };
   return (
-    <Layout id={3}>
-      <Container p='xl' style={{ width: '40vw' }}>
-        <form onSubmit={form.onSubmit(shorten)}>
-          <Stack>
-            <TextInput required size='lg' placeholder='Paste your long URL here' {...form.getInputProps('Destination')}/>
-            <Group grow>
-              <Select label='URL' required disabled={form.values.Vanity.length > 0} data={['alphanumeric', 'emoji', 'invisible']} {...form.getInputProps('URL')}/>
-              {canUseVanity && <TextInput label='Vanity URL' placeholder='Leave blank for random URL' {...form.getInputProps('Vanity')}/>}
-            </Group>
-            <PasswordInput autoComplete='one-time-code' label='Password' placeholder='Leave blank for none' {...form.getInputProps('Password')}/>
-            <Button type='submit' leftIcon={<FiScissors/>}>Shorten</Button>
-          </Stack>
-        </form>
-      </Container>
-    </Layout>
+    <Modal size={600} opened={opened} overlayBlur={4} onClose={onClose} {...props} title='Shorten URLs'>
+      <form onSubmit={form.onSubmit(shorten)}>
+        <Stack>
+          <TextInput required placeholder='Paste your long URL here' {...form.getInputProps('Destination')}/>
+          <Group grow>
+            <Select label='URL' required disabled={form.values.Vanity.length > 0} data={['alphanumeric', 'emoji', 'invisible']} {...form.getInputProps('URL')}/>
+            {canUseVanity && <TextInput label='Vanity URL' placeholder='Leave blank for random URL' {...form.getInputProps('Vanity')}/>}
+          </Group>
+          <PasswordInput autoComplete='one-time-code' label='Password' placeholder='Leave blank for none' {...form.getInputProps('Password')}/>
+          <Button type='submit' leftIcon={<FiScissors/>}>Shorten</Button>
+        </Stack>
+      </form>
+    </Modal>
   );
 }
-
-Page_Shorten.authRequired = true;
-Page_Shorten.title = 'Shorten';
-Page_Shorten.permission = Permission.SHORTEN;

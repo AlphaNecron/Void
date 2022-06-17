@@ -1,23 +1,32 @@
-import {Anchor, Title, Text, Stack, Autocomplete} from '@mantine/core';
-import {useClipboard} from '@mantine/hooks';
+import {Anchor, Autocomplete, Button, Stack, Text} from '@mantine/core';
+import {useClipboard, useDisclosure} from '@mantine/hooks';
 import CardGrid from 'components/CardGrid';
 import HiddenQR from 'components/HiddenQR';
 import ItemCard from 'components/ItemCard';
-import Layout from 'components/Layout';
+import ShortenDialog from 'dialogs/Shorten';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
 import React from 'react';
-import {FiClipboard, FiExternalLink, FiSearch, FiTrash} from 'react-icons/fi';
+import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
 import useSWR from 'swr';
 
 export default function Page_URLs() {
-  const { data, mutate } = useSWR('/api/user/urls', (url: string) => fetch(url).then(r => r.json()));
-  const { query, handler } = useQuery();
+  const {data, mutate} = useSWR('/api/user/urls', (url: string) => fetch(url).then(r => r.json()));
+  const {query, handler} = useQuery();
+  const [opened, dHandler] = useDisclosure(false);
   const clipboard = useClipboard();
   return (
-    <Layout onReload={mutate} id={4}>
+    <>
+      <ShortenDialog opened={opened} onClose={dHandler.close} onShorten={() => mutate()}/>
       <Stack>
-        <Autocomplete icon={<FiSearch/>} placeholder='Search something' value={query} onChange={handler.set} data={(data && data.files) ? Array.from(new Set([ ...data.map(url => url.destination), ...data.map(url => url.short) ] )) : []}/>
+        <div style={{display: 'flex'}}>
+          <Button leftIcon={<FiScissors/>} onClick={dHandler.open}>
+            Shorten
+          </Button>
+          <Autocomplete ml='xs' style={{flex: 1}} icon={<FiSearch/>} placeholder='Search something' value={query}
+            onChange={handler.set}
+            data={(data && data.files) ? Array.from(new Set([...data.map(url => url.destination), ...data.map(url => url.short)])) : []}/>
+        </div>
         <CardGrid itemSize={375}>
           {data && handler.filterList(data, ['short', 'destination']).map((url, i) =>
             <ItemCard key={i} actions={[
@@ -38,21 +47,21 @@ export default function Page_URLs() {
                 action: () => console.log('del')
               }
             ]}>
-              <div style={{ display: 'flex', margin: 16 }}>
+              <div style={{display: 'flex', margin: 16}}>
                 <HiddenQR value={`${window.location.origin}/${url.short}`}/>
-                <div style={{ flex: 1, marginLeft: 16 }}>
+                <div style={{flex: 1, marginLeft: 16}}>
                   <Text size='sm' weight={700}>
-                  ID: {url.id}
+                    ID: {url.id}
                     <br/>
-                  Created at: {new Date(url.createdAt).toLocaleString()}
+                    Created at: {new Date(url.createdAt).toLocaleString()}
                     <br/>
-                  Destination: <Anchor size='sm' href={url.destination}>
+                    Destination: <Anchor size='sm' href={url.destination}>
                       {url.destination}
                     </Anchor>
                     <br/>
-                  Views: {url.views}
+                    Views: {url.views}
                     <br/>
-                  Has password: {url.password ? 'Yes' : 'No'}
+                    Has password: {url.password ? 'Yes' : 'No'}
                   </Text>
                 </div>
               </div>
@@ -60,7 +69,7 @@ export default function Page_URLs() {
           )}
         </CardGrid>
       </Stack>
-    </Layout>
+    </>
   );
 }
 

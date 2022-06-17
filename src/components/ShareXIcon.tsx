@@ -1,4 +1,3 @@
-import {useMantineTheme} from '@mantine/core';
 import React from 'react';
 
 export default function ShareXIcon({size = 512, isDark = false, ...props}) {

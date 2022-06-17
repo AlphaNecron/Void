@@ -27,9 +27,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (existing) return res.forbid('Vanity is already taken');
   }
   let rand = generate('alphanumeric', cfg.void.url.length);
-  if (req.body['URL'] && ['emoji', 'invisible', 'alphanumeric'].includes(req.body['URL'].toString())) {
+  if (req.body['URL'] && ['emoji', 'invisible', 'alphanumeric'].includes(req.body['URL'].toString()))
     rand = generate(req.body['URL'].toString() as 'alphanumeric' | 'invisible' | 'emoji', cfg.void.url.length);
-  }
   let password;
   if (req.body['Password']) password = await hash(req.body['Password']);
   const url = await prisma.url.create({

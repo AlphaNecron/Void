@@ -30,11 +30,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     }
     catch (e) {
-      return res.json({
-        success: false,
-        error: 'Could not delete all files',
-        deleted
-      });
+      logger.error(e);
     }
     return res.json(failed.length > 0 ? ({ success: false, failed, deleted }) : ({ success: true, deleted }));
   } else {
@@ -50,7 +46,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       });
       if (file) {
         await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
-        logger.info(`Deleted ${file.fileName} (${file.id})`);
+        logger.info(`Deleted ${file.fileName} (${file.id}).`);
         return res.json({
           success: true
         });

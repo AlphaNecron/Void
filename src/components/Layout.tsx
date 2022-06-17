@@ -1,7 +1,6 @@
 import {
   ActionIcon,
   AppShell,
-  Avatar,
   Box,
   Burger,
   Center,
@@ -9,6 +8,7 @@ import {
   Group,
   Header,
   Image,
+  Indicator,
   LoadingOverlay,
   Menu,
   Navbar,
@@ -16,7 +16,7 @@ import {
   ScrollArea,
   Skeleton,
   Text,
-  Tooltip,
+  Transition,
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme
@@ -26,10 +26,11 @@ import {NextLink} from '@mantine/next';
 import ShareX from 'components/dialogs/ShareX';
 import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
+import StyledTooltip from 'components/StyledTooltip';
+import UserAvatar from 'components/UserAvatar';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {hasPermission, isAdmin, Permission} from 'lib/permission';
 import {useSession} from 'next-auth/react';
-import {useRouter} from 'next/router';
 import React, {useState} from 'react';
 import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
@@ -39,46 +40,29 @@ import {
   RiGroupFill,
   RiLink,
   RiMoonClearFill,
-  RiRefreshLine,
-  RiScissorsFill,
   RiShieldStarFill,
   RiSunFill,
   RiTeamFill,
-  RiTerminalWindowFill,
-  RiUploadCloudFill
+  RiTerminalWindowFill
 } from 'react-icons/ri';
 
-function NavigationBar({ user, id, ...props }) {
-  const router = useRouter();
-  const [dialogOpen, setDialogOpen] = useSetState({ sharex: false });
+function NavigationBar({user, route, ...props}) {
+  const [dialogOpen, setDialogOpen] = useSetState({sharex: false});
   const pages = [
     {
-      icon: <RiDashboard3Fill />,
+      icon: <RiDashboard3Fill/>,
       label: 'Dashboard',
       route: '/dash',
       color: 'void'
     },
     {
-      icon: <RiArchiveFill />,
+      icon: <RiArchiveFill/>,
       label: 'Files',
       route: '/dash/files',
       color: 'yellow',
     },
     {
-      icon: <RiUploadCloudFill />,
-      label: 'Upload',
-      route: '/dash/upload',
-      color: 'blue'
-    },
-    {
-      icon: <RiScissorsFill />,
-      label: 'Shorten',
-      route: '/dash/shorten',
-      color: 'orange',
-      permission: Permission.SHORTEN
-    },
-    {
-      icon: <RiLink />,
+      icon: <RiLink/>,
       label: 'URLs',
       route: '/dash/urls',
       color: 'green',
@@ -91,25 +75,25 @@ function NavigationBar({ user, id, ...props }) {
       adminRequired: true,
       items: [
         {
-          icon: <RiGroupFill />,
+          icon: <RiGroupFill/>,
           label: 'Users',
           route: '/dash/users',
           color: 'pink'
         },
         {
-          icon: <RiTeamFill />,
+          icon: <RiTeamFill/>,
           label: 'Roles',
           route: '/dash/roles',
           color: 'teal'
         },
         {
-          icon: <RiGlobalFill />,
+          icon: <RiGlobalFill/>,
           label: 'Domains',
           route: '/dash/domains',
           color: 'grape'
         },
         {
-          icon: <RiTerminalWindowFill />,
+          icon: <RiTerminalWindowFill/>,
           label: 'Panel',
           route: '/dash/panel',
           color: 'cyan'
@@ -119,16 +103,18 @@ function NavigationBar({ user, id, ...props }) {
   ];
   return (
     <>
-      <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({ sharex: false })}/>
-      <Navbar {...props}>
+      <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({sharex: false})}/>
+      <Navbar style={{transition: 'width 400ms ease, min-width 400ms ease'}} {...props}>
         <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
           {pages.map((x, i) =>
             (x.adminRequired && isAdmin(user.permissions) && x.items) ? (
-              x.items.map((z, j) =>
-                <NavigationItem key={j} requiresAdmin onClick={() => router.push(z.route)} color={z.color} label={z.label} icon={z.icon} id={i+j} currentPageId={id}/>
+              x.items.map(z =>
+                <NavigationItem highlight={z.route === route} key={z.route} requiresAdmin component={NextLink}
+                  href={z.route} color={z.color} label={z.label} icon={z.icon}/>
               )
             ) : ((x.permission ? hasPermission(user.permissions, x.permission) : true) && !x.items) &&
-            <NavigationItem onClick={() => router.push(x.route)} color={x.color} label={x.label} icon={x.icon} id={i} currentPageId={id}/>
+              <NavigationItem highlight={x.route === route} component={NextLink} href={x.route} color={x.color}
+                label={x.label} icon={x.icon} id={i} key={i}/>
           )}
         </Navbar.Section>
         <Navbar.Section>
@@ -153,19 +139,20 @@ function NavigationBar({ user, id, ...props }) {
                   width: '100%',
                   padding: theme.spacing.xs,
                   borderRadius: theme.radius.sm,
-                  background: (id === (id < pages.length ? pages.length : pages.length + pages[pages.length - 1].items.length - 1)) && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
+                  background: route === '/dash/account' && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
                   color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
                   '&:hover': {
-                    backgroundColor:
-                                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
+                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
                   }
                 })}
               >
                 <Group align='center'>
-                  <Avatar
-                    src={user.image}
-                    radius='xl'
-                  />
+                  <Indicator withBorder size={14} position='bottom-end' color='green' offset={5}>
+                    <UserAvatar
+                      user={user}
+                      radius='xl'
+                      color='void'/>
+                  </Indicator>
                   <Box>
                     <Text size='md' weight={600}>
                       {user.name}
@@ -176,7 +163,8 @@ function NavigationBar({ user, id, ...props }) {
               </UnstyledButton>
             }>
               <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account'>Manage account</Menu.Item>
-              <Menu.Item onClick={() => setDialogOpen({ sharex: true })} icon={<ShareXIcon size={16}/>}>ShareX config</Menu.Item>
+              <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>ShareX
+                config</Menu.Item>
               <Divider/>
               <Menu.Item icon={<FiLogOut/>} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
             </Menu>
@@ -187,67 +175,66 @@ function NavigationBar({ user, id, ...props }) {
   );
 }
 
-function AppHeader({ children, onReload, searchBar, rightChildren }) {
-  const { toggleColorScheme } = useMantineColorScheme();
-  const { value } = useThemeValue();
+function AppHeader({children}) {
+  const {toggleColorScheme} = useMantineColorScheme();
+  const {value} = useThemeValue();
   return (
     <Header height={48} px='sm'>
-      <Center style={{ height: 48 }}>
-        <Group position='apart' style={{ width: '100%' }}>
+      <Center style={{height: 48}}>
+        <Group position='apart' style={{width: '100%'}}>
           {children}
-          {searchBar}
-          <Group spacing={4}>
-            {rightChildren}
-            {onReload && (
-              <Tooltip label='Refresh data'>
-                <ActionIcon variant='default' onClick={() => onReload()} size='lg'>
-                  <RiRefreshLine/>
-                </ActionIcon>
-              </Tooltip>
-            )}
-            <Tooltip label={`Toggle ${value('dark', 'light')} theme`}>
-              <ActionIcon variant='hover' color={value('purple', 'yellow')} onClick={() => toggleColorScheme()} size='lg'>
-                {value(<RiMoonClearFill />, <RiSunFill />)}
-              </ActionIcon>
-            </Tooltip>
-          </Group>
+          <StyledTooltip label={`Toggle ${value('dark', 'light')} theme`}>
+            <ActionIcon variant='light' radius='md' color={value('purple', 'yellow')}
+              onClick={() => toggleColorScheme()} size='lg'>
+              {value(<RiMoonClearFill/>, <RiSunFill/>)}
+            </ActionIcon>
+          </StyledTooltip>
         </Group>
       </Center>
     </Header>
   );
 }
 
-export default function Layout({ onReload = null, children, id, searchBar = null, rightChildren = null, side = null }) {
+export default function Layout({children, route}) {
   const [opened, setOpened] = useState(false);
   let status: string, user: { id?: string, role: string, name?: string, email?: string, image?: string };
-  const { breakpoints } = useMantineTheme();
-  const smallWidth = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+  const {breakpoints} = useMantineTheme();
+  const smallWidth = useMediaQuery(`(max-width: ${breakpoints.md}px)`);
   try {
-    ({ status, data: { user } } = useSession());
+    ({status, data: {user}} = useSession());
   } catch {
     return <LoadingOverlay visible={true}/>;
   }
   return status === 'authenticated' ? (
-    <AppShell
-      navbarOffsetBreakpoint='sm'
-      padding='md'
-      fixed
-      aside={side || <></>}
-      navbar={<NavigationBar hiddenBreakpoint='sm' width={{ base: 300 }} hidden={!opened} p='md' id={id} user={user} />}
-      header={<AppHeader rightChildren={rightChildren || <></>} onReload={onReload} searchBar={searchBar || <></>}>
-        {smallWidth ? (
-          <Burger
-            opened={opened}
-            style={{ height: 32, width: 32 }}
-            title='Open drawer'
-            onClick={() => setOpened((o) => !o)}
-            size='sm'
-            mr='xl'
-          />
-        ) : (
-          <Image src='/logo.png' height={32} alt='Void'/>
+    <AppShell styles={{
+      main: {transition: 'padding-left 400ms ease'}
+    }}
+    navbarOffsetBreakpoint='md'
+    padding='md'
+    fixed
+    navbar={
+      <Transition transition='slide-right' duration={400} mounted={opened || !smallWidth}>
+        {styles => (
+          <NavigationBar hiddenBreakpoint='md' style={styles} width={{md: 275}} hidden={!opened} p='md'
+            route={route}
+            user={user}/>
         )}
-      </AppHeader>}
+      </Transition>
+    }
+    header={<AppHeader>
+      {smallWidth ? (
+        <Burger
+          opened={opened}
+          style={{height: 32, width: 32}}
+          title='Open drawer'
+          onClick={() => setOpened((o) => !o)}
+          size='sm'
+          mr='xl'
+        />
+      ) : (
+        <Image src='/logo.png' height={32} alt='Void'/>
+      )}
+    </AppHeader>}
     >
       <Paper>
         {children}

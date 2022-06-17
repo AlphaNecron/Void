@@ -1,4 +1,5 @@
-import {ActionIcon, Card, CardProps, Group, MantineColor, Title, Tooltip} from '@mantine/core';
+import {ActionIcon, Card, CardProps, Group, MantineColor, Title} from '@mantine/core';
+import StyledTooltip from 'components/StyledTooltip';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import React from 'react';
 
@@ -13,11 +14,11 @@ export default function ItemCard({ children, title, actions, ...props } : { titl
         <Title style={{ maxWidth: `${100-10*actions.length}%`, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} order={6}>{title}</Title>
         <Group spacing={0}>
           {actions.map(action => (
-            <Tooltip key={action.label} label={action.label}>
+            <StyledTooltip key={action.label} label={action.label}>
               <ActionIcon loading={action.busy} color={action.color} onClick={action.action}>
                 {action.icon}
               </ActionIcon>
-            </Tooltip>
+            </StyledTooltip>
           ))}
         </Group>
       </Group>

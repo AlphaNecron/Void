@@ -96,7 +96,6 @@ async function initServer() {
       logger.info('Finished applying migrations');
       await runPrisma(config.void.databaseUrl, ['db', 'seed']);
     }
-    process.env.NEXT_PUBLIC_VOID_VERSION = `${name}@${version}`;
     process.env.NEXTAUTH_SECRET = Buffer.from(generate('alphanumeric', 32)).toString('base64');
     process.env.NEXTAUTH_URL = config.void.defaultDomain;
     await stat('./.next');

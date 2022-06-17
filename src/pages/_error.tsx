@@ -1,10 +1,10 @@
-import { Center, Button, Title } from '@mantine/core';
-import { errors } from 'lib/constants';
+import {Button, Title} from '@mantine/core';
+import Container from 'components/Container';
+import {errors} from 'lib/constants';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
-import { IoIosArrowBack } from 'react-icons/io';
-import Container from 'components/Container';
+import {IoIosArrowBack} from 'react-icons/io';
 
 export default function Error({ title }) {
   return (

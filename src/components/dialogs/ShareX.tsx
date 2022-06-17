@@ -5,7 +5,7 @@ import React from 'react';
 import {FiDownload, FiScissors} from 'react-icons/fi';
 import useSWR from 'swr';
 
-export default function ShareX({open, onClose, ...props}) {
+export default function Dialog_ShareX({open, onClose, ...props}) {
   const { data: token } = useSWR('/api/user/token', (url: string) => fetch(url).then(r => r.json()));
   const [ shareXOptions, setShareXOptions ] = useSetState({ name: 'Void', url: 'alphanumeric', askPassword: false });
   const uploaderConfig = {

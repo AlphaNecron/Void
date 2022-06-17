@@ -5,7 +5,7 @@ export function getMimetype(extension: string): string {
 }
 
 export function getType(mimetype: string): string {
-  return mimetype.trim().split('/').shift();
+  return mimetype?.trim().split('/').shift();
 }
 
 export function isText(mimetype: string): boolean {

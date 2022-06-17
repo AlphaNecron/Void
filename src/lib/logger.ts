@@ -1,4 +1,4 @@
-import colors, {blue} from '@colors/colors';
+import colors from '@colors/colors';
 import {DateTime} from 'luxon';
 import type {Logger, QueryOptions} from 'winston';
 
@@ -30,7 +30,7 @@ export const queryLog = (options?: QueryOptions) => new Promise<{
 
 const log = (level, msg) => {
   const date = DateTime.now().toFormat('D - TT');
-  console.log(`[${blue(date)}] ${colors[level](level)}: ${msg}`);
+  console.log(`[${colors.blue(date)}] ${colors[level](level)}: ${msg}`);
 };
 
 // fallback logger

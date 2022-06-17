@@ -71,7 +71,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         name: 'Credentials',
         credentials: {
           username: { label: 'Username', type: 'text' },
-          password: { label: 'Password', type: 'password' }
+          password: { label: 'Password', type: 'password' },
         },
         authorize: async (credentials): Promise<User> => {
           const user = await prisma.user.findUnique({

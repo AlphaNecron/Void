@@ -8,7 +8,7 @@ export default function Index() {
   const { data: session } = useSession();
   useEffect(() => {
     router.push(session ? '/dash' : '/auth/login');
-  }, [router]);
+  }, []);
   return (
     <Head>
       <title>Void</title>

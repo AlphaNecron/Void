@@ -1,11 +1,8 @@
 import React from 'react';
-import Layout from 'components/Layout';
 
 export default function Page_Domains() {
   return (
-    <Layout id={7}>
-
-    </Layout>
+    <></>
   );
 }
 

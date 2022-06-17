@@ -19,6 +19,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     });
     if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filesPerPage: +req.query.chunk, files: [] });
     const chunk = Number(req.query.chunk || total);
+    if (chunk < 1) return res.forbid('Invalid chunk.');
     const maxPage = Math.ceil(total / chunk);
     const page = +req.query.page > maxPage ? maxPage : (+req.query.page > 1 ? +req.query.page : 1) || 1;
     const files = await prisma.file.findMany({
@@ -39,7 +40,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         isPrivate: true
       },
       orderBy: {
-        uploadedAt: 'asc',
+        uploadedAt: req.query.order === 'ascending' ? 'asc' : 'desc',
       }
     });
     return res.json({

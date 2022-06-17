@@ -28,6 +28,9 @@
       "lib/*": [
         "lib/*"
       ],
+      "dialogs/*": [
+        "components/dialogs/*"
+      ],
       "hooks/*": [
         "hooks/*"
       ]

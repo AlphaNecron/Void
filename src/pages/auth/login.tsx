@@ -1,11 +1,11 @@
 import {
   ActionIcon,
   Affix,
-  Avatar,
   Badge,
   Button,
   Checkbox,
   Group,
+  Image,
   Paper,
   PasswordInput,
   TextInput,
@@ -51,7 +51,7 @@ export default function LoginPage({ providers }) {
   const authProviders = Object.values(providers);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   return (
-    <Paper component='body' style={{ height: '100vh' }}>
+    <Paper style={{ height: '100vh' }}>
       <Transition transition='slide-right' duration={600} mounted={mount}>
         {styles => (
           <Container style={{ backgroundSize: 'cover', ...styles }}>
@@ -71,7 +71,7 @@ export default function LoginPage({ providers }) {
                       else return showNotification({ title: 'Failed to sign in', color: 'red', icon: <RiErrorWarningFill/>, message: res.error });
                     }
                     else {
-                      showNotification({ title: 'Login successfully, redirecting to Dashboard', message: '', icon: <RiCheckFill/>, color: 'green' });
+                      showNotification({ title: 'Logged in successfully, redirecting to the Dashboard.', message: '', icon: <RiCheckFill/>, color: 'green' });
                       router.push('/dash');
                     }
                   })}>
@@ -110,12 +110,12 @@ export default function LoginPage({ providers }) {
       </Transition>
       <Affix position={{ bottom: '2%', right: '2% ' }}>
         <Badge leftSection={
-          <Avatar size={16} mx={0} src='/logo.png' />
+          <Image width={16} height={16} mx={0} alt='Logo' src='/logo.png' />
         } rightSection={
           <ActionIcon variant='transparent' mx='-sm' onClick={() => toggleColorScheme()} size='lg'>
             {colorScheme === 'dark' ? <RiSunFill /> : <RiMoonClearFill />}
           </ActionIcon>
-        }>{process.env.NEXT_PUBLIC_VOID_VERSION}</Badge>
+        }>{process.env.voidVersion}</Badge>
       </Affix>
     </Paper>
   );

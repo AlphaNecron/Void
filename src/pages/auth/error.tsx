@@ -1,6 +1,6 @@
-import { Text, Title } from '@mantine/core';
+import {Title} from '@mantine/core';
 import Container from 'components/Container';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 export default function AuthError({ error }) {
   return (

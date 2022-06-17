@@ -17,7 +17,9 @@ import {
 import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import {Prism} from '@mantine/prism';
+import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
+import ResponsiveButton from 'components/ResponsiveButton';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
@@ -36,7 +38,6 @@ import {VscWordWrap} from 'react-icons/vsc';
 export function Preview({data: {isPrivate = false, isExploding = false, properties, embed}}) {
   const [open, handler] = useDisclosure(false);
   const [dialogOpen, dHandler] = useDisclosure(false);
-  console.log(isExploding);
   if (isPrivate) return (
     <>
       <Head>
@@ -97,38 +98,9 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
   };
   const actions = (fluid = false, float = true) => (
     <Group position='apart' grow={fluid} style={fluid || !float ? ({}) : ({ position: 'absolute', bottom: 24, right: 24, zIndex: 100 })} spacing={4}>
-      {fluid ? (
-        <Button color='blue' onClick={handler.open} leftIcon={<FiInfo/>}>Info</Button>
-      ) : (
-        <Tooltip label='View properties'>
-          <ActionIcon onClick={handler.open} variant='filled' color='blue'>
-            <FiInfo/>
-          </ActionIcon>
-        </Tooltip>
-      )
-      }
-      {isExploding || (fluid ? (
-        <Button color='green' component='a' href={src()} download={properties['File name']} leftIcon={<FiDownload/>}>
-            Download
-        </Button>
-      ) : (
-        <Tooltip label='Download'>
-          <ActionIcon component='a' href={src()} download={properties['File name']} variant='filled' color='green'>
-            <FiDownload/>
-          </ActionIcon>
-        </Tooltip>
-      ))}
-      {fluid ? (
-        <Button onClick={dHandler.open} color='red' leftIcon={<FiFlag/>}>
-          Report
-        </Button>
-      ) : (
-        <Tooltip label='Report this file'>
-          <ActionIcon onClick={dHandler.open} variant='filled' color='red'>
-            <FiFlag/>
-          </ActionIcon>
-        </Tooltip>
-      )}
+      <ResponsiveButton color='blue' onClick={handler.open} icon={<FiInfo/>} condition={fluid} label='Info'/>
+      {isExploding || <ResponsiveButton color='green' component='a' condition={fluid} href={src()} download={properties['File name']} label='Download' icon={<FiDownload/>}/>}
+      <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag/>} label='Report' condition={fluid}/>
     </Group>
   );
   return (
@@ -207,10 +179,10 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
               }}/>
             </>
           ) : isType('audio', mimetype) ? (
-            <>
-              {actions()}
-              <audio src={src()} autoPlay controls/>
-            </>
+            <Stack>
+              <AudioPlayer title={name} src={src()}/>
+              {actions(true, false)}
+            </Stack>
           ) : isType('video', mimetype) ? (
             <>
               {actions()}
@@ -234,12 +206,15 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
               </div>
               <Prism withLineNumbers styles={
                 {
+                  lineNumber: {
+                    textAlign: 'left'
+                  },
                   scrollArea: {
                     height: '66vh',
                     width: '66vw'
                   },
                   ...(wrap && {
-                    code: {
+                    lineContent: {
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
                     }
@@ -354,7 +329,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
       .replace(/{{datetime}}/ig, file.uploadedAt.toLocaleString())
       .replace(/{{mimetype}}/ig, file.mimetype)
       .replace(/{{size}}/ig, parseByte(Number(file.size)))
-      .replace(/{{username}}/ig, file.user.name) : null;
+      .replace(/{{username}}/ig, file.user.username) : null;
   if (file.isPrivate) {
     const session = await getSession({req});
     if (!session)
@@ -388,7 +363,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
           'Size': parseByte(Number(file.size)),
           'Uploaded at': file.uploadedAt.toLocaleString(),
           'Views': file.views,
-          'Uploaded by': file.user.name || 'Anonymous'
+          'Uploaded by': file.user.name || 'Unknown'
         },
         embed: {
           enabled: embedEnabled,

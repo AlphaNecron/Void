@@ -1,14 +1,16 @@
-import {ColorScheme, ColorSchemeProvider, MantineProvider, Title, useMantineTheme} from '@mantine/core';
+import {ColorScheme, ColorSchemeProvider, MantineProvider} from '@mantine/core';
 import {useLocalStorage} from '@mantine/hooks';
 import {ModalsProvider} from '@mantine/modals';
 import {NotificationsProvider} from '@mantine/notifications';
-import Container from 'components/Container';
+import Layout from 'components/Layout';
+import Dialog_FilesDeleted from 'dialogs/FilesDeleted';
+import Dialog_Qr from 'dialogs/Qr';
 import {hasPermission, isAdmin} from 'lib/permission';
 import {SessionProvider, useSession} from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
 
-export default function Void({ Component, pageProps: { session, ...pageProps } }) {
+export default function Void({ Component, pageProps: { session, ...pageProps }, router }) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'void-color-scheme',
     defaultValue: 'dark',
@@ -22,12 +24,12 @@ export default function Void({ Component, pageProps: { session, ...pageProps } }
         <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider withGlobalStyles withNormalizeCSS theme={{
+        <MantineProvider emotionOptions={{ key: 'void' }} withGlobalStyles withNormalizeCSS theme={{
           colorScheme,
           loader: 'bars',
           primaryColor: 'void',
-          fontFamily: 'Source Sans Pro',
-          fontFamilyMonospace: 'JetBrains Mono',
+          fontFamily: 'Source Sans Pro, sans-serif',
+          fontFamilyMonospace: 'JetBrains Mono, monospace',
           fontSizes: {
             xs: 13,
             sm: 14,
@@ -50,12 +52,14 @@ export default function Void({ Component, pageProps: { session, ...pageProps } }
             ],
           }
         }}>
-          <ModalsProvider>
+          <ModalsProvider modals={{ qr: Dialog_Qr, deleted: Dialog_FilesDeleted }} modalProps={{ overlayBlur: 4, withCloseButton: true }}>
             <NotificationsProvider>
               <SessionProvider refetchOnWindowFocus={true} refetchInterval={300} session={session}>
                 {(Component.authRequired || Component.adminOnly) ? (
-                  <Auth adminOnly={Component.adminOnly} permission={Component.permission} >
-                    <Component {...pageProps} />
+                  <Auth adminOnly={Component.adminOnly} permission={Component.permission} router={router}>
+                    <Layout route={router.route}>
+                      <Component {...pageProps} />
+                    </Layout>
                   </Auth>
                 ) : (
                   <Component {...pageProps} />
@@ -69,20 +73,9 @@ export default function Void({ Component, pageProps: { session, ...pageProps } }
   );
 }
 
-function Auth({ children, permission, adminOnly }) {
+function Auth({ children, permission, adminOnly, router }) {
   const { data, status } = useSession({ required: true });
   if (data?.user && status === 'authenticated' && !(adminOnly ? isAdmin(data?.user.permissions) : (permission || 0) !== 0 ? (hasPermission(data?.user.permissions, permission) || isAdmin(data?.user.permissions)) : true))
-    return (
-      <>
-        <Head>
-          <title>Insufficient permission</title>
-        </Head>
-        <Container>
-          <Title order={4} m='xl' align='center'>
-      You do not have permission to access this page.
-          </Title>
-        </Container>
-      </>
-    );
+    router.push('/auth/login');
   return data?.user && status === 'authenticated' ? children : null;
 }

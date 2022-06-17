@@ -1,10 +1,9 @@
 import {LoadingOverlay, ScrollArea, Table, Text} from '@mantine/core';
 import CardGrid from 'components/CardGrid';
 import DashboardCard from 'components/DashboardCard';
-import Layout from 'components/Layout';
 import StatCard from 'components/StatCard';
 import React from 'react';
-import {FiFile, FiLink, FiLink2, FiStar, FiUser} from 'react-icons/fi';
+import {FiFile, FiLink2, FiStar, FiUser} from 'react-icons/fi';
 import useSWR from 'swr';
 
 function Atd({ children, ...props }) {
@@ -16,7 +15,7 @@ export default function Page_Dashboard() {
   if (data) {
     const { user, stats } = data;
     return (
-      <Layout id={0}>
+      <>
         <CardGrid itemSize={250}>
           <StatCard title='Total files' icon={<FiFile size={14}/>} value={stats.upload.totalFiles} alt={`You have uploaded ${stats.user.files} files in total.`}/>
           {/*<DashboardCard title='User storage'>*/}
@@ -80,7 +79,7 @@ export default function Page_Dashboard() {
             </ScrollArea>
           </DashboardCard>
         )}
-      </Layout>
+      </>
     );
   }
   else return <LoadingOverlay visible={true}/>;

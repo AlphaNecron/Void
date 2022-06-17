@@ -1,10 +1,12 @@
-import {useMantineTheme} from '@mantine/core';
+import {MantineColor, useMantineTheme} from '@mantine/core';
 
 export default function useThemeValue() {
-  const theme = useMantineTheme();
+  const { colorScheme, colors, fn: { lighten: lightenColor } } = useMantineTheme();
+  const isDark = colorScheme === 'dark';
   return {
-    isDark: theme.colorScheme === 'dark',
-    value: <T>(valueIfLight: T, valueIfDark: T) => theme.colorScheme === 'dark' ? valueIfDark : valueIfLight
+    isDark,
+    value: <T>(valueIfLight: T, valueIfDark: T) => isDark ? valueIfDark : valueIfLight,
+    colorValue: (color: MantineColor, shadeIfLight: number, shadeIfDark: number, lighten?: number): string => isDark ? colors[color][shadeIfDark] : lightenColor(colors[color][shadeIfLight], lighten || 0)
   };
 }
 

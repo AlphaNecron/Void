@@ -2,6 +2,7 @@ import {readFileSync} from 'fs';
 import {rm} from 'fs/promises';
 import config from 'lib/config';
 import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
+import {isType} from 'lib/mime';
 import prisma from 'lib/prisma';
 import {resolve} from 'path';
 
@@ -52,6 +53,10 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         }
       });
       await rm(path);
+    }
+    if (isType('audio', file.mimetype)) {
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Content-Range', 'bytes');
     }
     res.end(data);
   } else {
