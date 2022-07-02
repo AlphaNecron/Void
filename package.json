@@ -23,7 +23,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} --transpile-only prisma/seed.ts"
   },
   "dependencies": {
-    "@isaacs/ttlcache": "^1.0.5",
+    "@isaacs/ttlcache": "^1.1.0",
     "@mantine/core": "^4.2.11",
     "@mantine/dropzone": "^4.2.11",
     "@mantine/form": "^4.2.11",

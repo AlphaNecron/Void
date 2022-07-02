@@ -321,10 +321,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@isaacs/ttlcache@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@isaacs/ttlcache@npm:1.0.5"
-  checksum: a0db6e0658466ea3e40bbca40724c405bfb40cb303b36a817eaf0fb42cb4e94a7d7a8bc1748939e7ccbed594f2122aa8934dedac6fcae44f787f8af5c8203826
+"@isaacs/ttlcache@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@isaacs/ttlcache@npm:1.1.0"
+  checksum: 989703321c15bc4cf10552eb13c80146fc385ab9cee850e9a1b383b5184b132f099fd51fcc4efe17a35a4df0d166781853e3353b48ae634b23ca5b880ea2a4c9
   languageName: node
   linkType: hard
 
@@ -6358,7 +6358,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "void@workspace:."
   dependencies:
-    "@isaacs/ttlcache": ^1.0.5
+    "@isaacs/ttlcache": ^1.1.0
     "@mantine/core": ^4.2.11
     "@mantine/dropzone": ^4.2.11
     "@mantine/form": ^4.2.11
