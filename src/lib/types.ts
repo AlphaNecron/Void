@@ -2,6 +2,8 @@ export interface Void {
   useHttps: boolean;
   host: string;
   port: number;
+  secret: string;
+  rateLimit: number;
   databaseUrl: string;
   defaultDomain: string;
   url: UrlOptions;

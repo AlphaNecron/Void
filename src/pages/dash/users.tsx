@@ -11,6 +11,7 @@ import useSWR from 'swr';
 export default function Page_Users() {
   const {data, mutate} = useSWR('/api/users', (url: string) => fetch(url).then(r => r.json()));
   const {query, handler} = useQuery();
+  const deleteUser = () => fetch('/api/users');
   return data ? (
     <Stack>
       {data?.length > 0 && (

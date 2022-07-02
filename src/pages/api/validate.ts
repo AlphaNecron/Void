@@ -17,7 +17,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     }
   });
   const valid = await verify(url.password, req.body.password);
-  if (!valid) return res.error('Wrong password');
+  if (!valid) return res.error('Wrong password.');
   await prisma.url.update({
     where: {
       id: url.id

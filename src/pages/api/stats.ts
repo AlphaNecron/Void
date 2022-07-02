@@ -1,13 +1,10 @@
 // import { bytesToHr, sizeOfDir } from 'lib/utils';
-import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
   if (!user || !user.role) return res.unauthorized();
-  const quota = await req.getUserQuota(user);
-  const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT, true);
   const users = await prisma.user.findMany({
     take: 10,
     select: {
@@ -52,11 +49,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     _count: true
   });
   return res.json({
-    user: {
-      bypass,
-      role: user.role.name,
-      quota
-    },
     stats: {
       urls: urlAgg._count,
       views: {

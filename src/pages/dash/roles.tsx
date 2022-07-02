@@ -7,7 +7,7 @@ export default function Page_Roles() {
   const { data, mutate } = useSWR('/api/admin/roles', (url: string) => fetch(url).then(r => r.json()));
   return data ? (
     data.map(role => (
-      <Button key={role.name}>{role.name}</Button>
+      <Button key={role.name}>{JSON.stringify(role)}</Button>
     ))
   ) : <LoadingOverlay visible/>;
 }

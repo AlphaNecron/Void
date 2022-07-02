@@ -4,7 +4,6 @@ import {
   LoadingOverlay,
   MantineNumberSize,
   Menu,
-  Paper,
   SegmentedControl,
   Slider,
   Stack,
@@ -47,7 +46,7 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
     </StyledTooltip>
   );
   return (
-    <Paper m='-md' mb={-22} style={{position: 'relative'}} {...props}>
+    <div style={{ margin: -16 }}>
       <video onRateChange={({currentTarget: {playbackRate}}) => setRate(playbackRate)} onMouseMove={() => {
         setShow(true);
         if (ticker.current) {
@@ -59,11 +58,11 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
       }} onLoadedData={onDurationChanged} onVolumeChange={({currentTarget: {volume}}) => setVol(volume)}
       onTimeUpdate={({currentTarget: {currentTime}}) => setTime(currentTime)} onWaiting={() => setBusy(true)}
       onPlaying={() => setBusy(false)} onDurationChange={onDurationChanged}
-      style={{position: 'relative'}} onClick={toggle} src={src} ref={ref} {...props}
+      style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0}} onClick={toggle} src={src} ref={ref} {...props}
       onPause={() => togglePlaying(false)} onPlay={e => {
         togglePlaying(true);
         onDurationChanged(e);
-      }}/>
+      }} {...props}/>
       <LoadingOverlay zIndex={100} visible={busy}/>
       <Transition transition='slide-up' duration={200} exitDuration={200} mounted={show || pin}>
         {styles => (
@@ -82,14 +81,14 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
                 ref.current.currentTime = t;
                 setTime(t);
               }} mb={4} label={`${s2m(time)} / ${s2m(dura)}`}/>
-            <Group mt={-4} spacing={4} mx='md' position='apart' align='center'>
+            <Group spacing={4} mx='md' position='apart' align='center'>
               <Group spacing={4}>
                 <Action icon={<FiRewind/>} label='Seek backward' onClick={() => seek(-10)}/>
                 <Action onClick={toggle} icon={playing ? <FiPause/> : <FiPlay/>} label={playing ? 'Pause' : 'Play'}/>
                 <Action icon={<FiFastForward/>} label='Seek forward' onClick={() => seek(10)}/>
               </Group>
               <Group mr='xs' align='center' spacing={4}>
-                <VolumeIndicator level={vol * 100}/>
+                <VolumeIndicator level={vol * 100} size={18}/>
                 <Slider size='xs' value={vol} onChange={v => {
                   ref.current.volume = v;
                   setVol(v);
@@ -112,6 +111,6 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
           </Stack>
         )}
       </Transition>
-    </Paper>
+    </div>
   );
 }

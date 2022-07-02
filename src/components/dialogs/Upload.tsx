@@ -20,6 +20,7 @@ import {
 } from '@mantine/core';
 import {Dropzone, DropzoneStatus} from '@mantine/dropzone';
 import {useClipboard, useDisclosure, useListState, useSetState} from '@mantine/hooks';
+import {useModals} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import FileIndicator from 'components/FileIndicator';
 import StyledMenu from 'components/StyledMenu';
@@ -31,13 +32,7 @@ import {DateTime, Duration} from 'luxon';
 import React, {useEffect, useState} from 'react';
 import {FiFile, FiUpload, FiX} from 'react-icons/fi';
 import {GoSettings} from 'react-icons/go';
-import {
-  RiClipboardFill,
-  RiErrorWarningFill,
-  RiFileWarningFill,
-  RiSignalWifiErrorFill,
-  RiUploadCloud2Fill
-} from 'react-icons/ri';
+import {RiErrorWarningFill, RiFileWarningFill, RiSignalWifiErrorFill, RiUploadCloud2Fill} from 'react-icons/ri';
 import {VscClearAll, VscFiles} from 'react-icons/vsc';
 
 function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
@@ -54,7 +49,7 @@ function ImageUploadIcon({status, ...props}) {
   return status.accepted ? <FiUpload {...props} /> : status.rejected ? <FiX {...props} /> : <FiFile {...props} />;
 }
 
-export interface VoidFile extends File {
+interface VoidFile extends File {
   selected: boolean;
 }
 
@@ -63,6 +58,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const [flOpen, handler] = useDisclosure(false);
   const selected = files.filter(f => f.selected);
   const [progress, setProgress] = useState({progress: 0, speed: 0, estimated: 0});
+  const { openContextModal } = useModals();
   const [restrictions, setRestrictions] = useState({
     bypass: false,
     blacklistedExtensions: [],
@@ -83,6 +79,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const clipboard = useClipboard();
   const [prefs, setPrefs] = useSetState({exploding: false, url: 'alphanumeric', private: false});
   const pasteHandler = (e: ClipboardEvent) => {
+    e.preventDefault();
     const image = Array.from(e.clipboardData.items).find(x => isType('image', x.type));
     if (!image) return;
     setBusy(true);
@@ -115,24 +112,34 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
           return x;
         });
         fHandler.setState(remaining);
-        showNotification({
-          title: 'File(s) uploaded!',
-          message: (
-            <ScrollArea style={{maxHeight: 150}}>
-              {data.map((file, i) => <Anchor style={{display: 'block'}} href={file.url} target='_blank'
-                key={i}>{file.url}</Anchor>)}
-            </ScrollArea>
-          ),
-          color: 'green',
-          icon: <RiUploadCloud2Fill/>
-        });
-        clipboard.copy(data[0].url);
-        showNotification({
-          title: 'Copied the first URL to your clipboard.',
-          message: null,
-          color: 'green',
-          icon: <RiClipboardFill/>
-        });
+        if (data.length > 1) {
+          onClose();
+          openContextModal('uploaded', {
+            title: 'Files uploaded',
+            innerProps: {
+              files: data,
+              onCopy: clipboard.copy
+            }
+          });
+        } else {
+          showNotification({
+            title: <Title order={6}>File uploaded!</Title>,
+            message: (
+              <div>
+                <Anchor size='sm' target='_blank' href={data[0].url}>File URL</Anchor>
+                <br/>
+                <Anchor size='sm' target='_blank' href={data[0].thumbUrl}>Raw file URL</Anchor>
+                <br/>
+                <Anchor size='sm' target='_blank' href={data[0].deletionUrl} color='red'>Delete</Anchor>
+                <br/>
+                <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
+              </div>
+            ),
+            color: 'green',
+            icon: <RiUploadCloud2Fill/>
+          });
+          clipboard.copy(data[0].url);
+        }
         onUpload();
       } else showNotification({
         title: 'Failed to upload the file(s).',
@@ -160,7 +167,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
             title: 'Following files are not accepted!',
             message: files.map((x, i) => <Text
               style={{maxWidth: 325, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} inline
-              key={i}>{x.file.name}</Text>),
+              key={i}>{x.file.name}</Text>
+            ),
             color: 'red',
             icon: <RiFileWarningFill/>
           })} onDrop={f =>
@@ -193,8 +201,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
           )}
         </Dropzone>
         <GroupedTransition transitions={{
-          text: { duration: 200, transition: 'slide-down' },
-          bar: { duration: 200, transition: 'slide-up' }
+          text: { duration: 600, transition: 'slide-down' },
+          bar: { duration: 600, transition: 'slide-up' }
         }} mounted={busy}>
           {styles => (
             <>
@@ -265,7 +273,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                 fHandler.setState([]);
                 previews.forEach(i => URL.revokeObjectURL(i));
                 previews = [];
-              }} size='xs' leftIcon={<VscClearAll/>} color='red'>
+              }} size='xs' leftIcon={<VscClearAll/>} disabled={busy} color='red'>
                 Clear all
               </Button>
             </Group>

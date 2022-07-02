@@ -1,5 +1,7 @@
 import {Role} from '@prisma/client';
-import {Permission} from 'lib/permission';
+import {check} from 'lib/cache';
+import config from 'lib/config';
+import {hasPermission, Permission} from 'lib/permission';
 import type {NextApiRequest, NextApiResponse} from 'next';
 import {getSession} from 'next-auth/react';
 import prisma from '../prisma';
@@ -38,6 +40,7 @@ export type VoidRequest = NextApiRequest & {
     total: number;
   } | null>;
   files?: VoidFile[];
+  check: () => Promise<boolean>;
 }
 
 export type VoidResponse = NextApiResponse & {
@@ -47,29 +50,21 @@ export type VoidResponse = NextApiResponse & {
   notAllowed: () => void;
   unauthorized: () => void;
   noPermission: (permission: Permission) => void;
+  rateLimited: () => void;
   bad: (message: string) => void;
-  json: (json: any) => void;
 }
 
-export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => (req: VoidRequest, res: VoidResponse) => {
-  res.error = (message: string, code?: number) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(code || 400);
-    res.json({
-      code: code || 400,
-      error: message
-    });
-  };
+export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) => unknown) => async (req: VoidRequest, res: VoidResponse) => {
+  res.error = (message: string, code = 400) => res.status(code).json({
+    error: message
+  });
   res.forbid = (message: string) => res.error(message, 403);
   res.bad = (message: string) => res.error(message, 401);
   res.notFound = (message: string) => res.error(message, 404);
   res.notAllowed = () => res.error('Method is not allowed', 405);
   res.unauthorized = () => res.forbid('Unauthorized');
   res.noPermission = (permission: Permission) => res.forbid(`Current user does not have ${Permission[permission]} permission.`);
-  res.json = (json: any) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(json));
-  };
+  res.rateLimited = () => res.status(429).json({ error: 'You are being rate-limited.', nextReset: res.getHeader('x-ratelimit-reset') });
   req.getUserQuota = async (user: VoidUser) => {
     const agg = await prisma.file.aggregate({
       where: {
@@ -86,35 +81,12 @@ export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) =>
       total: Number(user.role.storageQuota),
     };
   };
+  const session = await getSession({req});
   req.getUser = async (privateToken?: string) => {
-    if (privateToken) {
-      return await prisma.user.findUnique({
-        where: {
-          privateToken
-        },
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          email: true,
-          embedEnabled: true,
-          embedSiteName: true,
-          embedSiteNameUrl: true,
-          embedTitle: true,
-          embedColor: true,
-          embedDescription: true,
-          embedAuthor: true,
-          embedAuthorUrl: true,
-          role: true,
-          privateToken: true
-        }
-      });
-    }
-    const session = await getSession({ req });
-    if (!session) return null;
+    if (!(privateToken || session)) return null;
     return await prisma.user.findUnique({
       where: {
-        id: session.user.id
+        [privateToken ? 'privateToken' : 'id']: privateToken || session.user.id
       },
       select: {
         id: true,
@@ -134,5 +106,7 @@ export const withVoid = (handler: (req: NextApiRequest, res: NextApiResponse) =>
       }
     });
   };
-  return handler(req, res);
+  const ip = req.headers['x-forwarded-for']?.toString().split(',').shift() || req.headers['x-real-ip'] || req.connection.remoteAddress;
+  const rateLimited = check(res, config.void.rateLimit, ip.toString()) && !hasPermission(session?.user?.permissions, Permission.ADMINISTRATION);
+  return rateLimited ? res.rateLimited() : handler(req, res);
 };

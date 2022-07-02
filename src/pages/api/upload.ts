@@ -13,16 +13,14 @@ const uploader = multer();
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method === 'GET') {
-    const user = await req.getUser(req.headers.authorization);
+    const user = await req.getUser();
     if (!user || !user.role) return res.unauthorized();
-    const quota = await req.getUserQuota(user);
-    const bypass = [Permission.BYPASS_LIMIT, Permission.ADMINISTRATION, Permission.OWNER].some(perm => hasPermission(user.role.permissions, perm));
+    const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT);
     return res.json({
       bypass,
       blacklistedExtensions: cfg.void.upload.blacklistedExtensions,
       maxSize: Number(user.role.maxFileSize),
-      maxFileCount: user.role.maxFileCount,
-      quota
+      maxFileCount: user.role.maxFileCount
     });
   }
   else if (req.method === 'POST') {
@@ -63,6 +61,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       await writeFile(join(path, file.id), f.buffer);
       const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
       responses.push({
+        name: file.fileName,
         url: `${baseUrl}/${file.slug}`,
         deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
         thumbUrl: `${baseUrl}/api/file/${file.id}`
@@ -91,5 +90,5 @@ export default async function handlers(req: VoidRequest, res: VoidResponse) {
 export const config = {
   api: {
     bodyParser: false,
-  },
+  }
 };

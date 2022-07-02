@@ -13,10 +13,10 @@ import {
   Menu,
   Navbar,
   Paper,
+  Progress,
   ScrollArea,
   Skeleton,
   Text,
-  Transition,
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme
@@ -30,6 +30,7 @@ import StyledTooltip from 'components/StyledTooltip';
 import UserAvatar from 'components/UserAvatar';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {hasPermission, isAdmin, Permission} from 'lib/permission';
+import {parseByte} from 'lib/utils';
 import {useSession} from 'next-auth/react';
 import React, {useState} from 'react';
 import {FiLogOut, FiUser} from 'react-icons/fi';
@@ -40,13 +41,14 @@ import {
   RiGroupFill,
   RiLink,
   RiMoonClearFill,
-  RiShieldStarFill,
   RiSunFill,
   RiTeamFill,
   RiTerminalWindowFill
 } from 'react-icons/ri';
+import {SiGithub} from 'react-icons/si';
+import useSWR from 'swr';
 
-function NavigationBar({user, route, ...props}) {
+function NavigationBar({user, onCollapse, route, quota, ...props}) {
   const [dialogOpen, setDialogOpen] = useSetState({sharex: false});
   const pages = [
     {
@@ -69,9 +71,6 @@ function NavigationBar({user, route, ...props}) {
       permission: Permission.SHORTEN
     },
     {
-      icon: <RiShieldStarFill/>,
-      label: 'Administration',
-      color: 'red',
       adminRequired: true,
       items: [
         {
@@ -109,11 +108,13 @@ function NavigationBar({user, route, ...props}) {
           {pages.map((x, i) =>
             (x.adminRequired && isAdmin(user.permissions) && x.items) ? (
               x.items.map(z =>
-                <NavigationItem highlight={z.route === route} key={z.route} requiresAdmin component={NextLink}
+                <NavigationItem onClick={onCollapse} highlight={z.route === route} key={z.route} requiresAdmin
+                  component={NextLink}
                   href={z.route} color={z.color} label={z.label} icon={z.icon}/>
               )
             ) : ((x.permission ? hasPermission(user.permissions, x.permission) : true) && !x.items) &&
-              <NavigationItem highlight={x.route === route} component={NextLink} href={x.route} color={x.color}
+              <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
+                color={x.color}
                 label={x.label} icon={x.icon} id={i} key={i}/>
           )}
         </Navbar.Section>
@@ -129,7 +130,7 @@ function NavigationBar({user, route, ...props}) {
               root: {
                 width: '100%'
               }
-            }} placement='end' withArrow control={
+            }} placement='start' withArrow control={
               <UnstyledButton
                 sx={theme => ({
                   display: 'block',
@@ -159,6 +160,13 @@ function NavigationBar({user, route, ...props}) {
                 </Group>
               </UnstyledButton>
             }>
+              {quota && (
+                <>
+                  <Menu.Label>{parseByte(quota.used)} / {parseByte(quota.total)} used</Menu.Label>
+                  <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs'/>
+                </>
+              )}
+              <Divider/>
               <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account'>Manage account</Menu.Item>
               <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>ShareX
                 config</Menu.Item>
@@ -180,12 +188,19 @@ function AppHeader({children}) {
       <Center style={{height: 48}}>
         <Group position='apart' style={{width: '100%'}}>
           {children}
-          <StyledTooltip label={`Toggle ${value('dark', 'light')} theme`}>
-            <ActionIcon variant='light' radius='md' color={value('purple', 'yellow')}
-              onClick={() => toggleColorScheme()} size='lg'>
-              {value(<RiMoonClearFill/>, <RiSunFill/>)}
-            </ActionIcon>
-          </StyledTooltip>
+          <Group spacing={8}>
+            <StyledTooltip label='Void on GitHub'>
+              <ActionIcon variant='filled' radius='md' size='lg' color='dark' component='a' target='_blank' href='https://github.com/AlphaNecron/Void'>
+                <SiGithub/>
+              </ActionIcon>
+            </StyledTooltip>
+            <StyledTooltip label={`Toggle ${value('dark', 'light')} theme`}>
+              <ActionIcon variant='light' radius='md' color={value('purple', 'yellow')}
+                onClick={() => toggleColorScheme()} size='lg'>
+                {value(<RiMoonClearFill/>, <RiSunFill/>)}
+              </ActionIcon>
+            </StyledTooltip>
+          </Group>
         </Group>
       </Center>
     </Header>
@@ -195,6 +210,7 @@ function AppHeader({children}) {
 export default function Layout({children, route}) {
   const [opened, setOpened] = useState(false);
   let status: string, user: { id?: string, role: string, name?: string, email?: string, image?: string };
+  const {data} = useSWR('/api/user/quota', (url: string) => fetch(url).then(r => r.json()));
   const {breakpoints} = useMantineTheme();
   const smallWidth = useMediaQuery(`(max-width: ${breakpoints.md}px)`);
   try {
@@ -203,35 +219,30 @@ export default function Layout({children, route}) {
     return <LoadingOverlay visible={true}/>;
   }
   return status === 'authenticated' ? (
-    <AppShell styles={{
-      main: {transition: 'padding-left 400ms ease'}
-    }}
-    navbarOffsetBreakpoint='md'
-    padding='md'
-    fixed
-    navbar={
-      <Transition transition='slide-right' duration={400} mounted={opened || !smallWidth}>
-        {styles => (
-          <NavigationBar hiddenBreakpoint='md' style={styles} width={{md: 275}} hidden={!opened} p='md'
-            route={route}
-            user={user}/>
+    <AppShell
+      navbarOffsetBreakpoint='md'
+      padding='md'
+      fixed
+      navbar={
+        <NavigationBar onCollapse={() => smallWidth && setTimeout(() => setOpened(false), 150)}
+          hiddenBreakpoint='md' width={{md: 235}} hidden={!opened} p='md'
+          route={route} quota={data ? {used: data.used, total: data.total} : null}
+          user={user}/>
+      }
+      header={<AppHeader>
+        {smallWidth ? (
+          <Burger
+            opened={opened}
+            style={{height: 32, width: 32}}
+            title='Open drawer'
+            onClick={() => setOpened((o) => !o)}
+            size='sm'
+            mr='xl'
+          />
+        ) : (
+          <Image src='/logo.png' height={32} width={32} alt='Void'/>
         )}
-      </Transition>
-    }
-    header={<AppHeader>
-      {smallWidth ? (
-        <Burger
-          opened={opened}
-          style={{height: 32, width: 32}}
-          title='Open drawer'
-          onClick={() => setOpened((o) => !o)}
-          size='sm'
-          mr='xl'
-        />
-      ) : (
-        <Image src='/logo.png' height={32} alt='Void'/>
-      )}
-    </AppHeader>}
+      </AppHeader>}
     >
       <Paper>
         {children}

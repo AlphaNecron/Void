@@ -6,7 +6,7 @@ import {QRCode} from 'react-qrcode-logo';
 
 export default function HiddenQR({ value, size = 96 }: { value: string, size?: number }) {
   const [show, setShow] = useState(false);
-  const { colors, primaryColor, white } = useMantineTheme();
+  const { colors, primaryColor } = useMantineTheme();
   const { value: themeValue, colorValue } = useThemeValue();
   return (
     show ? (

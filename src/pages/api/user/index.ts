@@ -7,7 +7,8 @@ import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
-  if (req.method === 'PATCH') {
+  switch (req.method) {
+  case 'PATCH': {
     const data = {};
     if (req.body.password) {
       data['password'] = await hash(req.body.password);
@@ -64,14 +65,19 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       logger.info(`User ${user.id} was updated`, updated);
       return res.json(updated);
     }
-    return res.bad('Nothing was updated.');
+    res.bad('Nothing was updated.');
+    break;
   }
-  else if (req.method === 'GET') {
+  case 'GET': {
     delete user.email;
     delete user.privateToken;
     delete user.role;
-    return res.json(user);
-  } else return res.notAllowed();
+    res.json(user);
+    break;
+  }
+  default:
+    res.notAllowed();
+  }
 }
 
 export default withVoid(handler);

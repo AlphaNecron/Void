@@ -11,8 +11,7 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
@@ -20,6 +19,7 @@ import {Prism} from '@mantine/prism';
 import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
+import StyledTooltip from 'components/StyledTooltip';
 import VideoPlayer from 'components/VideoPlayer';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
@@ -174,8 +174,8 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
               <Image alt={name} src={src()} styles={{
                 image: {
                   objectFit: 'contain',
-                  maxWidth: '80vw',
-                  maxHeight: '80vh'
+                  maxWidth: '90vw',
+                  maxHeight: '90vh'
                 }
               }}/>
             </>
@@ -185,7 +185,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
               {actions(true, false)}
             </Stack>
           ) : isType('video', mimetype) ? (
-            <VideoPlayer style={{maxHeight: '80vh', maxWidth: '80vw'}} src={src()} onReport={dHandler.open} onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
+            <VideoPlayer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open} onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
           ) : isText(mimetype) ? (
             <Stack>
               <div style={{ display: 'flex' }}>
@@ -193,11 +193,11 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                   clearable={false} mr={4}
                   data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
                 <Group spacing={4}>
-                  <Tooltip label='Toggle word wrap'>
-                    <ActionIcon variant='filled' color={wrap ? 'void1' : 'gray'} onClick={() => setWrap(w => !w)}>
+                  <StyledTooltip label='Toggle word wrap'>
+                    <ActionIcon variant='filled' color={wrap ? 'void' : 'gray'} onClick={() => setWrap(w => !w)}>
                       <VscWordWrap/>
                     </ActionIcon>
-                  </Tooltip>
+                  </StyledTooltip>
                   {actions(false, false)}
                 </Group>
               </div>
@@ -207,8 +207,10 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     textAlign: 'left'
                   },
                   scrollArea: {
-                    height: '66vh',
-                    width: '66vw'
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '90vw',
+                    maxHeight: '90vh'
                   },
                   ...(wrap && {
                     lineContent: {

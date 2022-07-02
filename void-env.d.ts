@@ -1,3 +1,4 @@
+import type TTLCache from '@isaacs/ttlcache';
 import type {PrismaClient} from '@prisma/client';
 import type {Logger} from 'winston';
 import type {Config} from './src/lib/types';
@@ -8,6 +9,9 @@ declare global {
       prisma: PrismaClient;
       config: Config;
       logger: Logger;
+      cache: TTLCache;
     }
   }
 }
+
+

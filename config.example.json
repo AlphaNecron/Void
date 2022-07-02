@@ -1,23 +1,28 @@
 {
-    "void": {
-        "useHttps": false,
-        "host": "0.0.0.0",
-        "port": 3000,
-        "databaseUrl": "postgres://postgres:postgres@postgres/postgres",
-        "defaultDomain": "http://localhost:3000",
-        "url": {
-            "allowVanityUrl": true,
-            "length": 6
-        },
-        "authProviders": {
-          "discord": {
-            "clientId": "YOUR DISCORD CLIENT ID",
-            "clientSecret": "YOUR DISCORD CLIENT SECRET"
-          }
-        },
-        "upload": {
-            "outputDirectory": "./uploads",
-            "blacklistedExtensions": []
-        }
+  "void": {
+    "useHttps": false,
+    "host": "0.0.0.0",
+    "port": 3000,
+    "secret": "secretmin24characters",
+    "rateLimit": 1200,
+    "databaseUrl": "postgres://postgres:postgres@postgres/postgres",
+    "url": {
+      "allowVanityUrl": true,
+      "length": 6
+    },
+    "authProviders": {
+      "discord": {
+        "clientId": "YOUR DISCORD CLIENT ID",
+        "clientSecret": "YOUR DISCORD CLIENT SECRET"
+      },
+      "github": {
+        "clientId": "YOUR GITHUB CLIENT ID",
+        "clientSecret": "YOUR GITHUB CLIENT SECRET"
+      }
+    },
+    "file": {
+      "outputDirectory": "./uploads",
+      "blacklistedExtensions": [ ".zip", ".exe" ]
     }
+  }
 }

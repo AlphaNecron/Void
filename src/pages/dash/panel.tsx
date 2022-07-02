@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Autocomplete,
   Center,
   ColorSwatch,
   Group,
@@ -10,8 +9,10 @@ import {
   Stack,
   Table,
   Text,
+  TextInput,
   useMantineTheme
 } from '@mantine/core';
+import {useScrollIntoView} from '@mantine/hooks';
 import CardGrid from 'components/CardGrid';
 import Console from 'components/Console';
 import DashboardCard from 'components/DashboardCard';
@@ -32,12 +33,15 @@ import useSWR from 'swr';
 export default function Page_Panel() {
   const {query, handler} = useQuery();
   const {colors, colorScheme} = useMantineTheme();
+  const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({ offset: 60 });
+
+
   const {data} = useSWR('/api/admin/stats', (url: string) => fetch(url).then(r => r.json()), {
-    refreshInterval: 4e3,
+    refreshInterval: 5e3,
     revalidateOnReconnect: true
   });
   const {data: logs} = useSWR('/api/admin/logs', (url: string) => fetch(url).then(r => r.json()), {
-    refreshInterval: 2e3,
+    refreshInterval: 5e3,
     revalidateOnReconnect: true
   });
   const createText = (label: string, value: string) => (
@@ -169,12 +173,12 @@ export default function Page_Panel() {
       </DashboardCard>
       {logs && (
         <DashboardCard icon={<IoMdListBox/>} title='Logs' rightItem={
-          <Autocomplete type='search' rightSection={
+          <TextInput variant='unstyled' type='search' style={{ minWidth: 200 }} ml='md' rightSection={
             <ActionIcon onClick={() => handler.set('')}>
               <FiX/>
             </ActionIcon>
-          } icon={<FiSearch/>} value={query} onChange={handler.set} placeholder='Search something...'
-          data={Array.from(new Set(logs.map(x => x.message)))} size='xs'/>
+          } icon={<FiSearch/>} value={query} onChange={({ currentTarget: { value }}) => handler.set(value) } placeholder='Search something...'
+          size='xs'/>
         }>
           <Console lines={handler.filterList(logs, ['message'])}/>
         </DashboardCard>

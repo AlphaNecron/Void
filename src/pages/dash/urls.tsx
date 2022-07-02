@@ -1,13 +1,16 @@
-import {Anchor, Autocomplete, Button, Stack, Text} from '@mantine/core';
+import {Autocomplete, Button, Stack, Text} from '@mantine/core';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
+import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
 import HiddenQR from 'components/HiddenQR';
 import ItemCard from 'components/ItemCard';
+import Spoil from 'components/Spoil';
 import ShortenDialog from 'dialogs/Shorten';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
 import React from 'react';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
+import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
 import useSWR from 'swr';
 
 export default function Page_URLs() {
@@ -15,6 +18,32 @@ export default function Page_URLs() {
   const {query, handler} = useQuery();
   const [opened, dHandler] = useDisclosure(false);
   const clipboard = useClipboard();
+  const handleDelete = (id: string) => fetch('/api/user/urls', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({id})
+  }).then(r => r.json()).then(r => {
+    if (r.success)
+      return showNotification({
+        title: 'Successfully deleted the URL.',
+        icon: <RiDeleteBinFill/>,
+        message: '',
+        color: 'green'
+      });
+    showNotification({
+      title: 'Failed to delete the file',
+      message: '',
+      color: 'red',
+      icon: <RiErrorWarningFill/>
+    });
+  }).catch(e => showNotification({
+    title: 'Failed to delete the file',
+    message: e.toString(),
+    color: 'red',
+    icon: <RiErrorWarningFill/>
+  })).finally(() => mutate());
   return (
     <>
       <ShortenDialog opened={opened} onClose={dHandler.close} onShorten={() => mutate()}/>
@@ -44,7 +73,7 @@ export default function Page_URLs() {
                 label: 'Delete',
                 color: 'red',
                 icon: <FiTrash/>,
-                action: () => console.log('del')
+                action: () => handleDelete(url.id)
               }
             ]}>
               <div style={{display: 'flex', margin: 16}}>
@@ -55,9 +84,14 @@ export default function Page_URLs() {
                     <br/>
                     Created at: {new Date(url.createdAt).toLocaleString()}
                     <br/>
-                    Destination: <Anchor size='sm' href={url.destination}>
+                    Destination: <Spoil url size='sm' style={{
+                      maxWidth: 110,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
                       {url.destination}
-                    </Anchor>
+                    </Spoil>
                     <br/>
                     Views: {url.views}
                     <br/>

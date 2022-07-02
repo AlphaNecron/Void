@@ -16,11 +16,11 @@ export const queryLog = (options?: QueryOptions) => new Promise<{
     message: string
   }[]}>((resolve ,reject) => {
     global.logger.query(options || {
-      from: new Date(new Date().valueOf() - 60*60*24*1000),
+      from: new Date(new Date().valueOf() - 60*60*3*1e3),
       until: new Date(),
       limit: 100,
       start: 0,
-      order: 'desc' as 'desc' | 'asc',
+      order: 'asc',
       fields: ['level', 'timestamp', 'message']
     }, (err, results) => {
       if (err) return reject(err);

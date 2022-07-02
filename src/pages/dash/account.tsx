@@ -13,14 +13,14 @@ import {
   Popover,
   Stack,
   Table,
-  TextInput,
-  Tooltip
+  TextInput
 } from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import DashboardCard from 'components/DashboardCard';
 import PasswordBox from 'components/PasswordBox';
+import StyledTooltip from 'components/StyledTooltip';
 import UserAvatar from 'components/UserAvatar';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {useSession} from 'next-auth/react';
@@ -163,14 +163,14 @@ export default function Page_Account() {
           <DashboardCard icon={<RiKey2Fill/>} title='Private token' my='md'>
             <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'}
               description='Remember to keep it safe or people can upload on behalf of you'
-              placeholder='Click Regenerate button to generate one.' rightSectionWidth={96} rightSection={
+              placeholder='Click Regenerate to generate one.' rightSectionWidth={96} rightSection={
                 <>
-                  <Tooltip label={reveal ? 'Hide' : 'Show'}>
+                  <StyledTooltip label={reveal ? 'Hide' : 'Show'}>
                     <ActionIcon onClick={() => setReveal(!reveal)}>
                       {reveal ? <IoEyeOffOutline/> : <IoEyeOutline/>}
                     </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label='Copy'>
+                  </StyledTooltip>
+                  <StyledTooltip label='Copy'>
                     <ActionIcon onClick={() => {
                       clipboard.copy(dataToken.privateToken);
                       showNotification({
@@ -181,12 +181,12 @@ export default function Page_Account() {
                     }}>
                       <IoCopyOutline/>
                     </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label='Regenerate'>
+                  </StyledTooltip>
+                  <StyledTooltip label='Regenerate'>
                     <ActionIcon onClick={regenToken}>
                       <IoRefreshOutline/>
                     </ActionIcon>
-                  </Tooltip>
+                  </StyledTooltip>
                 </>
               } readOnly icon={<RiKeyLine/>} autoComplete='one-time-code'/>
           </DashboardCard>

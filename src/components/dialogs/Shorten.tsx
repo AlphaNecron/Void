@@ -1,5 +1,6 @@
 import {Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
+import {useClipboard} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import {hasPermission, Permission} from 'lib/permission';
 import {useSession} from 'next-auth/react';
@@ -12,7 +13,7 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
   const schema = yup.object({
     Destination: yup.string().required().url(),
     URL: yup.string().oneOf(['alphanumeric', 'emoji', 'invisible'], 'Invalid URL type.').default('alphanumeric'),
-    Vanity: yup.string().nullable().min(4),
+    Vanity: yup.string().nullable(),
     Password: yup.string().nullable()
   });
   const form = useForm({
@@ -26,6 +27,7 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
   });
   const [canUseVanity, setCanUseVanity] = useState(false);
   const { data } = useSession({ required: true });
+  const clip = useClipboard();
   useEffect(() =>
     setCanUseVanity(hasPermission(data.user.permissions, Permission.VANITY)), [data]);
   const shorten = values => {
@@ -36,8 +38,16 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
       },
       body: JSON.stringify(values)
     }).then(r => r.json()).then(u => {
-      if (u.url)
-        return showNotification({ title: 'Copied the URL to your clipboard', icon: <RiClipboardFill/>, color: 'green', message: <Anchor target='_blank' href={u.url}>{u.url}</Anchor> });
+      if (u.url) {
+        clip.copy(u.url);
+        onShorten();
+        return showNotification({
+          title: 'Copied the URL to your clipboard',
+          icon: <RiClipboardFill/>,
+          color: 'green',
+          message: <Anchor target='_blank' href={u.url}>{u.url}</Anchor>
+        });
+      }
       showNotification({ title: 'Failed to shorten the URL', icon: <RiErrorWarningFill/>, color: 'red', message: u.error });
     });
   };

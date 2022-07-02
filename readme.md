@@ -10,7 +10,7 @@
   ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
-> Void is being rewritten, it's highly unrecommended to try this branch, as well as its corresponding Docker image for the time being since this build is extremely buggy and incompleted. 
+> Void is being rewritten, it's highly unrecommended to try this branch, as well as its corresponding Docker image for the time being since this build is extremely buggy and incompleted.
 
 ### Requirements
   - `node` >= 16
@@ -74,6 +74,8 @@
         "useHttps": false, // Whether to enable HTTPS for URLs created returned by API.
         "host": "0.0.0.0", // The host Void should run on.
         "port": 3000, // The port Void should run on.
+        "secret": "secretmin24characters", // The secret key used to hash cookies. (*)
+        "rateLimit": 1200, // Rate limit for users per hour. (**)
         "databaseUrl": "postgres://postgres:postgres@postgres/postgres", // The Postgres database URL.
         "url": {
             "allowVanityUrl": true, // Whether to allow users to shorten with vanity URLs.
@@ -92,6 +94,8 @@
     }
 }
   ```
+(*): If it is empty, a random key will be generated, otherwise, it must be at least 24 characters.  
+(**) Users with `ADMINISTRATION` permission will not be affected by this.
 
 ### Features
   - Configurable

@@ -5,18 +5,18 @@ import {
   Button,
   Checkbox,
   Group,
-  Image,
   Paper,
   PasswordInput,
+  Text,
   TextInput,
   Title,
-  Tooltip,
   Transition,
   useMantineColorScheme
 } from '@mantine/core';
 import {useForm} from '@mantine/form';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
+import StyledTooltip from 'components/StyledTooltip';
 import {getProviders, signIn, useSession} from 'next-auth/react';
 import router from 'next/router';
 import React, {useEffect, useState} from 'react';
@@ -92,12 +92,12 @@ export default function LoginPage({ providers }) {
                     <div style={{ display: 'flex', marginTop: 16 }}>
                       <Group spacing={4} mr={4}>
                         {authProviders.filter((x: { type }) => x.type === 'oauth').map((x: { id, name }) => (
-                          <Tooltip key={x.id} label={`Login with ${x.name}`}>
+                          <StyledTooltip key={x.id} label={`Login with ${x.name}`}>
                             <ActionIcon size='lg' onClick={() => signIn(x.id, { callbackUrl: '/dash' })}
                               style={{ background: providersStyle[x.id] && providersStyle[x.id].color }} variant='filled'>
                               {providersStyle[x.id] ? providersStyle[x.id].icon : <FiLock />}
                             </ActionIcon>
-                          </Tooltip>
+                          </StyledTooltip>
                         ))}
                       </Group>
                       <Button style={{ flex: 1 }} leftIcon={<FiLogIn />} type='submit'>Login</Button>
@@ -109,13 +109,16 @@ export default function LoginPage({ providers }) {
         )}
       </Transition>
       <Affix position={{ bottom: '2%', right: '2% ' }}>
-        <Badge leftSection={
-          <Image width={16} height={16} mx={0} alt='Logo' src='/logo.png' />
-        } rightSection={
-          <ActionIcon variant='transparent' mx='-sm' onClick={() => toggleColorScheme()} size='lg'>
-            {colorScheme === 'dark' ? <RiSunFill /> : <RiMoonClearFill />}
-          </ActionIcon>
-        }>{process.env.voidVersion}</Badge>
+        <Badge variant='filled' radius='xs' size='md' px='xs'>
+          <Group spacing={0}>
+            <Text ml='xs' style={{ fontSize: 10 }}>
+              {process.env.voidVersion}
+            </Text>
+            <ActionIcon variant='transparent' style={{ color: 'white' }} onClick={() => toggleColorScheme()}>
+              {colorScheme === 'dark' ? <RiSunFill /> : <RiMoonClearFill />}
+            </ActionIcon>
+          </Group>
+        </Badge>
       </Affix>
     </Paper>
   );

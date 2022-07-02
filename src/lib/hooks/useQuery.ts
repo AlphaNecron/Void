@@ -10,7 +10,7 @@ export default function useQuery(delay = 300) {
     handler: {
       set: setQuery,
       filter: matcher,
-      filterList: (list, properties) => list.filter(x => properties.some(z => matcher(x[z])))
+      filterList: (list, criteria: string[]) => list.filter(x => criteria.some(z => matcher(x[z])))
     },
     debouncedQuery: debounced
   };

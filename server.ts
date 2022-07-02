@@ -37,12 +37,7 @@ const logger = createLogger({
 
 async function runPrisma(url: string, args: string[], nostdout?: boolean): Promise<string> {
   return new Promise((res, rej) => {
-    const proc = spawn(resolve('node_modules', '.bin', 'prisma'), args, {
-      env: {
-        DATABASE_URL: url,
-        ...process.env
-      },
-    });
+    const proc = spawn(resolve('node_modules', '.bin', 'prisma'), args);
     let a = '';
     proc.stdout.on('data', d => {
       if (!nostdout) console.log(d.toString());
@@ -72,10 +67,10 @@ function readConfig(): Config | void {
   }
 }
 
-async function deploy(config) {
+async function deploy(config: Config) {
   try {
-    await runPrisma(config.core.database_url, ['migrate', 'deploy']);
-    await runPrisma(config.core.database_url, ['generate'], true);
+    await runPrisma(config.void.databaseUrl, ['migrate', 'deploy']);
+    await runPrisma(config.void.databaseUrl, ['generate'], true);
   } catch (e) {
     console.log(e);
     throwAndExit('There was an error, exiting...');
@@ -84,6 +79,9 @@ async function deploy(config) {
 
 async function initServer() {
   try {
+    (BigInt.prototype as any).toJSON = function () {
+      return Number(this);
+    };
     global.logger = logger;
     const config = await validate(readConfig());
     global.config = config;
@@ -96,7 +94,7 @@ async function initServer() {
       logger.info('Finished applying migrations');
       await runPrisma(config.void.databaseUrl, ['db', 'seed']);
     }
-    process.env.NEXTAUTH_SECRET = Buffer.from(generate('alphanumeric', 32)).toString('base64');
+    process.env.NEXTAUTH_SECRET = config.void.secret.length === 0 ? Buffer.from(generate('alphanumeric', 32)).toString('base64') : config.void.secret;
     process.env.NEXTAUTH_URL = config.void.defaultDomain;
     await stat('./.next');
     await mkdir(config.void.upload.outputDirectory, {recursive: true});
@@ -117,10 +115,9 @@ async function initServer() {
             res.statusCode < 400 ? logger.debug(`${res.statusCode} ${req.url}`) : logger.debug(`${res.statusCode} ${req.url}`);
           }
         });
-      srv.on('error', (e) => throwAndExit(e.message));
-      srv.on('listening', async () => {
-        logger.info(`Listening on ${config.void.host}:${config.void.port}`);
-      });
+      srv.on('error', e => throwAndExit(e.message));
+      srv.on('listening', async () =>
+        logger.info(`Listening on ${config.void.host}:${config.void.port}`));
       srv.listen(config.void.port, config.void.host);
     });
   } catch (e) {

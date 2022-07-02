@@ -11,6 +11,6 @@ export function isAdmin(permInt: number) {
 }
 
 export function hasPermission(permInt: number, perm: Permission, withAdmin = true): boolean {
-  const has = (p) => (permInt & p) !== 0;
+  const has = p => (permInt & p) !== 0;
   return withAdmin ? [Permission.ADMINISTRATION, Permission.OWNER, perm].some(p => has(p)) : has(perm);
 }
