@@ -13,9 +13,10 @@ const uploader = multer({
 });
 
 async function handler(req: NextApiReq, res: NextApiRes) {
+  const usr = await req.user();
   if (req.method !== 'POST') return res.forbid('Invalid method');
-  if (!req.headers.authorization) return res.forbid('Unauthorized');
-  const user = await prisma.user.findFirst({
+  if (!(req.headers.authorization || usr)) return res.forbid('Unauthorized');
+  const user = usr || await prisma.user.findFirst({
     where: {
       token: req.headers.authorization
     }
