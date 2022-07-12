@@ -7,12 +7,11 @@ import {
   RingProgress,
   ScrollArea,
   Stack,
-  Table,
+  Table, Tabs,
   Text,
   TextInput,
   useMantineTheme
 } from '@mantine/core';
-import {useScrollIntoView} from '@mantine/hooks';
 import CardGrid from 'components/CardGrid';
 import Console from 'components/Console';
 import DashboardCard from 'components/DashboardCard';
@@ -21,34 +20,28 @@ import TextPair from 'components/TextPair';
 import useQuery from 'lib/hooks/useQuery';
 import {parseByte} from 'lib/utils';
 import {Duration} from 'luxon';
-import React from 'react';
+import {useState} from 'react';
 import {CgSmartphoneRam} from 'react-icons/cg';
 import {FaMemory} from 'react-icons/fa';
 import {FiSearch, FiX} from 'react-icons/fi';
 import {IoMdListBox} from 'react-icons/io';
 import {MdDesktopWindows, MdMemory, MdStorage} from 'react-icons/md';
+import {RiGlobalFill, RiGroupFill, RiTeamFill, RiTerminalBoxFill, RiTerminalWindowFill} from 'react-icons/ri';
 import {VscTerminalLinux} from 'react-icons/vsc';
 import useSWR from 'swr';
 
 export default function Page_Panel() {
   const {query, handler} = useQuery();
-  const {colors, colorScheme} = useMantineTheme();
-  const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({ offset: 60 });
-
-
+  const {colors} = useMantineTheme();
   const {data} = useSWR('/api/admin/stats', (url: string) => fetch(url).then(r => r.json()), {
-    refreshInterval: 5e3,
-    revalidateOnReconnect: true
+    refreshInterval: 10e3
   });
   const {data: logs} = useSWR('/api/admin/logs', (url: string) => fetch(url).then(r => r.json()), {
     refreshInterval: 5e3,
-    revalidateOnReconnect: true
+    fallbackData: []
   });
   const createText = (label: string, value: string) => (
-    <Text size='sm' weight={700} color='dimmed'>
-      {label}: <Text size='sm' style={{display: 'inline'}}
-        color={colorScheme === 'dark' ? 'white' : 'dark'}>{value}</Text>
-    </Text>
+    <TextPair label={label} value={value}/>
   );
   const createLegend = (color: string, description: string) => (
     <Group>
@@ -125,7 +118,7 @@ export default function Page_Panel() {
                 ['Codename', data.os.codename],
                 ['Kernel', `${data.os.kernel} - ${data.os.arch}`],
                 ['Hostname', data.os.hostname],
-                ['UEFI', data.os.uefi ? 'Yes' : 'No']
+                ['UEFI', data.os.uefi ? 'Enabled' : 'Disabled']
               ].map(([x, y]) => <TextPair label={x} value={y} key={x}/>)}
             </div>
           </Group>
@@ -173,18 +166,18 @@ export default function Page_Panel() {
       </DashboardCard>
       {logs && (
         <DashboardCard icon={<IoMdListBox/>} title='Logs' rightItem={
-          <TextInput variant='unstyled' type='search' style={{ minWidth: 200 }} ml='md' rightSection={
+          <TextInput variant='unstyled' type='search' style={{ minWidth: 250 }} ml='md' rightSection={
             <ActionIcon onClick={() => handler.set('')}>
               <FiX/>
             </ActionIcon>
           } icon={<FiSearch/>} value={query} onChange={({ currentTarget: { value }}) => handler.set(value) } placeholder='Search something...'
           size='xs'/>
         }>
-          <Console lines={handler.filterList(logs, ['message'])}/>
+          <Console mt='xs' lines={handler.filterList(logs, ['message'])}/>
         </DashboardCard>
       )}
     </Stack>
-  ) : <LoadingOverlay visible/>;
+  ) : <LoadingOverlay visible={true}/>;
 }
 
 Page_Panel.title = 'Panel';

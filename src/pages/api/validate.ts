@@ -4,8 +4,8 @@ import prisma from 'lib/prisma';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
-  if (!req.body.id) return res.forbid('No ID.');
-  if (!req.body.password) return res.forbid('No password.');
+  const { id, password } = req.body;
+  if (!(id && password)) res.error('Invalid request.');
   const url = await prisma.url.findUnique({
     where: {
       id: req.body.id

@@ -29,7 +29,7 @@ import useQuery from 'lib/hooks/useQuery';
 import {isType} from 'lib/mime';
 import {parseByte} from 'lib/utils';
 import {Duration} from 'luxon';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {FaBomb, FaLock} from 'react-icons/fa';
 import {FiClipboard, FiExternalLink, FiSearch, FiTrash, FiUpload} from 'react-icons/fi';
 import {ImQrcode} from 'react-icons/im';
@@ -57,7 +57,7 @@ function FileCardInner({handler, checked, file, ...props}) {
           </StyledTooltip>
         )}
       </Group>
-      <Badge px='xs'>
+      <Badge px='xs' variant='filled' radius='xs'>
         <Group spacing={4} align='center' position='center'>
           <RiHardDriveFill size={12}/>
           <Text size='xs' weight={700}>

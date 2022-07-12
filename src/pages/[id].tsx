@@ -21,16 +21,17 @@ import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
 import StyledTooltip from 'components/StyledTooltip';
 import VideoPlayer from 'components/VideoPlayer';
+import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
 import {parseByte} from 'lib/utils';
+import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
-import {getSession} from 'next-auth/react';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
 import {Language} from 'prism-react-renderer';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {BiNavigation} from 'react-icons/bi';
 import {FiDownload, FiFlag, FiInfo, FiSend} from 'react-icons/fi';
 import {RiErrorWarningFill, RiFlag2Fill, RiNavigationFill} from 'react-icons/ri';
@@ -275,7 +276,8 @@ export default function Handler({type, data}) {
   return type === 'url' ? <Url id={data.id}/> : <Preview data={data}/>;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
+// eslint-disable-next-line
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {
   const file = await prisma.file.findUnique({
     where: {
       slug: query.id.toString()
@@ -330,8 +332,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
       .replace(/{{size}}/ig, parseByte(Number(file.size)))
       .replace(/{{username}}/ig, file.user.username) : null;
   if (file.isPrivate) {
-    const session = await getSession({req});
-    if (!session)
+    if (!req.session.user)
       return {
         props: {
           data: {
@@ -378,4 +379,4 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
       }
     }
   };
-};
+}, ironOptions);

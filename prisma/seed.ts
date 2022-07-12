@@ -14,7 +14,8 @@ async function main() {
         create: {
           name: 'Owner',
           rolePriority: 0,
-          permissions: Permission.OWNER,
+          color: '#E96565',
+          permissions: 62,
         }
       }
     }

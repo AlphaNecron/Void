@@ -1,8 +1,6 @@
 import {Box, Center} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 
-import React from 'react';
-
 export default function Container({ height = '100vh', children, center = true, ...props }) {
   const { isDark, value } = useThemeValue();
   const box = (

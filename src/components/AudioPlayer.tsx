@@ -3,9 +3,9 @@ import {useBooleanToggle} from '@mantine/hooks';
 import StyledTooltip from 'components/StyledTooltip';
 import VolumeIndicator from 'components/VolumeIndicator';
 import {Duration} from 'luxon';
-import React, {useRef, useState} from 'react';
-import {AiFillFastBackward, AiFillFastForward} from 'react-icons/ai';
-import {RiMusicFill, RiPauseFill, RiPlayFill} from 'react-icons/ri';
+import {useRef, useState} from 'react';
+import {FiFastForward, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
+import {RiMusicFill} from 'react-icons/ri';
 
 export default function AudioPlayer({src, title, ...props}) {
   const ref = useRef<HTMLAudioElement>();
@@ -41,11 +41,11 @@ export default function AudioPlayer({src, title, ...props}) {
         whiteSpace: 'nowrap'
       }} align='center' order={6}>{ref.current?.title || title}</Title>
       <Group spacing={4} grow my='-sm'>
-        <Action icon={<AiFillFastBackward/>} label='Backward 10 seconds'
+        <Action icon={<FiRewind/>} label='Backward 10 seconds'
           onClick={() => seek(-10)}/>
-        <Action label={playing ? 'Pause' : 'Play'} icon={playing ? <RiPauseFill/> : <RiPlayFill/>} onClick={() =>
+        <Action label={playing ? 'Pause' : 'Play'} icon={playing ? <FiPause/> : <FiPlay/>} onClick={() =>
           ref.current[playing ? 'pause' : 'play']()}/>
-        <Action label='Forward 10 seconds' icon={<AiFillFastForward/>}
+        <Action label='Forward 10 seconds' icon={<FiFastForward/>}
           onClick={() => seek(10)}/>
       </Group>
       <div style={{display: 'flex', width: '100%', alignItems: 'center'}}>

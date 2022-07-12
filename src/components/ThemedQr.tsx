@@ -1,6 +1,5 @@
 import {useMantineTheme} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 import {IProps, QRCode} from 'react-qrcode-logo';
 
 export default function ThemedQr({ theme, ...props} : { theme?: { light: { bg: string, fg: string }, dark: { bg: string, fg: string }}} & IProps) {

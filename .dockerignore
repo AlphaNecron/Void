@@ -2,5 +2,6 @@ node_modules/
 .next/
 uploads/
 .git/
-.logs/
-/src/pages/dash/urls.tsx
+logs/
+.yarn/
+.swc/

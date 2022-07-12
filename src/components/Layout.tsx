@@ -9,7 +9,6 @@ import {
   Header,
   Image,
   Indicator,
-  LoadingOverlay,
   Menu,
   Navbar,
   Paper,
@@ -28,11 +27,11 @@ import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
 import StyledTooltip from 'components/StyledTooltip';
 import UserAvatar from 'components/UserAvatar';
+import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {hasPermission, isAdmin, Permission} from 'lib/permission';
-import {parseByte} from 'lib/utils';
-import {useSession} from 'next-auth/react';
-import React, {useState} from 'react';
+import {parseByte, validateColor, validateHex} from 'lib/utils';
+import {useState} from 'react';
 import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
   RiArchiveFill,
@@ -103,16 +102,16 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
   return (
     <>
       <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({sharex: false})}/>
-      <Navbar style={{transition: 'width 400ms ease, min-width 400ms ease'}} {...props}>
+      <Navbar {...props}>
         <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
           {pages.map((x, i) =>
-            (x.adminRequired && isAdmin(user.permissions) && x.items) ? (
+            (x.adminRequired && isAdmin(user.role.permissions) && x.items) ? (
               x.items.map(z =>
                 <NavigationItem onClick={onCollapse} highlight={z.route === route} key={z.route} requiresAdmin
                   component={NextLink}
                   href={z.route} color={z.color} label={z.label} icon={z.icon}/>
               )
-            ) : ((x.permission ? hasPermission(user.permissions, x.permission) : true) && !x.items) &&
+            ) : ((x.permission ? hasPermission(user.role.permissions, x.permission) : true) && !x.items) &&
               <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
                 color={x.color}
                 label={x.label} icon={x.icon} id={i} key={i}/>
@@ -148,14 +147,13 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                   <Indicator withBorder size={14} position='bottom-end' color='green' offset={5}>
                     <UserAvatar
                       user={user}
-                      radius='xl'
-                      color='void'/>
+                      radius='xl'/>
                   </Indicator>
                   <Box>
                     <Text size='md' weight={600}>
-                      {user.name}
+                      {user.name || user.username || <p style={{ color: 'green'}}>Unknown</p>}
                     </Text>
-                    <Text weight={600} color='dimmed' size='sm'>{user.role}</Text>
+                    <Text weight={600} sx={validateHex(user.role.color) && { color: user.role.color }} size='sm'>{user.role.name}</Text>
                   </Box>
                 </Group>
               </UnstyledButton>
@@ -209,16 +207,11 @@ function AppHeader({children}) {
 
 export default function Layout({children, route}) {
   const [opened, setOpened] = useState(false);
-  let status: string, user: { id?: string, role: string, name?: string, email?: string, image?: string };
   const {data} = useSWR('/api/user/quota', (url: string) => fetch(url).then(r => r.json()));
   const {breakpoints} = useMantineTheme();
   const smallWidth = useMediaQuery(`(max-width: ${breakpoints.md}px)`);
-  try {
-    ({status, data: {user}} = useSession());
-  } catch {
-    return <LoadingOverlay visible={true}/>;
-  }
-  return status === 'authenticated' ? (
+  const session = useSession();
+  return session.isLogged ? (
     <AppShell
       navbarOffsetBreakpoint='md'
       padding='md'
@@ -227,7 +220,7 @@ export default function Layout({children, route}) {
         <NavigationBar onCollapse={() => smallWidth && setTimeout(() => setOpened(false), 150)}
           hiddenBreakpoint='md' width={{md: 235}} hidden={!opened} p='md'
           route={route} quota={data ? {used: data.used, total: data.total} : null}
-          user={user}/>
+          user={session.user}/>
       }
       header={<AppHeader>
         {smallWidth ? (
@@ -242,13 +235,12 @@ export default function Layout({children, route}) {
         ) : (
           <Image src='/logo.png' height={32} width={32} alt='Void'/>
         )}
-      </AppHeader>}
+      </AppHeader>
+      }
     >
       <Paper>
         {children}
       </Paper>
     </AppShell>
-  ) : status === 'loading' ? (
-    <Skeleton/>
-  ) : null;
+  ) : <Skeleton/>;
 }

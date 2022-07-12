@@ -32,7 +32,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     else if (file.isExploding) {
       if (file.views === 0) {
         const user = await req.getUser(req.headers.authorization);
-        if (user?.id !== file.user.id) return res.forbid('Exploding image.');
+        if (user?.id !== file.user.id) return res.error('Exploding image.');
       }
     }
     res.setHeader('Content-Type', file.mimetype);

@@ -1,11 +1,15 @@
 import {hash} from 'argon2';
+import {unlinkSync} from 'fs';
+import config from 'lib/config';
 import logger from 'lib/logger';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 // import { generateToken, hashPassword } from 'lib/utils';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import {resolve} from 'path';
 
 function maskEmail(email: string): string {
+  if (!email) return null;
   const parts = email.split('@');
   const domain = parts.pop();
   const toMask = parts.shift();
@@ -35,12 +39,18 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (!target) return res.notFound('Target user not found.');
     if (user.role.permissions < target.role.permissions || user.role.rolePriority < target.role.rolePriority)
       return res.forbid('You are not allowed to delete this user.');
-    break;
+    await prisma.user.delete({
+      where: {
+        id: target.id
+      }
+    });
+    unlinkSync(resolve(config.void.upload.outputDirectory, 'avatars', target.id));
+    unlinkSync(resolve(config.void.upload.outputDirectory, target.id));
+    return res.success();
   }
   case 'POST': {
     const {username, password} = req.body;
-    if (!username) return res.bad('No username was provided');
-    if (!password) return res.bad('No password was provided');
+    if (!(username && password)) return res.error('Invalid credentials.');
     const existing = await prisma.user.findFirst({
       where: {
         username
@@ -65,21 +75,18 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         username: true,
         name: true,
         email: true,
-        image: true,
+        avatar: true,
         id: true,
         embedEnabled: true,
         embedSiteName: true,
         embedColor: true,
         embedTitle: true,
         embedAuthor: true,
-        embedAuthorUrl: true
+        embedAuthorUrl: true,
+        role: true
       }
     });
-    return res.json(all.map(user => {
-      if (user.email)
-        user.email = maskEmail(user.email);
-      return user;
-    }));
+    return res.json(all.map(usr => ({ ...usr, email: maskEmail(usr.email) })));
   }
   }
 }

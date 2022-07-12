@@ -1,7 +1,6 @@
 import {Button, Checkbox, Group, Modal, Select, Stack, TextInput} from '@mantine/core';
 import {useSetState} from '@mantine/hooks';
 import {Prism} from '@mantine/prism';
-import React from 'react';
 import {FiDownload, FiScissors} from 'react-icons/fi';
 import useSWR from 'swr';
 

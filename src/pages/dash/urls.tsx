@@ -8,7 +8,6 @@ import Spoil from 'components/Spoil';
 import ShortenDialog from 'dialogs/Shorten';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
-import React from 'react';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
 import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
 import useSWR from 'swr';

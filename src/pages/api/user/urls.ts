@@ -1,12 +1,12 @@
 import logger from 'lib/logger';
-import {isAdmin} from 'lib/permission';
+import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
-  if (!isAdmin(user.role.permissions)) return res.forbid('Admin permission is required.');
+  if (!hasPermission(user.role.permissions, Permission.SHORTEN)) return res.noPermission(Permission.SHORTEN);
   if (req.method === 'DELETE') {
     if (!req.body.id) return res.forbid('No URL ID.');
     const url = await prisma.url.findUnique({
@@ -25,7 +25,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     logger.info(`User ${user.id} deleted a url ${url.id}`, { meta: { url }});
-    return res.json({ success: true });
+    return res.success();
   } else {
     const urls = await prisma.url.findMany({
       where: {

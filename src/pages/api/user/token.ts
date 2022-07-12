@@ -16,7 +16,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     logger.info(`User ${user.username} (${user.id}) reset their token`);
-    return res.json({ success: true, newToken: updated.privateToken });
+    return res.success({ newToken: updated.privateToken });
   }
   else if (req.method === 'GET')
     return res.json({ privateToken: user.privateToken });

@@ -3,8 +3,7 @@ import CardGrid from 'components/CardGrid';
 import DashboardCard from 'components/DashboardCard';
 import StatCard from 'components/StatCard';
 import {parseByte} from 'lib/utils';
-import React from 'react';
-import {FiFile, FiHardDrive, FiLink2, FiStar, FiUser} from 'react-icons/fi';
+import {FiFile, FiGlobe, FiHardDrive, FiLink2, FiStar, FiUser, FiUsers} from 'react-icons/fi';
 import useSWR from 'swr';
 
 function Atd({ children, ...props }) {
@@ -18,12 +17,12 @@ export default function Page_Dashboard() {
     return (
       <>
         <CardGrid itemSize={180}>
-          <StatCard title='Total size' icon={<FiHardDrive size={14}/>} value={parseByte(stats.upload.totalSize)} alt={`${parseByte(stats.upload.averageSize)} on average.`}/>
-          <StatCard title='Total files' icon={<FiFile size={14}/>} value={stats.upload.totalFiles} alt={`You own ${stats.user.files} files.`}/>
-          <StatCard title='Total users' value={stats.users.count} icon={<FiUser size={14}/>}/>
-          <StatCard title='Total URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have ${stats.user.urls} URLs.`}/>
-          <StatCard title='Total URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have ${stats.user.urls} URLs.`}/>
-          <StatCard title='Total URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have ${stats.user.urls} URLs.`}/>
+          <StatCard title='Total size' icon={<FiHardDrive size={14}/>} value={parseByte(stats.upload.totalSize || 0)} alt={`${parseByte(stats.upload.averageSize || 0)} on average.`}/>
+          <StatCard title='Files' icon={<FiFile size={14}/>} value={stats.upload.totalFiles} alt={`You own ${stats.user.files} files.`}/>
+          <StatCard title='Users' value={stats.users.count} icon={<FiUser size={14}/>}/>
+          <StatCard title='URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have ${stats.user.urls} URLs.`}/>
+          <StatCard title='Domains' icon={<FiGlobe/>} value={stats.domainCount}/>
+          <StatCard title='Roles' icon={<FiUsers size={14}/>} value={stats.roleCount}/>
         </CardGrid>
         {stats.users.top && (
           <DashboardCard icon={<FiStar size={14}/>} mt='md' title='Top 10 users' size={0}>
@@ -60,4 +59,4 @@ export default function Page_Dashboard() {
 }
 
 Page_Dashboard.title = 'Dashboard';
-Page_Dashboard.authRequired = 'true';
+Page_Dashboard.authRequired = true;

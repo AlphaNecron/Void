@@ -1,7 +1,6 @@
 import {Stack, Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import ThemedQr from 'components/ThemedQr';
-import React from 'react';
 
 export default function Dialog_Qr({ innerProps }: ContextModalProps<{ value: string }>) {
   return (

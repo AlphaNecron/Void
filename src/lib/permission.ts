@@ -6,7 +6,7 @@ export enum Permission {
   OWNER = 32
 }
 
-export function isAdmin(permInt: number) {
+export function isAdmin(permInt: number): boolean {
   return [Permission.ADMINISTRATION, Permission.OWNER].some(p => hasPermission(permInt, p, false));
 }
 

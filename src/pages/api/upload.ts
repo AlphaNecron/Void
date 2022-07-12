@@ -1,18 +1,17 @@
 import {mkdirSync} from 'fs';
 import {writeFile} from 'fs/promises';
 import cfg from 'lib/config';
-import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
+import {VoidRequest, VoidResponse} from 'lib/middleware/withVoid';
 import {getMimetype} from 'lib/mime';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import generate from 'lib/urlGenerator';
-import multer from 'multer';
+import {withMulter} from 'middleware/withMulter';
 import {join, resolve} from 'path';
 
-const uploader = multer();
-
 async function handler(req: VoidRequest, res: VoidResponse) {
-  if (req.method === 'GET') {
+  switch (req.method) {
+  case 'GET': {
     const user = await req.getUser();
     if (!user || !user.role) return res.unauthorized();
     const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT);
@@ -23,10 +22,10 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       maxFileCount: user.role.maxFileCount
     });
   }
-  else if (req.method === 'POST') {
+  case 'POST': {
     const user = await req.getUser(req.headers.authorization);
     if (!user || !user.role) return res.unauthorized();
-    if (!req.files || req.files.length === 0) return res.bad('No files uploaded.');
+    if (!req.files || req.files.length === 0) return res.error('No files uploaded.');
     const quota = await req.getUserQuota(user);
     if (!hasPermission(user.role.permissions, Permission.BYPASS_LIMIT)) {
       if (req.files.some(file => file.size > user.role.maxFileSize || cfg.void.upload.blacklistedExtensions.includes(file.originalname.split('.').pop())))
@@ -57,7 +56,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         }
       });
       const path = resolve(cfg.void.upload.outputDirectory, user.id);
-      mkdirSync(path, { recursive: true });
+      mkdirSync(path, {recursive: true});
       await writeFile(join(path, file.id), f.buffer);
       const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
       responses.push({
@@ -69,22 +68,10 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     }
     return res.json(responses);
   }
-  return res.notAllowed();
-}
-
-function run(middleware) {
-  return (req, res) =>
-    new Promise((resolve, reject) => {
-      middleware(req, res, (result) => {
-        if (result instanceof Error) reject(result);
-        resolve(result);
-      });
-    });
-}
-
-export default async function handlers(req: VoidRequest, res: VoidResponse) {
-  await run(uploader.array('files'))(req, res);
-  return withVoid(handler)(req, res);
+  default: {
+    return res.notAllowed();
+  }
+  }
 }
 
 export const config = {
@@ -92,3 +79,5 @@ export const config = {
     bodyParser: false,
   }
 };
+
+export default withMulter(handler);

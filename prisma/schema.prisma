@@ -7,18 +7,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// TODO: Split embed options into a model.
+
 model User {
   id               String    @id      @default(cuid())
-  username         String?   @unique
+  username         String    @unique
   name             String?
   password         String?
+  avatar           Avatar?
+  discord          Discord?
   email            String?   @unique
   emailVerified    DateTime?
-  image            String?
-  accounts         Account[]
   privateToken     String?   @unique
   roleName         String    @default("User")
-  role             Role?     @relation(fields: [roleName], references: [name])
+  role             Role?     @relation(fields: [roleName], references: [name], onDelete: Cascade)
   embedEnabled     Boolean   @default(true)
   embedSiteName    String?   @default("Void")
   embedSiteNameUrl String?
@@ -32,23 +34,18 @@ model User {
   urls             Url[]
 }
 
-model Account {
-  id                        String  @id      @default(cuid())
-  userId                    String
-  type                      String
-  provider                  String
-  providerAccountId         String
-  refresh_token             String? @db.Text @map("refreshToken")
-  refresh_token_expires_in  Int?
-  access_token              String? @db.Text @map("accessToken")
-  expires_at                Int?             @map("expiresAt")
-  token_type                String?          @map("tokenType")
-  scope                     String?
-  idToken                   String? @db.Text @map("idToken")
-  session_state             String?          @map("sessionState")
-  user                      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Avatar {
+  mimetype        String      @default("image/png")
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String      @unique
+}
 
-  @@unique([provider, providerAccountId])
+model Discord {
+  id               String      @id
+  accessToken      String      @unique
+  refreshToken     String      @unique
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String      @unique
 }
 
 model Url {
@@ -71,6 +68,7 @@ model Domain {
 
 model Role {
   name              String  @id
+  color             String? @default("#B794F4")
   rolePriority      Int     @default(100)
   permissions       Int     @default(0)
   maxFileSize       BigInt  @default(104857600)
@@ -82,7 +80,7 @@ model Role {
 model File {
   id            String   @id @default(uuid())
   fileName      String
-  mimetype      String   @default("image/png")
+  mimetype      String   @default("application/octet-stream")
   isExploding   Boolean  @default(false)
   isPrivate     Boolean  @default(false)
   size          BigInt   @default(0)

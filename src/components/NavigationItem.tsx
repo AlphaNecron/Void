@@ -1,7 +1,6 @@
 import {Group, Text, ThemeIcon, UnstyledButton} from '@mantine/core';
 import StyledTooltip from 'components/StyledTooltip';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 import {RiShieldStarFill} from 'react-icons/ri';
 
 export default function NavigationItem({ highlight, requiresAdmin = false, width = '100%', label, color, icon, ...props }) {
@@ -28,10 +27,11 @@ export default function NavigationItem({ highlight, requiresAdmin = false, width
           </ThemeIcon>
           <Text size='md' weight={600}>{label}</Text>
         </Group>
-        {requiresAdmin &&
+        {requiresAdmin && (
           <StyledTooltip label='Administration'>
             <RiShieldStarFill/>
-          </StyledTooltip>}
+          </StyledTooltip>
+        )}
       </Group>
     </UnstyledButton>
   );

@@ -1,14 +1,10 @@
-import {useSession} from 'next-auth/react';
+import useSession from 'lib/hooks/useSession';
 import Head from 'next/head';
-import {useRouter} from 'next/router';
-import React, {useEffect} from 'react';
+import router from 'next/router';
 
 export default function Index() {
-  const router = useRouter();
-  const { data: session } = useSession();
-  useEffect(() => {
-    router.push(session ? '/dash' : '/auth/login');
-  }, []);
+  useSession(true, () =>
+    router.push('/auth/login'), () => router.push('/dash'));
   return (
     <Head>
       <title>Void</title>

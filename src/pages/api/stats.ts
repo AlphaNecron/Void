@@ -19,6 +19,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     }
   });
   const userCount = await prisma.user.count();
+  const domainCount = await prisma.domain.count();
+  const roleCount = await prisma.role.count();
   const urlAgg = await prisma.url.aggregate({
     _sum: {
       views: true
@@ -50,15 +52,17 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   });
   return res.json({
     stats: {
+      domainCount,
+      roleCount,
       urls: urlAgg._count,
       views: {
-        files: agg._sum.views,
-        urls: urlAgg._sum.views
+        files: agg._sum.views || 0,
+        urls: urlAgg._sum.views || 0
       },
       upload: {
         totalSize: Number(agg._sum.size),
         totalFiles: agg._count,
-        averageSize: agg._avg.size,
+        averageSize: Number(agg._avg.size),
       },
       users: {
         count: userCount,
@@ -69,7 +73,10 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           urls: user._count.urls
         })).sort((a,b) => (b.files + b.urls) - (a.files + a.urls))
       },
-      user: usr._count
+      user: {
+        role: user.role.name,
+        ...usr._count
+      }
     }
   });
 }

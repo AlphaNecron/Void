@@ -1,15 +1,8 @@
 import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {getSession} from 'next-auth/react';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
-  const session = await getSession({ req });
-  if (!session) return res.unauthorized();
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id
-    }
-  });
+  const user = await req.getUser();
   if (!user) return res.unauthorized();
   if (req.method === 'GET') {
     const total = await prisma.file.count({
@@ -19,7 +12,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     });
     if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filesPerPage: +req.query.chunk, files: [] });
     const chunk = Number(req.query.chunk || total);
-    if (chunk < 1) return res.forbid('Invalid chunk.');
+    if (chunk < 1) return res.error('Invalid chunk.');
     const maxPage = Math.ceil(total / chunk);
     const page = Math.min(Math.max(1, +req.query.page || 1), maxPage);
     const files = await prisma.file.findMany({

@@ -1,4 +1,4 @@
-export interface Void {
+export type Void = {
   useHttps: boolean;
   host: string;
   port: number;
@@ -9,25 +9,25 @@ export interface Void {
   url: UrlOptions;
   defaultRole: string;
   domains?: string[];
-  authProviders: Record<string, Provider>;
+  discordProvider: Provider;
   upload: UploadOptions;
 }
 
-export interface Provider {
+export type Provider = {
   clientId: string;
   clientSecret: string;
 }
 
-export interface UrlOptions {
+export type UrlOptions = {
   allowVanityUrl: boolean;
   length: number;
 }
 
-export interface UploadOptions {
+export type UploadOptions = {
   outputDirectory: string;
   blacklistedExtensions: string[];
 }
 
-export interface Config {
+export type Config = {
   void: Void;
 }

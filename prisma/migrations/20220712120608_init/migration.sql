@@ -1,19 +1,18 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "username" TEXT,
+    "username" TEXT NOT NULL,
     "name" TEXT,
     "password" TEXT,
     "email" TEXT,
     "emailVerified" TIMESTAMP(3),
-    "image" TEXT,
     "privateToken" TEXT,
-    "roleName" TEXT NOT NULL DEFAULT E'User',
+    "roleName" TEXT NOT NULL DEFAULT 'User',
     "embedEnabled" BOOLEAN NOT NULL DEFAULT true,
-    "embedSiteName" TEXT NOT NULL DEFAULT E'Void',
+    "embedSiteName" TEXT DEFAULT 'Void',
     "embedSiteNameUrl" TEXT,
     "embedTitle" TEXT,
-    "embedColor" TEXT NOT NULL DEFAULT E'#B794F4',
+    "embedColor" TEXT DEFAULT '#B794F4',
     "embedDescription" TEXT,
     "embedAuthor" TEXT,
     "embedAuthorUrl" TEXT,
@@ -22,21 +21,19 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Account" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "provider" TEXT NOT NULL,
-    "providerAccountId" TEXT NOT NULL,
-    "refreshToken" TEXT,
-    "accessToken" TEXT,
-    "expiresAt" INTEGER,
-    "tokenType" TEXT,
-    "scope" TEXT,
-    "idToken" TEXT,
-    "sessionState" TEXT,
+CREATE TABLE "Avatar" (
+    "mimetype" TEXT NOT NULL DEFAULT 'image/png',
+    "userId" TEXT NOT NULL
+);
 
-    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
+-- CreateTable
+CREATE TABLE "Discord" (
+    "id" TEXT NOT NULL,
+    "accessToken" TEXT NOT NULL,
+    "refreshToken" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Discord_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -64,6 +61,7 @@ CREATE TABLE "Domain" (
 -- CreateTable
 CREATE TABLE "Role" (
     "name" TEXT NOT NULL,
+    "color" TEXT DEFAULT '#B794F4',
     "rolePriority" INTEGER NOT NULL DEFAULT 100,
     "permissions" INTEGER NOT NULL DEFAULT 0,
     "maxFileSize" BIGINT NOT NULL DEFAULT 104857600,
@@ -77,7 +75,7 @@ CREATE TABLE "Role" (
 CREATE TABLE "File" (
     "id" TEXT NOT NULL,
     "fileName" TEXT NOT NULL,
-    "mimetype" TEXT NOT NULL DEFAULT E'image/png',
+    "mimetype" TEXT NOT NULL DEFAULT 'application/octet-stream',
     "isExploding" BOOLEAN NOT NULL DEFAULT false,
     "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     "size" BIGINT NOT NULL DEFAULT 0,
@@ -106,7 +104,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_privateToken_key" ON "User"("privateToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
+CREATE UNIQUE INDEX "Avatar_userId_key" ON "Avatar"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Discord_accessToken_key" ON "Discord"("accessToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Discord_refreshToken_key" ON "Discord"("refreshToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Discord_userId_key" ON "Discord"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Url_short_key" ON "Url"("short");
@@ -124,10 +131,13 @@ CREATE UNIQUE INDEX "_DomainToUser_AB_unique" ON "_DomainToUser"("A", "B");
 CREATE INDEX "_DomainToUser_B_index" ON "_DomainToUser"("B");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_roleName_fkey" FOREIGN KEY ("roleName") REFERENCES "Role"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_roleName_fkey" FOREIGN KEY ("roleName") REFERENCES "Role"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Avatar" ADD CONSTRAINT "Avatar_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Discord" ADD CONSTRAINT "Discord_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Url" ADD CONSTRAINT "Url_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -136,7 +146,7 @@ ALTER TABLE "Url" ADD CONSTRAINT "Url_userId_fkey" FOREIGN KEY ("userId") REFERE
 ALTER TABLE "File" ADD CONSTRAINT "File_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_DomainToUser" ADD FOREIGN KEY ("A") REFERENCES "Domain"("name") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_DomainToUser" ADD CONSTRAINT "_DomainToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Domain"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_DomainToUser" ADD FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_DomainToUser" ADD CONSTRAINT "_DomainToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

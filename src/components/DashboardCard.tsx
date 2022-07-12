@@ -1,6 +1,5 @@
 import {Card, Group, Text} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 
 export default function DashboardCard({ title, children, rightItem = null, icon = null, ...props }) {
   const { value } = useThemeValue();

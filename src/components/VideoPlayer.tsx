@@ -13,7 +13,7 @@ import {useBooleanToggle} from '@mantine/hooks';
 import StyledTooltip from 'components/StyledTooltip';
 import VolumeIndicator from 'components/VolumeIndicator';
 import {Duration} from 'luxon';
-import React, {useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {FiDownload, FiFastForward, FiFlag, FiInfo, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
 import {TbPin, TbPinnedOff} from 'react-icons/tb';
 
@@ -49,12 +49,9 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
     <div style={{ margin: -16 }}>
       <video onRateChange={({currentTarget: {playbackRate}}) => setRate(playbackRate)} onMouseMove={() => {
         setShow(true);
-        if (ticker.current) {
+        if (ticker.current)
           window.clearTimeout(ticker.current);
-        }
-        ticker.current = setTimeout(() => {
-          setShow(false);
-        }, 3e3);
+        ticker.current = setTimeout(() => setShow(false), 3e3);
       }} onLoadedData={onDurationChanged} onVolumeChange={({currentTarget: {volume}}) => setVol(volume)}
       onTimeUpdate={({currentTarget: {currentTime}}) => setTime(currentTime)} onWaiting={() => setBusy(true)}
       onPlaying={() => setBusy(false)} onDurationChange={onDurationChanged}

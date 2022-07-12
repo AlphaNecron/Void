@@ -10,9 +10,7 @@ export function handler(req: VoidRequest, res: VoidResponse) {
   }
   if (reason.length <= 3) return res.forbid('Invalid reason.');
   logger.info(`User reported file: ${id} for ${reason}`);
-  return res.json({
-    success: true
-  });
+  return res.success();
 }
 
 export default withVoid(handler);

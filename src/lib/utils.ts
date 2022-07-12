@@ -1,7 +1,8 @@
+import {MANTINE_COLORS} from '@mantine/core';
 import generate from './urlGenerator';
 
 
-export function generateToken() {
+export function generateToken(): string {
   return generate('alphanumeric', 16) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
 }
 
@@ -20,7 +21,10 @@ export function validateHex(color: string): boolean { // https://gist.github.com
   }
 }
 
-export function parseByte(bytes: number) {
+export function validateColor(color: string, extraColors: string[] = [], fallback = 'void'): string {
+  return [...MANTINE_COLORS, ...extraColors].includes(color) ? color : fallback;
+}
+export function parseByte(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
   let num = 0;
   let isNegative = false;

@@ -1,17 +1,15 @@
 import {blue} from '@colors/colors';
 import {PrismaClient} from '@prisma/client';
-import {spawn} from 'child_process';
-import {existsSync, readFileSync} from 'fs';
-import {mkdir, stat} from 'fs/promises';
+import DiscordOAuth from 'discord-oauth2';
+import {mkdirSync} from 'fs';
 import {createServer} from 'http';
 import {DateTime} from 'luxon';
 import next from 'next';
 import {resolve} from 'path';
 import {createLogger, format, transports} from 'winston';
 import {name, version} from './package.json';
-import type {Config} from './src/lib/types';
-import generate from './src/lib/urlGenerator';
-import validate from './src/lib/validateConfig';
+import {deploy, injectBigIntSerializer, readConfig, runPrisma, throwAndExit} from './src/lib/serverUtils';
+import validate from './src/lib/validate';
 
 const dev = process.env.NODE_ENV === 'development';
 
@@ -35,56 +33,20 @@ const logger = createLogger({
   ],
 });
 
-async function runPrisma(url: string, args: string[], nostdout?: boolean): Promise<string> {
-  return new Promise((res, rej) => {
-    const proc = spawn(resolve('node_modules', '.bin', 'prisma'), args);
-    let a = '';
-    proc.stdout.on('data', d => {
-      if (!nostdout) console.log(d.toString());
-      a += d.toString();
-    });
-    proc.stderr.on('data', d => {
-      if (!nostdout) console.log(d.toString());
-      rej(d.toString());
-    });
-    proc.stdout.on('end', () => res(a));
-    proc.stdout.on('close', () => res(a));
-  });
-}
-
-function throwAndExit(msg: string) {
-  logger.error(msg);
-  process.exit(1);
-}
-
-function readConfig(): Config | void {
-  if (!existsSync(resolve('config.json'))) {
-    return throwAndExit('Config file not found, please create one.');
-  } else {
-    logger.info('Reading config file');
-    const str = readFileSync(resolve('config.json'), 'utf8');
-    return JSON.parse(str);
-  }
-}
-
-async function deploy(config: Config) {
-  try {
-    await runPrisma(config.void.databaseUrl, ['migrate', 'deploy']);
-    await runPrisma(config.void.databaseUrl, ['generate'], true);
-  } catch (e) {
-    console.log(e);
-    throwAndExit('There was an error, exiting...');
-  }
-}
-
 async function initServer() {
+  global.logger = logger;
   try {
-    (BigInt.prototype as any).toJSON = function () {
-      return Number(this);
-    };
-    global.logger = logger;
+    injectBigIntSerializer();
     const config = await validate(readConfig());
     global.config = config;
+    if (config.void.discordProvider.clientSecret && config.void.discordProvider.clientId) {
+      const { defaultDomain, discordProvider: { clientSecret, clientId } } = config.void;
+      global.discordOauth = new DiscordOAuth({
+        clientSecret,
+        clientId,
+        redirectUri: `${defaultDomain}/api/discord/callback`
+      });
+    }
     process.env.DATABASE_URL = config.void.databaseUrl;
     global.prisma = new PrismaClient();
     const data = await runPrisma(config.void.databaseUrl, ['migrate', 'status'], true);
@@ -94,10 +56,7 @@ async function initServer() {
       logger.info('Finished applying migrations');
       await runPrisma(config.void.databaseUrl, ['db', 'seed']);
     }
-    process.env.NEXTAUTH_SECRET = config.void.secret.length === 0 ? Buffer.from(generate('alphanumeric', 32)).toString('base64') : config.void.secret;
-    process.env.NEXTAUTH_URL = config.void.defaultDomain;
-    await stat('./.next');
-    await mkdir(config.void.upload.outputDirectory, {recursive: true});
+    mkdirSync(resolve(config.void.upload.outputDirectory, 'avatars'), {recursive: true});
     logger.info(`Initialized ${name}@${version}`);
     const app = next({
       hostname: config.void.host,

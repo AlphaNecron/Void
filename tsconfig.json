@@ -41,7 +41,6 @@
   "include": [
     "next-env.d.ts",
     "void-env.d.ts",
-    "next-auth.d.ts",
     "**/*.ts",
     "**/*.tsx"
   ],

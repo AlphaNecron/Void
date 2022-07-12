@@ -47,9 +47,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       if (file) {
         await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
         logger.info(`Deleted ${file.fileName} (${file.id}).`);
-        return res.json({
-          success: true
-        });
+        return res.success();
       } else return res.forbid('File not found');
     } catch {
       return res.forbid('Failed to delete the file');

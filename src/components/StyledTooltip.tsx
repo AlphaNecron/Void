@@ -1,6 +1,5 @@
 import {Tooltip, TooltipProps} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 
 export default function StyledTooltip(props: TooltipProps) {
   const { colorValue, value } = useThemeValue();

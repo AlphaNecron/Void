@@ -1,6 +1,5 @@
 import {Text} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 
 export default function TextPair({ label, value, ...props}) {
   const { value: themeValue } = useThemeValue();

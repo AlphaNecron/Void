@@ -1,5 +1,4 @@
 import {isType} from 'lib/mime';
-import React from 'react';
 import {FiFile, FiFileText, FiImage, FiMusic, FiVideo} from 'react-icons/fi';
 
 export default function FileIndicator({ mimetype, ...props }) {

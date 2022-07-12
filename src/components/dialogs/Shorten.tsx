@@ -2,9 +2,9 @@ import {Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput} f
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
+import useSession from 'lib/hooks/useSession';
 import {hasPermission, Permission} from 'lib/permission';
-import {useSession} from 'next-auth/react';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {FiScissors} from 'react-icons/fi';
 import {RiClipboardFill, RiErrorWarningFill} from 'react-icons/ri';
 import * as yup from 'yup';
@@ -26,10 +26,10 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
     }
   });
   const [canUseVanity, setCanUseVanity] = useState(false);
-  const { data } = useSession({ required: true });
+  const session = useSession(true );
   const clip = useClipboard();
   useEffect(() =>
-    setCanUseVanity(hasPermission(data.user.permissions, Permission.VANITY)), [data]);
+    setCanUseVanity(hasPermission(session.user?.role.permissions, Permission.VANITY)), [session]);
   const shorten = values => {
     fetch('/api/shorten', {
       method: 'POST',

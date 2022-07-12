@@ -9,6 +9,7 @@ import {
   Group,
   Highlight,
   Image,
+  LoadingOverlay,
   MantineTheme,
   Popover,
   Stack,
@@ -19,29 +20,34 @@ import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import DashboardCard from 'components/DashboardCard';
+import UpdateAvatarDialog from 'components/dialogs/UpdateAvatar';
 import PasswordBox from 'components/PasswordBox';
 import StyledTooltip from 'components/StyledTooltip';
+import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
+import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import {useSession} from 'next-auth/react';
-import React, {useState} from 'react';
+import {useRouter} from 'next/router';
+import {useState} from 'react';
 import {FaUserCheck, FaUserCircle} from 'react-icons/fa';
 import {FiInfo, FiSave} from 'react-icons/fi';
 import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 'react-icons/io5';
 import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine} from 'react-icons/ri';
+import {SiDiscord} from 'react-icons/si';
 import useSWR from 'swr';
 import * as yup from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
+  const { isLogged, user } = useSession();
   const clipboard = useClipboard({timeout: 500});
   const [open, handler] = useDisclosure(false);
-  const {data: {user}} = useSession();
+  const { reload } = useRouter();
   const fetcher = (url: string) => fetch(url).then(r => r.json());
   const schema = yup.object({
-    name: yup.string().min(2, {message: 'Display name should be longer than 2 characters.'}),
+    name: yup.string().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
     username: yup.string().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
-    password: yup.string().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, 'Password must match shown criteria.'),
+    password: yup.string().nullable().test('password', 'Password must match shown criteria.', pwd => pwd.length <= 0 || /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g.test(pwd)),
     embedEnabled: yup.boolean().required(),
     embedColor: yup.string().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {excludeEmptyString: false}),
     embedSiteName: yup.string().nullable(),
@@ -53,30 +59,9 @@ export default function Page_Account() {
   });
   const form = useForm({
     schema: yupResolver(schema),
-    initialValues: {
-      name: '',
-      username: '',
-      password: '',
-      embedEnabled: false,
-      embedColor: '',
-      embedSiteName: '',
-      embedSiteNameUrl: '',
-      embedTitle: '',
-      embedDescription: '',
-      embedAuthor: '',
-      embedAuthorUrl: ''
-    }
+    initialValues: isLogged && { ...user, password: '' }
   });
   const {data: dataToken, mutate: mutateToken} = useSWR('/api/user/token', fetcher);
-  const {data, mutate} = useSWR('/api/user', (url: string) => fetcher(url).then(r => {
-    form.setValues(r);
-    return r;
-  }), {
-    revalidateOnMount: true,
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
   const {value} = useThemeValue();
   const regenToken = () => {
     fetch('/api/user/token', {
@@ -103,7 +88,7 @@ export default function Page_Account() {
     'date': 'The date the file is uploaded',
     'time': 'The time the file is uploaded',
     'datetime': 'The date and time the file is uploaded',
-    'username': 'Name of user uploaded the file'
+    'username': 'The name of the user uploaded the file (you)'
   };
   const hlStyle = (theme: MantineTheme): CSSObject => ({
     background: theme.colors[theme.primaryColor][7],
@@ -121,34 +106,40 @@ export default function Page_Account() {
       },
       body: JSON.stringify(values)
     }).then(r => r.json()).then(r => {
-      if (!r.error) {
-        return showNotification({
+      if (!r.error)
+        showNotification({
           title: 'Successfully updated your user.',
           icon: <FaUserCheck/>,
           message: '',
           color: 'green'
         });
-        mutate();
-      }
-      showNotification({
+      else showNotification({
         title: 'Failed to update your user.',
         message: r.error,
         color: 'red',
         icon: <RiErrorWarningFill/>
       });
+      reload();
     });
-  return (
+  const [opened, dHandler] = useDisclosure(false);
+  return isLogged ? (
     <>
+      <UpdateAvatarDialog opened={opened} onClose={dHandler.close} onDone={reload}/>
       <form id='account_form' onSubmit={form.onSubmit(updateUser)}>
-        <DashboardCard icon={<FaUserCircle/>} title='Basic information'>
+        <DashboardCard icon={<FaUserCircle/>} title='Basic information' mb='md'>
           <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
-            <UserAvatar mr='xl' ml='xs' size={160} user={user}/>
+            <Stack align='end' mr='sm'>
+              <UserAvatar size={128} mx='sm' user={user}/>
+              <Button variant='subtle' fullWidth onClick={dHandler.open}>
+                Update avatar
+              </Button>
+            </Stack>
             <Stack style={{flex: 1}}>
               <Group grow>
                 <TextInput label='Display name' description='Can be your real name or whatever you like'
                   placeholder='Display name' {...form.getInputProps('name')}/>
                 <TextInput label='Username' description='The unique username used to login to your account'
-                  placeholder='Username' {...form.getInputProps('username')}/>
+                  placeholder='Username' {...form.getInputProps('username')} required/>
               </Group>
               <PasswordBox
                 label='Password'
@@ -160,7 +151,7 @@ export default function Page_Account() {
           </div>
         </DashboardCard>
         {dataToken && (
-          <DashboardCard icon={<RiKey2Fill/>} title='Private token' my='md'>
+          <DashboardCard icon={<RiKey2Fill/>} title='Private token' mb='md'>
             <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'}
               description='Remember to keep it safe or people can upload on behalf of you'
               placeholder='Click Regenerate to generate one.' rightSectionWidth={96} rightSection={
@@ -211,8 +202,8 @@ export default function Page_Account() {
               </tbody>
             </Table>
           </Popover>
-        } title='Embed'>
-          <div style={{display: 'flex', marginTop: 8, alignItems: 'center'}}>
+        } title='Embed' mb='md'>
+          <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
             <Stack style={{flex: 1}}>
               <Checkbox label='Enable embed' {...form.getInputProps('embedEnabled', {type: 'checkbox'})}/>
               <Group grow>
@@ -238,8 +229,7 @@ export default function Page_Account() {
               borderLeft: `3px solid ${form.values.embedColor}`,
               borderRadius: 4,
               background: '#2F3136',
-              width: 480,
-              maxHeight: 360
+              width: 480
             }}>
               <Highlight target='_blank' style={{fontSize: 12}} color='dimmed'
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a'
@@ -260,12 +250,17 @@ export default function Page_Account() {
           </div>
         </DashboardCard>
       </form>
-      <Affix position={{bottom: 32, right: 32}}>
+      <DashboardCard icon={<SiDiscord/>} title='Discord account'>
+        <Stack m='xs'>
+          <TextPair label='Status' value='Linked'/>
+        </Stack>
+      </DashboardCard>
+      <Affix position={{bottom: 32, right: 32}} zIndex={0}>
         <Button size='md' type='submit' form='account_form' color='green' variant={value('outline', 'light')}
           leftIcon={<FiSave/>}>Save</Button>
       </Affix>
     </>
-  );
+  ) : <LoadingOverlay visible={true}/>;
 }
 
 Page_Account.title = 'Account';

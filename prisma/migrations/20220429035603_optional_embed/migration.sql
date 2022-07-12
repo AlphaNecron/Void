@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "User" ALTER COLUMN "embedSiteName" DROP NOT NULL,
-ALTER COLUMN "embedColor" DROP NOT NULL;

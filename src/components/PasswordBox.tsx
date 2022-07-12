@@ -1,5 +1,5 @@
 import {Box, PasswordInput, Popover, Progress, Text} from '@mantine/core';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {BiCheck, BiX} from 'react-icons/bi';
 
 function PasswordRequirement({ meets, label }: { meets: boolean; label: string }) {

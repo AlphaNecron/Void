@@ -10,7 +10,7 @@
   ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
-> Void is being rewritten, it's highly unrecommended to try this branch, as well as its corresponding Docker image for the time being since this build is extremely buggy and incompleted.
+> ⚠️ This is just a development branch, it should not be used for production.
 
 ### Requirements
   - `node` >= 16
@@ -24,8 +24,8 @@
   yarn install # or npm install
   cp config.example.json config.json
   nano config.json # edit the config file
-  yarn build # or npm run build
-  yarn start # or npm start
+  yarn prod # to build and start production server
+  yarn dev # to start development server
   ```
 
 ### Docker
@@ -74,18 +74,17 @@
         "useHttps": false, // Whether to enable HTTPS for URLs created returned by API.
         "host": "0.0.0.0", // The host Void should run on.
         "port": 3000, // The port Void should run on.
-        "secret": "secretmin24characters", // The secret key used to hash cookies. (*)
+        "secret": "secretmin32characters", // The secret key used to hash cookies. (*)
         "rateLimit": 1200, // Rate limit for users per hour. (**)
+        "defaultDomain": "http://localhost:3000", // The base domain used for multiple purposes.
         "databaseUrl": "postgres://postgres:postgres@postgres/postgres", // The Postgres database URL.
         "url": {
             "allowVanityUrl": true, // Whether to allow users to shorten with vanity URLs.
             "length": 6 // The maximum length for URLs generated with shortener and uploader.
         },
-        "authProviders": { // You can add more providers here, as long as you provide the client ID, client secret add them to [...nextauth].ts.
-          "discord": {
-            "clientId": "YOUR DISCORD CLIENT ID", // Discord client id, you can grab one in the Application dashboard.
-            "clientSecret": "YOUR DISCORD CLIENT SECRET" // Discord client sercet, you can grab one in the Application dashboard as well.
-          }
+        "discordProvider": {
+          "clientId": "YOUR DISCORD CLIENT ID", // Discord client id, you can grab one in the Application dashboard.
+          "clientSecret": "YOUR DISCORD CLIENT SECRET" // Discord client secret, you can grab one in the Application dashboard as well.
         },
         "file": {
             "outputDirectory": "./uploads", // The directory to save upload files.
@@ -94,7 +93,7 @@
     }
 }
   ```
-(*): If it is empty, a random key will be generated, otherwise, it must be at least 24 characters.  
+(*): If it is empty, a random key will be generated, otherwise, it must be at least 32 characters.  
 (**) Users with `ADMINISTRATION` permission will not be affected by this.
 
 ### Features

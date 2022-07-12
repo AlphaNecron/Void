@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Button,
   Checkbox,
   Divider,
@@ -25,14 +24,14 @@ import {showNotification} from '@mantine/notifications';
 import FileIndicator from 'components/FileIndicator';
 import StyledMenu from 'components/StyledMenu';
 import StyledTooltip from 'components/StyledTooltip';
-import {useUpload} from 'lib/hooks/useUpload';
+import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';
 import {parseByte} from 'lib/utils';
 import {DateTime, Duration} from 'luxon';
-import React, {useEffect, useState} from 'react';
-import {FiFile, FiUpload, FiX} from 'react-icons/fi';
+import {useEffect, useState} from 'react';
+import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
 import {GoSettings} from 'react-icons/go';
-import {RiErrorWarningFill, RiFileWarningFill, RiSignalWifiErrorFill, RiUploadCloud2Fill} from 'react-icons/ri';
+import {RiFileWarningFill, RiSignalWifiErrorFill, RiUploadCloud2Fill} from 'react-icons/ri';
 import {VscClearAll, VscFiles} from 'react-icons/vsc';
 
 function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
@@ -49,16 +48,16 @@ function ImageUploadIcon({status, ...props}) {
   return status.accepted ? <FiUpload {...props} /> : status.rejected ? <FiX {...props} /> : <FiFile {...props} />;
 }
 
-interface VoidFile extends File {
+type VoidFile = {
   selected: boolean;
-}
+} & File;
 
 export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const [files, fHandler] = useListState<VoidFile>([]);
   const [flOpen, handler] = useDisclosure(false);
   const selected = files.filter(f => f.selected);
   const [progress, setProgress] = useState({progress: 0, speed: 0, estimated: 0});
-  const { openContextModal } = useModals();
+  const {openContextModal} = useModals();
   const [restrictions, setRestrictions] = useState({
     bypass: false,
     blacklistedExtensions: [],
@@ -78,6 +77,53 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const theme = useMantineTheme();
   const clipboard = useClipboard();
   const [prefs, setPrefs] = useSetState({exploding: false, url: 'alphanumeric', private: false});
+  // handlers
+  const errorHandler = (message: string) => {
+    showNotification({
+      title: 'Failed to upload the file(s).',
+      message,
+      color: 'red',
+      icon: <RiSignalWifiErrorFill/>
+    });
+    setBusy(false);
+  };
+  const uploadedHandler = data => {
+    const remaining = files.filter(x => !x.selected).map((x, i) => {
+      x.selected = i <= restrictions.maxFileCount || restrictions.bypass;
+      return x;
+    });
+    fHandler.setState(remaining);
+    if (data.length > 1) {
+      onClose();
+      openContextModal('uploaded', {
+        title: 'Files uploaded',
+        innerProps: {
+          files: data,
+          onCopy: clipboard.copy
+        }
+      });
+    } else {
+      showNotification({
+        title: <Title order={6}>File uploaded!</Title>,
+        message: (
+          <div>
+            <Group grow spacing={4} my='sm'>
+              <Button component='a' href={data[0].url} target='_blank' leftIcon={<FiExternalLink/>}>View</Button>
+              <Button component='a' href={data[0].thumbUrl} target='_blank' color='blue' leftIcon={<FiFile/>}>Raw</Button>
+              <Button component='a' href={data[0].deletionUrl} target='_blank' color='red' leftIcon={<FiTrash/>}>Delete</Button>
+            </Group>
+            <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
+          </div>
+        ),
+        color: 'green',
+        icon: <RiUploadCloud2Fill/>
+      });
+      clipboard.copy(data[0].url);
+    }
+    setBusy(false);
+    onClose();
+    onUpload();
+  };
   const pasteHandler = (e: ClipboardEvent) => {
     e.preventDefault();
     const image = Array.from(e.clipboardData.items).find(x => isType('image', x.type));
@@ -95,69 +141,15 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   }, []);
   const {upload, onCancel} = useUpload('/api/upload', {
     'URL': prefs.url,
-    'Exploding': prefs.exploding ? 'true' : 'false',
-    'Private': prefs.private ? 'true' : 'false'
-  }, setProgress);
-  const uploadFiles = async () => {
-    try {
-      if (selected.length < 1) return;
-      setBusy(true);
-      const body = new FormData();
-      files.filter(f => f.selected).forEach(f => body.append('files', f));
-      const res = await upload(body);
-      const data = res.data;
-      if (res.status === 200 && !data.error) {
-        const remaining = files.filter(x => !x.selected).map((x, i) => {
-          x.selected = i <= restrictions.maxFileCount || restrictions.bypass;
-          return x;
-        });
-        fHandler.setState(remaining);
-        if (data.length > 1) {
-          onClose();
-          openContextModal('uploaded', {
-            title: 'Files uploaded',
-            innerProps: {
-              files: data,
-              onCopy: clipboard.copy
-            }
-          });
-        } else {
-          showNotification({
-            title: <Title order={6}>File uploaded!</Title>,
-            message: (
-              <div>
-                <Anchor size='sm' target='_blank' href={data[0].url}>File URL</Anchor>
-                <br/>
-                <Anchor size='sm' target='_blank' href={data[0].thumbUrl}>Raw file URL</Anchor>
-                <br/>
-                <Anchor size='sm' target='_blank' href={data[0].deletionUrl} color='red'>Delete</Anchor>
-                <br/>
-                <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
-              </div>
-            ),
-            color: 'green',
-            icon: <RiUploadCloud2Fill/>
-          });
-          clipboard.copy(data[0].url);
-        }
-        onUpload();
-      } else showNotification({
-        title: 'Failed to upload the file(s).',
-        message: data.error,
-        color: 'red',
-        icon: <RiSignalWifiErrorFill/>
-      });
-    } catch (e) {
-      showNotification({
-        title: 'Error occurred during file upload.',
-        message: e.message,
-        color: 'red',
-        autoClose: true,
-        icon: <RiErrorWarningFill/>
-      });
-    } finally {
-      setBusy(false);
-    }
+    'Exploding': prefs.exploding.toString(),
+    'Private': prefs.private.toString()
+  }, setProgress, errorHandler, uploadedHandler);
+  const uploadFiles = () => {
+    if (selected.length < 1) return;
+    setBusy(true);
+    const body = new FormData();
+    files.filter(f => f.selected).forEach(f => body.append('files', f));
+    upload(body);
   };
   return (
     <Modal size={600} opened={opened} overlayBlur={4} onClose={onClose} {...props} title='Upload files'>
@@ -166,7 +158,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
           onReject={files => showNotification({
             title: 'Following files are not accepted!',
             message: files.map((x, i) => <Text
-              style={{maxWidth: 325, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} inline
+              style={{maxWidth: 325, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+              inline
               key={i}>{x.file.name}</Text>
             ),
             color: 'red',
@@ -201,14 +194,14 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
           )}
         </Dropzone>
         <GroupedTransition transitions={{
-          text: { duration: 600, transition: 'slide-down' },
-          bar: { duration: 600, transition: 'slide-up' }
+          text: {duration: 600, transition: 'slide-down'},
+          bar: {duration: 600, transition: 'slide-up'}
         }} mounted={busy}>
           {styles => (
             <>
               <Title style={styles.text} order={5}>{progress.speed.toFixed(2)} Mbps
-              -
-              About {Duration.fromMillis(progress.estimated * 1e3).shiftTo('hours', 'minutes', 'seconds').toHuman({maximumFractionDigits: 0})} remaining.</Title>
+                -
+                About {Duration.fromMillis(progress.estimated * 1e3).shiftTo('hours', 'minutes', 'seconds').toHuman({maximumFractionDigits: 0})} remaining.</Title>
               <Progress style={styles.bar} animate striped value={progress.progress}/>
             </>
           )}
@@ -240,7 +233,11 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                         <tbody>
                           {[['Name', x.name], ['Size', parseByte(x.size)], ['Mimetype', x.type.length < 1 ? 'unknown' : x.type], ['Last modified', DateTime.fromMillis(x.lastModified || 0).toFormat('FFF')]].map(([x, y]) => (
                             <tr key={x}>
-                              <td><strong>{x}</strong></td>
+                              <td>
+                                <strong>
+                                  {x}
+                                </strong>
+                              </td>
                               <td>{y}</td>
                             </tr>
                           ))}
@@ -288,7 +285,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                 onChange={url => setPrefs({url})}/>
               <Checkbox checked={prefs.exploding} onChange={e => setPrefs({exploding: e.target.checked})}
                 label='Exploding'/>
-              <Checkbox checked={prefs.private} onChange={e => setPrefs({private: e.target.checked})} label='Private'/>
+              <Checkbox checked={prefs.private} onChange={e => setPrefs({private: e.target.checked})}
+                label='Private'/>
             </Stack>
           </StyledMenu>
           <Button color={busy ? 'red' : 'green'} onClick={busy ? () => {

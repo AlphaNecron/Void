@@ -1,14 +1,104 @@
-import {Button, LoadingOverlay} from '@mantine/core';
-import React from 'react';
+import {
+  Alert,
+  Button,
+  Chip,
+  Chips,
+  Text,
+  LoadingOverlay,
+  Stack,
+  Tabs,
+  TextInput,
+  Col,
+  ColorInput,
+  Divider, Group
+} from '@mantine/core';
+import List from 'components/List';
+import StyledTooltip from 'components/StyledTooltip';
+import useSession from 'lib/hooks/useSession';
+import {validateHex} from 'lib/utils';
+import {FiPlus} from 'react-icons/fi';
+import {RiAlertFill, RiFileWarningFill} from 'react-icons/ri';
 import useSWR from 'swr';
 
-/// TODO: MERGE ADMINISTRATIVE PAGES ALTOGETHER
+function Color({color}) {
+  return <div style={{background: validateHex(color) ? color : 'white', width: 16, height: 16, borderRadius: '100%'}}/>;
+}
+
 export default function Page_Roles() {
-  const { data, mutate } = useSWR('/api/admin/roles', (url: string) => fetch(url).then(r => r.json()));
+  const {user} = useSession();
+  const {data, mutate} = useSWR('/api/admin/roles', (url: string) => fetch(url).then(r => r.json()));
   return data ? (
-    data.map(role => (
-      <Button key={role.name}>{JSON.stringify(role)}</Button>
-    ))
+    <>
+      <Button style={{ width: 160 }} variant='outline' leftIcon={<FiPlus/>}>Create</Button>
+      <Divider my='xs' style={{ width: 120 }} mx={20}/>
+      <Tabs orientation='vertical' variant='pills' styles={({fontSizes: {md}}) => ({
+        tabInner: {
+          margin: '0 16px',
+          fontSize: md,
+          fontWeight: 600
+        },
+        tabsList: {
+          width: 160
+        },
+        body: {
+          marginTop: -56
+        }
+      })}>
+        {data.map(role => {
+          const isCurrent = user.role.name === role.name;
+          const isHigher = role.rolePriority <= user.role.rolePriority && !isCurrent;
+          console.log(role, user.role);
+          return (
+            <Tabs.Tab key={role.name} label={role.name} icon={<Color color={role.color}/>}>
+              <Stack>
+                {isCurrent && (
+                  <Alert title='Small reminder' color='yellow' icon={<RiAlertFill/>}>
+                    This is your current role, so you are not allowed to modify it.
+                  </Alert>
+                )}
+                {isHigher && (
+                  <Alert title='Note' color='red' icon={<RiAlertFill/>}>
+                    This role is higher than yours so you are not allowed to modify it.
+                  </Alert>
+                )}
+                <TextInput disabled={isCurrent || isHigher} label='Name' defaultValue={role.name}/>
+                <ColorInput disabled={isCurrent || isHigher} label='Color' defaultValue={role.color}/>
+                <div>
+                  <Text size='xs' mb={4}>Permissions</Text>
+                  <List items={role.permissions}>
+                    {perm => (
+                      <Text weight={700} style={{
+                        maxWidth: 350,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {perm}
+                      </Text>
+                    )}
+                  </List>
+                </div>
+                <div>
+                  <Text size='xs' mb={4}>Members</Text>
+                  <List items={role.users}>
+                    {user => (
+                      <Text weight={700} style={{
+                        maxWidth: 350,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {user.username}
+                      </Text>
+                    )}
+                  </List>
+                </div>
+              </Stack>
+            </Tabs.Tab>
+          );
+        })}
+      </Tabs>
+    </>
   ) : <LoadingOverlay visible/>;
 }
 

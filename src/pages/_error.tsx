@@ -3,7 +3,6 @@ import Container from 'components/Container';
 import {errors} from 'lib/constants';
 import Head from 'next/head';
 import Link from 'next/link';
-import React from 'react';
 import {IoIosArrowBack} from 'react-icons/io';
 
 export default function Error({ title }) {

@@ -1,9 +1,9 @@
 import {ActionIcon, Group, ScrollArea, Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
+import List from 'components/List';
 import StyledTooltip from 'components/StyledTooltip';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import React from 'react';
 import {FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 import {RiClipboardFill} from 'react-icons/ri';
 
@@ -15,14 +15,9 @@ export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: Cont
     </StyledTooltip>
   );
   return (
-    <ScrollArea scrollbarSize={4} style={{border: `2px solid ${colorValue('dark', 0, 6)}`, height: 200}}>
-      {files.map((f, i) => (
-        <Group position='apart' py={6} px='sm' sx={theme => ({
-          background: value('white', theme.colors.dark[7]), cursor: 'default', '&:hover': {
-            background: colorValue('dark', 0, 6)
-          }
-        })}
-        key={i}>
+    <List items={files}>
+      {f => (
+        <>
           <StyledTooltip label={f.name}>
             <Text weight={700} style={{
               maxWidth: 250,
@@ -46,8 +41,8 @@ export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: Cont
               <FiClipboard/>
             </LabelledAction>
           </Group>
-        </Group>
-      ))}
-    </ScrollArea>
+        </>
+      )}
+    </List>
   );
 }

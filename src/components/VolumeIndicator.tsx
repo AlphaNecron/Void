@@ -1,4 +1,3 @@
-import React from 'react';
 import {FiVolume, FiVolume1, FiVolume2, FiVolumeX} from 'react-icons/fi';
 
 export default function VolumeIndicator({level = 0, ...props}) {

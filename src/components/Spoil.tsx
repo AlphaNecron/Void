@@ -1,6 +1,5 @@
 import {ActionIcon, Anchor, Group, Text} from '@mantine/core';
 import {useBooleanToggle} from '@mantine/hooks';
-import React from 'react';
 import {FiEye, FiEyeOff} from 'react-icons/fi';
 
 export default function Spoil({url, children, ...props}) {

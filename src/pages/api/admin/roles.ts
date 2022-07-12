@@ -7,11 +7,27 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!(user && user.role && isAdmin(user.role.permissions))) return res.unauthorized();
   const perms = Object.values(Permission).filter(y => typeof y === 'string');
   if (req.method === 'GET') {
-    const roles = await prisma.role.findMany();
+    const roles = await prisma.role.findMany({
+      orderBy: [
+        {
+          permissions: 'desc'
+        },
+        {
+          rolePriority: 'asc'
+        }
+      ],
+      include: {
+        users: {
+          select: {
+            username: true
+          }
+        }
+      }
+    });
     return res.json(roles.map(x => ({
       ...x,
       permissionInteger: x.permissions,
-      permissions: perms.filter(y => hasPermission(x.permissions, Permission[y]))
+      permissions: perms.filter(y => hasPermission(x.permissions, Permission[y], false))
     })));
   } else return res.notAllowed();
 }

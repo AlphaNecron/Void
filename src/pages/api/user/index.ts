@@ -19,9 +19,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           username: req.body.username
         }
       });
-      if (existing && user.username !== req.body.username) {
+      if (existing && user.username !== req.body.username)
         return res.forbid('Username is already taken');
-      }
       data['username'] = req.body.username;
     }
     /// TODO: OPTIMIZE THIS SH!T
@@ -50,8 +49,11 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         },
         data,
         select: {
+          id: true,
+          avatar: true,
           username: true,
           name: true,
+          email: true,
           embedEnabled: true,
           embedSiteName: true,
           embedSiteNameUrl: true,
@@ -59,24 +61,25 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           embedColor: true,
           embedDescription: true,
           embedAuthor: true,
-          embedAuthorUrl: true
+          embedAuthorUrl: true,
+          role: true,
+          privateToken: true
         }
       });
       logger.info(`User ${user.id} was updated`, updated);
-      return res.json(updated);
+      req.session.user = updated;
+      await req.session.save();
+      return res.success();
     }
-    res.bad('Nothing was updated.');
-    break;
+    return res.error('Nothing was updated.');
   }
   case 'GET': {
     delete user.email;
     delete user.privateToken;
-    delete user.role;
-    res.json(user);
-    break;
+    return res.json(user);
   }
   default:
-    res.notAllowed();
+    return res.notAllowed();
   }
 }
 

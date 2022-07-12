@@ -1,25 +1,22 @@
 import {Button, Group, Stack, Title} from '@mantine/core';
 import Container from 'components/Container';
 import UserAvatar from 'components/UserAvatar';
-import {signOut, useSession} from 'next-auth/react';
+import useSession from 'lib/hooks/useSession';
 import router from 'next/router';
-import React, {useEffect} from 'react';
 import {FiChevronLeft, FiLogOut} from 'react-icons/fi';
 
 export default function LogoutPage() {
-  const {status, data} = useSession();
-  useEffect(() => {
-    if (!data?.user) router.push('/auth/login');
-  }, [data]);
-  return status === 'unauthenticated' ? router.push('/auth/login') : status === 'loading' ? null : (
+  const session = useSession(true, () => router.push('/auth/login'));
+  const logOut = () => fetch('/api/auth/logout').finally(() => router.push('/auth/login'));
+  return session.isLogged && (
     <Container px={64}>
       <Stack align='center'>
-        <UserAvatar size={96} user={data?.user}/>
-        <Title order={4}>Signed in as {data?.user.name}</Title>
+        <UserAvatar size={96} user={session.user}/>
+        <Title order={4}>Signed in as {session.user.name || session.user.username || session.user.id}</Title>
         <Group spacing={4}>
           <Button color='green' onClick={() => router.back()} leftIcon={<FiChevronLeft/>}>Go back</Button>
           <Button color='red'
-            onClick={() => signOut({callbackUrl: '/'})}
+            onClick={() => logOut()}
             leftIcon={<FiLogOut/>}>Logout</Button>
         </Group>
       </Stack>

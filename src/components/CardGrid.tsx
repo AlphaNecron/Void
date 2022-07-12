@@ -1,5 +1,4 @@
 import {SimpleGrid} from '@mantine/core';
-import React from 'react';
 
 export default function CardGrid({ children, itemSize }) {
   return (
