@@ -19,24 +19,20 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
   return (
     <Container p='xl'>
       <Stack align='center'>
-        <div style={{display: 'inline-flex', textAlign: 'center'}}>
-          <Text size='xl' weight={700}>
-            Successfully linked your account to
-          </Text>
-          <Text ml={4} size='xl' weight={700} color='void'>
+        <Text size='xl' weight={700}>
+          Successfully linked your account to
+          <Text ml={4} size='xl' weight={700} color='void' component='span'>
             {current}
           </Text>
-        </div>
+        </Text>
         <Avatar size={128} src={`${avatar}?size=128`} radius={100} mt='md' mx='md'/>
         <StyledTooltip label={id}>
-          <div style={{display: 'inline-flex', textAlign: 'center'}}>
-            <Text size='lg' weight={700}>
-              {username}
-            </Text>
-            <Text color='dimmed' size='lg' weight={700}>
+          <Text size='lg' weight={700}>
+            {username}
+            <Text component='span' color='dimmed' size='lg' weight={700}>
               #{tag}
             </Text>
-          </div>
+          </Text>
         </StyledTooltip>
         <Button leftIcon={<FiChevronLeft/>} onClick={() => router.push('/dash/account')}>Back to Account</Button>
       </Stack>

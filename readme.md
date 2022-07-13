@@ -10,7 +10,7 @@
   ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
-> ⚠️ This is just a development branch, it should not be used for production.
+> ⚠️ This is just a development branch, it **should not** be used for production.
 
 ### Requirements
   - `node` >= 16
@@ -88,7 +88,7 @@
         },
         "file": {
             "outputDirectory": "./uploads", // The directory to save upload files.
-            "blacklistedExtensions": [ ".zip", ".exe" ] // Prevent users from uploading files with certain extensions.
+            "blacklistedExtensions": [ ".zip", ".exe" ] // Prevent users from uploading files with certain extensions. (**)
         }
     }
 }
@@ -98,31 +98,32 @@
 
 ### Features
   - Configurable
-  - Fast and reliable
-  - Elegant Web UI
-  - Built with Next.js, React and Mantine
-  - Token-protected uploading
+  - Fast with eye-catching UI
   - Easy to setup
-  - Invisible URL
-  - Emoji URL
-  - Text previewing (with syntax highlighting)
-  - Video embed
-  - Role-based permissions
-  - URL shortener
-  - Discord bot (Rewriting)
-  - Login with social media
-  - Docker support
-  - Exploding and private images
-  - Password-protected URL
-  - Embed customization (with variables)
-
+  - Embed customization
+  - Custom file viewer
+  - Multiple URL charsets (`alphanumeric`, `emoji` and `invisible`)
+  - Comes with Docker image
+  - Dedicated Discord bot, mobile application as well as desktop application.  
   and more...
+
+### Techstack
+- [NextJS 12](https://nextjs.org) (Framework)
+- [ReactJS](https://reactjs.org) (User interface)
+- [NodeJS](https://nodejs.org) (Back-end)
+- [Mantine](https://mantine.dev) (UI library)
+- [Iron Session](https://www.npmjs.com/package/iron-session) (Authentication)
+- [TTLCache](https://www.npmjs.com/package/@isaacs/ttlcache) (Caching)
+- [Prisma](https://www.prisma.io) (ORM)
+- [PostgreSQL](https://www.postgresql.org) (Database)
+- [Yarn](https://yarnpkg.com) (Package manager)
+- [TypeScript](https://www.typescriptlang.org) (Programming language)
 
 ### Contribution
   - All pull requests must be made in `dev` branch, pull requests in other branches will be rejected.
 
 ### Credits
-  - Some code from `diced/zipline`
+  - Some ideas and initial codebase from `diced/zipline`
   - Logo and favicon from `icons8`
 
 ### Default credentials

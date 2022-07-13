@@ -1,8 +1,21 @@
-import {Alert, Button, ColorInput, Divider, LoadingOverlay, Stack, Tabs, Text, TextInput} from '@mantine/core';
+import {
+  Affix,
+  Alert, Badge,
+  Button,
+  ColorInput, Container,
+  Divider,
+  LoadingOverlay, NumberInput, ScrollArea,
+  Stack,
+  Tabs,
+  Text,
+  TextInput,
+  useMantineTheme
+} from '@mantine/core';
+import {useMediaQuery} from '@mantine/hooks';
 import List from 'components/List';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
-import {validateHex} from 'lib/utils';
+import {parseByte, validateHex} from 'lib/utils';
 import {FiPlus} from 'react-icons/fi';
 import {RiAlertFill} from 'react-icons/ri';
 
@@ -13,21 +26,17 @@ function Color({color}) {
 export default function Page_Roles() {
   const {user} = useSession();
   const {data, mutate} = useFetch('/api/admin/roles');
+  const {breakpoints} = useMantineTheme();
+  const isSmall = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
   return data ? (
     <>
-      <Button style={{ width: 160 }} variant='outline' leftIcon={<FiPlus/>}>Create</Button>
-      <Divider my='xs' style={{ width: 120 }} mx={20}/>
-      <Tabs orientation='vertical' variant='pills' styles={({fontSizes: {md}}) => ({
+      <Tabs grow orientation={isSmall ? 'horizontal' : 'vertical'} variant='pills' styles={({fontSizes: {md}}) => ({
         tabInner: {
-          margin: '0 16px',
           fontSize: md,
           fontWeight: 600
         },
-        tabsList: {
-          width: 160
-        },
-        body: {
-          marginTop: -56
+        tabsListWrapper: {
+          overflow: 'scroll'
         }
       })}>
         {data.map(role => {
@@ -35,19 +44,23 @@ export default function Page_Roles() {
           const isHigher = role.rolePriority <= user.role.rolePriority && !isCurrent;
           return (
             <Tabs.Tab key={role.name} label={role.name} icon={<Color color={role.color}/>}>
-              <Stack>
+              <Stack style={{ overflow: 'scroll' }}>
                 {isCurrent && (
                   <Alert title='Small reminder' color='yellow' icon={<RiAlertFill/>}>
-                    This is your current role, so you are not allowed to modify it.
+                      This is your current role, so you are not allowed to modify it.
                   </Alert>
                 )}
                 {isHigher && (
                   <Alert title='Note' color='red' icon={<RiAlertFill/>}>
-                    This role is higher than yours so you are not allowed to modify it.
+                      This role is higher than yours so you are not allowed to modify it.
                   </Alert>
                 )}
                 <TextInput disabled={isCurrent || isHigher} label='Name' defaultValue={role.name}/>
                 <ColorInput disabled={isCurrent || isHigher} label='Color' defaultValue={role.color}/>
+                <NumberInput disabled={isCurrent || isHigher} label='Priority' min={user.role.rolePriority + 1}
+                  defaultValue={role.rolePriority}/>
+                <NumberInput disabled={isCurrent || isHigher} label='Max file size (in bytes)'
+                  defaultValue={role.maxFileSize} min={107374182} step={1048576}/>
                 <div>
                   <Text size='xs' mb={4}>Permissions</Text>
                   <List items={role.permissions}>
@@ -83,6 +96,9 @@ export default function Page_Roles() {
           );
         })}
       </Tabs>
+      <Affix zIndex={0} position={{bottom: 32, right: 32}}>
+        <Button leftIcon={<FiPlus/>}>New role</Button>
+      </Affix>
     </>
   ) : <LoadingOverlay visible/>;
 }

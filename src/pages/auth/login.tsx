@@ -9,11 +9,12 @@ import {
   Paper,
   PasswordInput,
   Text,
-  TextInput,
+  TextInput, Title,
   Transition,
   useMantineColorScheme
 } from '@mantine/core';
 import {useForm} from '@mantine/form';
+import {useMediaQuery} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
 import useSession from 'lib/hooks/useSession';
@@ -49,6 +50,10 @@ export default function LoginPage() {
       <Transition transition='slide-right' duration={600} mounted={mount}>
         {styles => (
           <Container style={{ backgroundSize: 'cover', ...styles }}>
+            <Text size='xl' weight={700} align='center'>Enter the
+              <Text size='xl' ml={4} variant='gradient' gradient={{ from: '#D1C4E9', to: '#5E35B1', deg: 180 }} weight={700} component='span'>Void</Text>
+            </Text>
+            <Divider mx={128} my='sm'/>
             <Group align='center' spacing='lg' position='apart'>
               <form style={{ minWidth: 360 }} onSubmit={form.onSubmit(values => {
                 setBusy(true);
