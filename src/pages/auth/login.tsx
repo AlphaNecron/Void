@@ -9,12 +9,11 @@ import {
   Paper,
   PasswordInput,
   Text,
-  TextInput, Title,
+  TextInput,
   Transition,
   useMantineColorScheme
 } from '@mantine/core';
 import {useForm} from '@mantine/form';
-import {useMediaQuery} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
 import useSession from 'lib/hooks/useSession';
@@ -28,11 +27,6 @@ export default function LoginPage() {
   const [mount, setMount] = useState(false);
   const [busy, setBusy] = useState(false);
   const { mutate } = useSession();
-  const loginWithDiscord = () => {
-    fetch('/api/discord/auth').then(r => r.json()).then(r => {
-      router.push(r.url);
-    });
-  };
   useEffect(() => {
     setMount(true);
     return () => setMount(false);

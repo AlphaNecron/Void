@@ -1,7 +1,6 @@
 import {MANTINE_COLORS} from '@mantine/core';
 import generate from './urlGenerator';
 
-
 export function generateToken(): string {
   return generate('alphanumeric', 16) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
 }

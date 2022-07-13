@@ -9,9 +9,9 @@ export default function LogoutPage() {
   const session = useSession(true, () => router.push('/auth/login'));
   const logOut = () => fetch('/api/auth/logout').finally(() => router.push('/auth/login'));
   return session.isLogged && (
-    <Container style={{ padding: 64 }}>
+    <Container px={64} pt={32}>
       <Stack align='center'>
-        <UserAvatar size={180} user={session.user}/>
+        <UserAvatar size={128} user={session.user}/>
         <Title order={4}>Signed in as {session.user.name || session.user.username || session.user.id}</Title>
         <Group spacing={4}>
           <Button color='green' onClick={() => router.back()} leftIcon={<FiChevronLeft/>}>Go back</Button>

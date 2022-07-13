@@ -1,10 +1,10 @@
 import {
   Affix,
-  Alert, Badge,
+  Alert,
   Button,
-  ColorInput, Container,
-  Divider,
-  LoadingOverlay, NumberInput, ScrollArea,
+  ColorInput,
+  LoadingOverlay,
+  NumberInput,
   Stack,
   Tabs,
   Text,
@@ -15,7 +15,7 @@ import {useMediaQuery} from '@mantine/hooks';
 import List from 'components/List';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
-import {parseByte, validateHex} from 'lib/utils';
+import {validateHex} from 'lib/utils';
 import {FiPlus} from 'react-icons/fi';
 import {RiAlertFill} from 'react-icons/ri';
 
