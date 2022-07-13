@@ -44,7 +44,7 @@ async function initServer() {
       global.discordOauth = new DiscordOAuth({
         clientSecret,
         clientId,
-        redirectUri: `${defaultDomain}/api/discord/callback`
+        redirectUri: `${defaultDomain}/auth/callback`
       });
     }
     process.env.DATABASE_URL = config.void.databaseUrl;
@@ -68,7 +68,7 @@ async function initServer() {
     const handler = app.getRequestHandler();
     app.prepare().then(() => {
       const srv = createServer(handler);
-      if (dev)
+      if (process.env.VERBOSE === 'true' && dev)
         srv.on('request', (req, res) => {
           if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs'))) {
             res.statusCode < 400 ? logger.debug(`${res.statusCode} ${req.url}`) : logger.debug(`${res.statusCode} ${req.url}`);

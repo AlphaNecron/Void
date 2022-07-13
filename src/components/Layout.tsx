@@ -27,10 +27,11 @@ import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
 import StyledTooltip from 'components/StyledTooltip';
 import UserAvatar from 'components/UserAvatar';
+import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {hasPermission, isAdmin, Permission} from 'lib/permission';
-import {parseByte, validateColor, validateHex} from 'lib/utils';
+import {parseByte, validateHex} from 'lib/utils';
 import {useState} from 'react';
 import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
@@ -45,7 +46,6 @@ import {
   RiTerminalWindowFill
 } from 'react-icons/ri';
 import {SiGithub} from 'react-icons/si';
-import useSWR from 'swr';
 
 function NavigationBar({user, onCollapse, route, quota, ...props}) {
   const [dialogOpen, setDialogOpen] = useSetState({sharex: false});
@@ -207,7 +207,7 @@ function AppHeader({children}) {
 
 export default function Layout({children, route}) {
   const [opened, setOpened] = useState(false);
-  const {data} = useSWR('/api/user/quota', (url: string) => fetch(url).then(r => r.json()));
+  const {data} = useFetch('/api/user/quota');
   const {breakpoints} = useMantineTheme();
   const smallWidth = useMediaQuery(`(max-width: ${breakpoints.md}px)`);
   const session = useSession();

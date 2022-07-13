@@ -1,24 +1,10 @@
-import {
-  Alert,
-  Button,
-  Chip,
-  Chips,
-  Text,
-  LoadingOverlay,
-  Stack,
-  Tabs,
-  TextInput,
-  Col,
-  ColorInput,
-  Divider, Group
-} from '@mantine/core';
+import {Alert, Button, ColorInput, Divider, LoadingOverlay, Stack, Tabs, Text, TextInput} from '@mantine/core';
 import List from 'components/List';
-import StyledTooltip from 'components/StyledTooltip';
+import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import {validateHex} from 'lib/utils';
 import {FiPlus} from 'react-icons/fi';
-import {RiAlertFill, RiFileWarningFill} from 'react-icons/ri';
-import useSWR from 'swr';
+import {RiAlertFill} from 'react-icons/ri';
 
 function Color({color}) {
   return <div style={{background: validateHex(color) ? color : 'white', width: 16, height: 16, borderRadius: '100%'}}/>;
@@ -26,7 +12,7 @@ function Color({color}) {
 
 export default function Page_Roles() {
   const {user} = useSession();
-  const {data, mutate} = useSWR('/api/admin/roles', (url: string) => fetch(url).then(r => r.json()));
+  const {data, mutate} = useFetch('/api/admin/roles');
   return data ? (
     <>
       <Button style={{ width: 160 }} variant='outline' leftIcon={<FiPlus/>}>Create</Button>
@@ -47,7 +33,6 @@ export default function Page_Roles() {
         {data.map(role => {
           const isCurrent = user.role.name === role.name;
           const isHigher = role.rolePriority <= user.role.rolePriority && !isCurrent;
-          console.log(role, user.role);
           return (
             <Tabs.Tab key={role.name} label={role.name} icon={<Color color={role.color}/>}>
               <Stack>

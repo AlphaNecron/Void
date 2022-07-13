@@ -1,6 +1,5 @@
 import {useInterval} from '@mantine/hooks';
 import useAbort from 'lib/hooks/useAbort';
-import {useState} from 'react';
 
 export default function useUpload(endpoint: string, headers: Record<string, string>, onProgressChanged: ({
   canMeasure,
@@ -45,13 +44,12 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
       }
     };
     return {
-      register: () => {
-        Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler);
-      }
+      register: () =>
+        Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler)
     };
   };
   return {
-    upload: async (data) => {
+    async upload(data) {
       if (!ticker.active) {
         const req = new XMLHttpRequest();
         req.responseType = 'json';

@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Affix,
+  Avatar,
   Button,
   Checkbox,
   ColorInput,
@@ -19,49 +20,76 @@ import {
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
+import ConfirmButton from 'components/ConfirmButton';
 import DashboardCard from 'components/DashboardCard';
 import UpdateAvatarDialog from 'components/dialogs/UpdateAvatar';
 import PasswordBox from 'components/PasswordBox';
 import StyledTooltip from 'components/StyledTooltip';
 import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
+import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import {useRouter} from 'next/router';
+import router, {useRouter} from 'next/router';
 import {useState} from 'react';
 import {FaUserCheck, FaUserCircle} from 'react-icons/fa';
 import {FiInfo, FiSave} from 'react-icons/fi';
 import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 'react-icons/io5';
 import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine} from 'react-icons/ri';
 import {SiDiscord} from 'react-icons/si';
-import useSWR from 'swr';
+import {TbUnlink} from 'react-icons/tb';
 import * as yup from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
-  const { isLogged, user } = useSession();
+  const {isLogged, user} = useSession();
   const clipboard = useClipboard({timeout: 500});
   const [open, handler] = useDisclosure(false);
-  const { reload } = useRouter();
-  const fetcher = (url: string) => fetch(url).then(r => r.json());
+  const {reload} = useRouter();
+  const getInitialValues = () => {
+    const def = {
+      enabled: false,
+      siteName: 'Void',
+      siteNameUrl: '',
+      title: '',
+      color: '#B794F4',
+      description: '',
+      author: '',
+      authorUrl: ''
+    };
+    const values = {...user, ...(user.embed || def), password: ''};
+    delete values.embed;
+    return values;
+  };
   const schema = yup.object({
-    name: yup.string().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
+    name: yup.string().nullable().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
     username: yup.string().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
-    password: yup.string().nullable().test('password', 'Password must match shown criteria.', pwd => pwd.length <= 0 || /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g.test(pwd)),
-    embedEnabled: yup.boolean().required(),
-    embedColor: yup.string().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {excludeEmptyString: false}),
-    embedSiteName: yup.string().nullable(),
-    embedSiteNameUrl: yup.string().url().nullable(),
-    embedTitle: yup.string().nullable(),
-    embedDescription: yup.string().nullable(),
-    embedAuthor: yup.string().nullable(),
-    embedAuthorUrl: yup.string().url().nullable()
+    password: yup.string().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, {
+      excludeEmptyString: true,
+      message: 'Password must match shown criteria.'
+    }),
+    enabled: yup.boolean().required(),
+    color: yup.string().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {excludeEmptyString: false}),
+    siteName: yup.string().nullable(),
+    siteNameUrl: yup.string().url().nullable(),
+    title: yup.string().nullable(),
+    description: yup.string().nullable(),
+    author: yup.string().nullable(),
+    authorUrl: yup.string().url().nullable()
   });
   const form = useForm({
     schema: yupResolver(schema),
-    initialValues: isLogged && { ...user, password: '' }
+    initialValues: isLogged && getInitialValues()
   });
-  const {data: dataToken, mutate: mutateToken} = useSWR('/api/user/token', fetcher);
+  const {
+    data: dataToken,
+    mutate: mutateToken
+  } = useFetch('/api/user/token');
+  const {
+    data: discordInfo,
+    error,
+    mutate
+  } = useFetch('/api/discord');
   const {value} = useThemeValue();
   const regenToken = () => {
     fetch('/api/user/token', {
@@ -122,6 +150,8 @@ export default function Page_Account() {
       reload();
     });
   const [opened, dHandler] = useDisclosure(false);
+  const [busy, setBusy] = useState(false);
+  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
   return isLogged ? (
     <>
       <UpdateAvatarDialog opened={opened} onClose={dHandler.close} onDone={reload}/>
@@ -205,28 +235,28 @@ export default function Page_Account() {
         } title='Embed' mb='md'>
           <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
             <Stack style={{flex: 1}}>
-              <Checkbox label='Enable embed' {...form.getInputProps('embedEnabled', {type: 'checkbox'})}/>
+              <Checkbox label='Enable embed' {...form.getInputProps('enabled', {type: 'checkbox'})}/>
               <Group grow>
                 <TextInput maxLength={32} label='Site name'
-                  placeholder='Embed site name' {...form.getInputProps('embedSiteName')}/>
+                  placeholder='Embed site name' {...form.getInputProps('siteName')}/>
                 <TextInput maxLength={32} label='Site name URL'
-                  placeholder='Embed site name URL' {...form.getInputProps('embedSiteNameUrl')}/>
+                  placeholder='Embed site name URL' {...form.getInputProps('siteNameUrl')}/>
               </Group>
               <Group grow>
                 <TextInput maxLength={32} label='Title'
-                  placeholder='Embed title' {...form.getInputProps('embedTitle')}/>
+                  placeholder='Embed title' {...form.getInputProps('title')}/>
                 <ColorInput style={{flex: 1}} label='Color'
-                  placeholder='Embed color' {...form.getInputProps('embedColor')}/>
+                  placeholder='Embed color' {...form.getInputProps('color')}/>
               </Group>
               <TextInput label='Description' maxLength={64}
-                placeholder='Embed description' {...form.getInputProps('embedDescription')}/>
+                placeholder='Embed description' {...form.getInputProps('description')}/>
               <Group grow>
-                <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('embedAuthor')}/>
-                <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('embedAuthorUrl')}/>
+                <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('author')}/>
+                <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('authorUrl')}/>
               </Group>
             </Stack>
             <Container py={4} ml='md' px={10} style={{
-              borderLeft: `3px solid ${form.values.embedColor}`,
+              borderLeft: `3px solid ${form.values.color}`,
               borderRadius: 4,
               background: '#2F3136',
               width: 480
@@ -234,26 +264,50 @@ export default function Page_Account() {
               <Highlight target='_blank' style={{fontSize: 12}} color='dimmed'
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a'
                 variant='link'
-                href={form.values.embedSiteNameUrl}>{form.values.embedSiteName || 'Site name'}</Highlight>
+                href={form.values.siteNameUrl}>{form.values.siteName || 'Site name'}</Highlight>
               <Highlight target='_blank' highlight={Object.keys(variables).map(x => `{{${x}}}`)}
                 highlightStyles={hlStyle} component='a' variant='link'
                 style={{fontSize: 14, display: 'block', color: 'white'}}
-                href={form.values.embedAuthorUrl}>{form.values.embedAuthor || 'Author'}</Highlight>
+                href={form.values.authorUrl}>{form.values.author || 'Author'}</Highlight>
               <Highlight target='_blank' component='a' href='/random' variant='link'
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} weight={600}
-                color='blue' style={{fontSize: 16}}>{form.values.embedTitle || 'Title'}</Highlight>
+                color='blue' style={{fontSize: 16}}>{form.values.title || 'Title'}</Highlight>
               <Highlight style={{wordWrap: 'break-word', color: '#bbb'}}
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} size='sm'
-                color='white'>{form.values.embedDescription || 'Description'}</Highlight>
+                color='white'>{form.values.description || 'Description'}</Highlight>
               <Image fit='contain' height={225} src='/banner.png' alt='Preview image'/>
             </Container>
           </div>
         </DashboardCard>
       </form>
       <DashboardCard icon={<SiDiscord/>} title='Discord account'>
-        <Stack m='xs'>
-          <TextPair label='Status' value='Linked'/>
-        </Stack>
+        {discordInfo && !error ? (
+          <div style={{ margin: 16, display: 'flex' }}>
+            <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
+            <div style={{ flex: 1 }}>
+              {render(
+                ['Status', discordInfo ? 'Linked' : 'Unlinked'],
+                ['ID', discordInfo.id],
+                ['Username', `${discordInfo.username}#${discordInfo.tag}`]
+              )}
+              <ConfirmButton loading={busy} onClick={() => {
+                setBusy(true);
+                fetch('/api/discord', {
+                  method: 'DELETE'
+                }).then(() => mutate()).finally(() => setBusy(false));
+              }} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
+                Unlink this Discord account
+              </ConfirmButton>
+            </div>
+          </div>
+        ) : (
+          <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() => {
+            setBusy(true);
+            fetch('/api/discord/auth').then(r => r.json()).then(r => {
+              router.push(r.url);
+            }).finally(() => setBusy(false));
+          }} leftIcon={<SiDiscord/>}>Link</Button>
+        )}
       </DashboardCard>
       <Affix position={{bottom: 32, right: 32}} zIndex={0}>
         <Button size='md' type='submit' form='account_form' color='green' variant={value('outline', 'light')}

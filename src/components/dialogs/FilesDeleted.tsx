@@ -1,8 +1,7 @@
-import {Container, ScrollArea, Text} from '@mantine/core';
+import {Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import List from 'components/List';
 import StyledTooltip from 'components/StyledTooltip';
-import useThemeValue from 'lib/hooks/useThemeValue';
 
 export default function Dialog_FilesDeleted({innerProps: { files }}: ContextModalProps<{ files: { fileName: string }[] }>) {
   return (

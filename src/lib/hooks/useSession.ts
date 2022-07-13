@@ -1,7 +1,7 @@
 import type {IronSessionData} from 'iron-session';
+import useFetch from 'lib/hooks/useFetch';
 import type {VoidUser} from 'middleware/withVoid';
 import {useEffect} from 'react';
-import useSWR from 'swr';
 
 type Session = {
   isReady: boolean;
@@ -18,10 +18,7 @@ export default function useSession(required = false, onUnauthenticated?: () => v
     data,
     error,
     mutate
-  } = useSWR<VoidUser>('/api/user', (url: string) => fetch(url).then(r => r.json()).then(r => {
-    if (r.error) throw new Error(r.error);
-    return r;
-  }), {
+  } = useFetch('/api/user', {
     refreshInterval: 6e4
   });
   useEffect(() => {

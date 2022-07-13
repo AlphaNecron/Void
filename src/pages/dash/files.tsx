@@ -25,17 +25,17 @@ import FileIndicator from 'components/FileIndicator';
 import ItemCard from 'components/ItemCard';
 import StyledTooltip from 'components/StyledTooltip';
 import Upload from 'dialogs/Upload';
+import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {isType} from 'lib/mime';
 import {parseByte} from 'lib/utils';
 import {Duration} from 'luxon';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {FaBomb, FaLock} from 'react-icons/fa';
 import {FiClipboard, FiExternalLink, FiSearch, FiTrash, FiUpload} from 'react-icons/fi';
 import {ImQrcode} from 'react-icons/im';
 import {MdArrowUpward, MdChecklist, MdClearAll, MdDelete} from 'react-icons/md';
 import {RiDeleteBinFill, RiErrorWarningFill, RiHardDriveFill} from 'react-icons/ri';
-import useSWR from 'swr';
 
 function FileCardInner({handler, checked, file, ...props}) {
   return (
@@ -81,10 +81,11 @@ export default function Page_Files() {
   const {
     data,
     mutate
-  } = useSWR(`/api/user/files?page=${page}&chunk=${chunk}`, (url: string) => fetch(url).then(res => res.json()).then(dat => {
-    handler.setState(dat?.files.map(f => ({ id: f.id, checked: false })));
-    return dat;
-  }));
+  } = useFetch(`/api/user/files?page=${page}&chunk=${chunk}`);
+  useEffect(() => {
+    if (data)
+      handler.setState(data.files.map(f => ({id: f.id, checked: false})));
+  }, [data]);
   const del = (tokens: string[]) => {
     setBusy(true);
     fetch('/api/delete', {
@@ -110,7 +111,12 @@ export default function Page_Files() {
             files: j.deleted
           }
         });
-      } else showNotification({ title: 'Successfully deleted the file!', message: j.deleted[0].fileName, color: 'green', icon: <RiDeleteBinFill/> });
+      } else showNotification({
+        title: 'Successfully deleted the file!',
+        message: j.deleted[0].fileName,
+        color: 'green',
+        icon: <RiDeleteBinFill/>
+      });
     }).catch(e => {
       showNotification({
         title: 'Failed to delete the file',
@@ -132,13 +138,14 @@ export default function Page_Files() {
   const [opened, dHandler] = useDisclosure(false);
   const [scroll, scrollTo] = useWindowScroll();
   return data ? (data.error ? (
-    <Center style={{ height: '90vh' }}>
+    <Center style={{height: '90vh'}}>
       <Stack align='center'>
         <Title order={2}>
           {data.error}
         </Title>
         <Title order={3}>
-          Rate limit resets in {Duration.fromMillis(data.nextReset).shiftTo('minutes', 'seconds').toHuman({ maximumFractionDigits: 0})}
+          Rate limit resets
+          in {Duration.fromMillis(data.nextReset).shiftTo('minutes', 'seconds').toHuman({maximumFractionDigits: 0})}
         </Title>
       </Stack>
     </Center>
@@ -149,7 +156,7 @@ export default function Page_Files() {
         <Group spacing={4}>
           <Transition transition='slide-up' duration={200} mounted={selected.length < data.files.length}>
             {styles => (
-              <ActionIcon style={styles} onClick={() => handler.apply(i => ({ checked: true, id: i.id }))} color='green'
+              <ActionIcon style={styles} onClick={() => handler.apply(i => ({checked: true, id: i.id}))} color='green'
                 variant='light'
                 size='lg'>
                 <MdChecklist/>
@@ -159,10 +166,12 @@ export default function Page_Files() {
           <Transition transition='slide-left' duration={200} mounted={selected.length > 0}>
             {styles => (
               <Group spacing={4} style={styles}>
-                <ActionIcon onClick={() => handler.apply(i => ({ checked: false, id: i.id }))} color='yellow' variant='light' size='lg'>
+                <ActionIcon onClick={() => handler.apply(i => ({checked: false, id: i.id}))} color='yellow'
+                  variant='light' size='lg'>
                   <MdClearAll/>
                 </ActionIcon>
-                <ActionIcon onClick={() => deleteFiles(selected.map(s => s.id))} loading={busy} variant='light' size='lg' color='red'>
+                <ActionIcon onClick={() => deleteFiles(selected.map(s => s.id))} loading={busy} variant='light'
+                  size='lg' color='red'>
                   <MdDelete/>
                 </ActionIcon>
               </Group>
@@ -219,14 +228,16 @@ export default function Page_Files() {
               {isType('image', file.mimetype) ? (
                 <BackgroundImage src={`/api/file/${file.id}`}>
                   <div style={{height: 125, padding: 8}}>
-                    <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)} checked={items[i]?.checked} file={file}/>
+                    <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
+                      checked={items[i]?.checked} file={file}/>
                   </div>
                 </BackgroundImage>
               ) : (
                 <Center
                   sx={theme => ({height: 125, background: theme.colors.dark[theme.colorScheme === 'dark' ? 8 : 0]})}>
-                  <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)} checked={items[i]?.checked} file={file}
-                    style={{position: 'absolute', top: 8, left: 8, right: 8 }}/>
+                  <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
+                    checked={items[i]?.checked} file={file}
+                    style={{position: 'absolute', top: 8, left: 8, right: 8}}/>
                   <FileIndicator size={64} mimetype={file.mimetype}/>
                 </Center>
               )}

@@ -1,4 +1,4 @@
-import {Avatar, Role} from '@prisma/client';
+import {Avatar, EmbedOptions, Role} from '@prisma/client';
 import {IronSessionOptions} from 'iron-session';
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {check} from 'lib/cache';
@@ -12,8 +12,8 @@ export const ironOptions: IronSessionOptions = {
   cookieName: 'void_auth',
   password: (!config || config.void.secret.length === 0) ? generate('alphanumeric', 32) : config.void.secret,
   cookieOptions: {
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production'
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production' && config?.void?.useHttps || false
   }
 };
 
@@ -33,14 +33,7 @@ export type VoidUser = {
   name?: string;
   email?: string;
   role: Role;
-  embedEnabled: boolean;
-  embedSiteName: string;
-  embedSiteNameUrl?: string;
-  embedTitle?: string;
-  embedColor: string;
-  embedDescription?: string;
-  embedAuthor?: string;
-  embedAuthorUrl?: string;
+  embed?: EmbedOptions
   privateToken?: string;
 }
 
@@ -112,14 +105,7 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
           username: true,
           name: true,
           email: true,
-          embedEnabled: true,
-          embedSiteName: true,
-          embedSiteNameUrl: true,
-          embedTitle: true,
-          embedColor: true,
-          embedDescription: true,
-          embedAuthor: true,
-          embedAuthorUrl: true,
+          embed: true,
           role: true,
           privateToken: true
         }

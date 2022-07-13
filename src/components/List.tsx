@@ -1,4 +1,4 @@
-import {Container, Group, ScrollArea, Text} from '@mantine/core';
+import {Group, ScrollArea} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {ReactNode} from 'react';
 
@@ -6,7 +6,7 @@ export default function List({
   items,
   children,
   height = 200
-}: { items: any[], children: (item) => ReactNode, height?: number }) {
+}: { items: any[], children(item): ReactNode, height?: number }) {
   const {value, colorValue} = useThemeValue();
   return (
     <ScrollArea scrollbarSize={4} style={{

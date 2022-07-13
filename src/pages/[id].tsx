@@ -211,7 +211,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     display: 'flex',
                     flexDirection: 'column',
                     maxWidth: '90vw',
-                    maxHeight: '90vh'
+                    maxHeight: '80vh'
                   },
                   ...(wrap && {
                     lineContent: {
@@ -258,7 +258,7 @@ export function Url({id}) {
       <Head>
         <title>Protected URL</title>
       </Head>
-      <Container p={64}>
+      <Container style={{ padding: 64 }}>
         <Title mb='xl' order={4}>This URL is password-protected, please enter a password to continue.</Title>
         <div style={{display: 'flex'}}>
           <PasswordInput onKeyDown={e => e.key === 'Enter' && validate()} value={password}
@@ -283,7 +283,11 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       slug: query.id.toString()
     },
     include: {
-      user: true
+      user: {
+        include: {
+          embed: true
+        }
+      }
     }
   });
   if (!file) {
@@ -321,7 +325,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       }
     };
   }
-  const { embedEnabled, embedTitle, embedSiteName, embedSiteNameUrl, embedColor, embedDescription, embedAuthor, embedAuthorUrl } = file.user;
+  const { enabled, title, siteName, siteNameUrl, color, description, author, authorUrl } = file.user.embed;
   const replace = (text: string) =>
     text ? text.replace(/{{filename}}/ig, file.fileName)
       .replace(/{{id}}/ig, file.id)
@@ -366,14 +370,14 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
           'Uploaded by': file.user.name || 'Unknown'
         },
         embed: {
-          enabled: embedEnabled,
-          siteName: replace(embedSiteName),
-          siteNameUrl: embedSiteNameUrl,
-          title: replace(embedTitle),
-          color: embedColor,
-          description: replace(embedDescription),
-          author: replace(embedAuthor),
-          authorUrl: embedAuthorUrl,
+          enabled: enabled,
+          siteName: replace(siteName),
+          siteNameUrl: siteNameUrl,
+          title: replace(title),
+          color: color,
+          description: replace(description),
+          author: replace(author),
+          authorUrl: authorUrl,
           slug: query.id.toString()
         }
       }

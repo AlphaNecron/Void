@@ -1,11 +1,11 @@
 import {Button, Checkbox, Group, Modal, Select, Stack, TextInput} from '@mantine/core';
 import {useSetState} from '@mantine/hooks';
 import {Prism} from '@mantine/prism';
+import useFetch from 'lib/hooks/useFetch';
 import {FiDownload, FiScissors} from 'react-icons/fi';
-import useSWR from 'swr';
 
 export default function Dialog_ShareX({open, onClose, ...props}) {
-  const { data: token } = useSWR('/api/user/token', (url: string) => fetch(url).then(r => r.json()));
+  const { data: token } = useFetch('/api/user/token');
   const [ shareXOptions, setShareXOptions ] = useSetState({ name: 'Void', url: 'alphanumeric', askPassword: false });
   const uploaderConfig = {
     Version: '13.2.1',

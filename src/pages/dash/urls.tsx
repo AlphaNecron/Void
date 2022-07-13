@@ -6,14 +6,14 @@ import HiddenQR from 'components/HiddenQR';
 import ItemCard from 'components/ItemCard';
 import Spoil from 'components/Spoil';
 import ShortenDialog from 'dialogs/Shorten';
+import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
 import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
-import useSWR from 'swr';
 
 export default function Page_URLs() {
-  const {data, mutate} = useSWR('/api/user/urls', (url: string) => fetch(url).then(r => r.json()));
+  const {data, mutate} = useFetch('/api/user/urls');
   const {query, handler} = useQuery();
   const [opened, dHandler] = useDisclosure(false);
   const clipboard = useClipboard();

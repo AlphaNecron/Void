@@ -2,16 +2,16 @@ import {LoadingOverlay, ScrollArea, Table, Text} from '@mantine/core';
 import CardGrid from 'components/CardGrid';
 import DashboardCard from 'components/DashboardCard';
 import StatCard from 'components/StatCard';
+import useFetch from 'lib/hooks/useFetch';
 import {parseByte} from 'lib/utils';
 import {FiFile, FiGlobe, FiHardDrive, FiLink2, FiStar, FiUser, FiUsers} from 'react-icons/fi';
-import useSWR from 'swr';
 
 function Atd({ children, ...props }) {
   return <td {...props}>{children || <Text weight={700} color='dimmed' size='xs'>Unset</Text>}</td>;
 }
 
 export default function Page_Dashboard() {
-  const { data } = useSWR('/api/stats', (url: string) => fetch(url).then(r => r.json()));
+  const { data } = useFetch('/api/stats');
   if (data) {
     const { stats } = data;
     return (

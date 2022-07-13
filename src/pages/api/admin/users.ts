@@ -4,7 +4,6 @@ import config from 'lib/config';
 import logger from 'lib/logger';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
-// import { generateToken, hashPassword } from 'lib/utils';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 import {resolve} from 'path';
 
@@ -69,25 +68,34 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     logger.info('Created a new user.', newUser);
     return res.json(newUser);
   }
-  default: {
+  case 'GET': {
     const all = await prisma.user.findMany({
+      orderBy: [
+        {
+          role: {
+            permissions: 'desc'
+          }
+        },
+        {
+          role: {
+            rolePriority: 'asc'
+          }
+        }
+      ],
       select: {
         username: true,
         name: true,
         email: true,
         avatar: true,
         id: true,
-        embedEnabled: true,
-        embedSiteName: true,
-        embedColor: true,
-        embedTitle: true,
-        embedAuthor: true,
-        embedAuthorUrl: true,
+        embed: true,
         role: true
       }
     });
     return res.json(all.map(usr => ({ ...usr, email: maskEmail(usr.email) })));
   }
+  default:
+    return res.notAllowed();
   }
 }
 

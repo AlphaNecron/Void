@@ -84,7 +84,10 @@ export default function LoginPage() {
                 {/*<Button leftIcon={<FiEdit />} variant='subtle'>Register</Button>*/}
                 <Button loading={busy} fullWidth leftIcon={<FiLogIn />} mt='xs' type='submit'>Login</Button>
                 <Divider my='xs' mx={128}/>
-                <Button loading={busy} fullWidth style={{ backgroundColor: '#7289DA' }} onClick={loginWithDiscord} leftIcon={<SiDiscord/>}>Login with Discord</Button>
+                <Button loading={busy} fullWidth style={{ backgroundColor: '#7289DA' }} onClick={() =>
+                  fetch('/api/discord/auth').then(r => r.json()).then(r => {
+                    router.push(r.url);
+                  })} leftIcon={<SiDiscord/>}>Login with Discord</Button>
               </form>
             </Group>
           </Container>

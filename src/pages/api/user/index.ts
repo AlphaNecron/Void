@@ -10,6 +10,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   switch (req.method) {
   case 'PATCH': {
     const data = {};
+    const embedData = {};
     if (req.body.password) {
       data['password'] = await hash(req.body.password);
     }
@@ -26,42 +27,68 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     /// TODO: OPTIMIZE THIS SH!T
     if (req.body.name)
       data['name'] = req.body.name;
-    if ('embedEnabled' in req.body)
-      data['embedEnabled'] = req.body.embedEnabled === true;
-    if (req.body.embedSiteName)
-      data['embedSiteName'] = req.body.embedSiteName;
-    if (req.body.embedSiteNameUrl)
-      data['embedSiteNameUrl'] = req.body.embedSiteNameUrl;
-    if (req.body.embedTitle)
-      data['embedTitle'] = req.body.embedTitle;
-    if (req.body.embedColor && validateHex(req.body.embedColor))
-      data['embedColor'] = req.body.embedColor;
-    if (req.body.embedDescription)
-      data['embedDescription'] = req.body.embedDescription;
-    if (req.body.embedAuthor)
-      data['embedAuthor'] = req.body.embedAuthor;
-    if (req.body.embedAuthorUrl)
-      data['embedAuthorUrl'] = req.body.embedAuthorUrl;
+    if (req.body.enabled !== undefined)
+      embedData['enabled'] = req.body.enabled === true;
+    if (req.body.siteName)
+      embedData['siteName'] = req.body.siteName;
+    if (req.body.siteNameUrl)
+      embedData['siteNameUrl'] = req.body.siteNameUrl;
+    if (req.body.title)
+      embedData['title'] = req.body.title;
+    if (req.body.color && validateHex(req.body.color))
+      embedData['color'] = req.body.color;
+    if (req.body.description)
+      embedData['description'] = req.body.description;
+    if (req.body.author)
+      embedData['author'] = req.body.author;
+    if (req.body.authorUrl)
+      embedData['authorUrl'] = req.body.authorUrl;
+    console.log({
+      where: {
+        id: user.id
+      },
+      data: {
+        ...data,
+        ...(embedData !== {} && {
+          embed: {
+            update: embedData
+          }
+        })
+      },
+      select: {
+        id: true,
+        avatar: true,
+        username: true,
+        name: true,
+        email: true,
+        embed: true,
+        role: true,
+        privateToken: true
+      }
+    });
     if (data !== {}) {
       const updated = await prisma.user.update({
         where: {
           id: user.id
         },
-        data,
+        data: {
+          ...data,
+          ...(embedData !== {} && {
+            embed: {
+              upsert: {
+                update: embedData,
+                create: embedData
+              }
+            }
+          })
+        },
         select: {
           id: true,
           avatar: true,
           username: true,
           name: true,
           email: true,
-          embedEnabled: true,
-          embedSiteName: true,
-          embedSiteNameUrl: true,
-          embedTitle: true,
-          embedColor: true,
-          embedDescription: true,
-          embedAuthor: true,
-          embedAuthorUrl: true,
+          embed: true,
           role: true,
           privateToken: true
         }

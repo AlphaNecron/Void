@@ -7,7 +7,7 @@ import {
   RingProgress,
   ScrollArea,
   Stack,
-  Table, Tabs,
+  Table,
   Text,
   TextInput,
   useMantineTheme
@@ -17,34 +17,30 @@ import Console from 'components/Console';
 import DashboardCard from 'components/DashboardCard';
 import StyledTooltip from 'components/StyledTooltip';
 import TextPair from 'components/TextPair';
+import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {parseByte} from 'lib/utils';
 import {Duration} from 'luxon';
-import {useState} from 'react';
 import {CgSmartphoneRam} from 'react-icons/cg';
 import {FaMemory} from 'react-icons/fa';
 import {FiSearch, FiX} from 'react-icons/fi';
 import {IoMdListBox} from 'react-icons/io';
 import {MdDesktopWindows, MdMemory, MdStorage} from 'react-icons/md';
-import {RiGlobalFill, RiGroupFill, RiTeamFill, RiTerminalBoxFill, RiTerminalWindowFill} from 'react-icons/ri';
 import {VscTerminalLinux} from 'react-icons/vsc';
-import useSWR from 'swr';
 
 export default function Page_Panel() {
   const {query, handler} = useQuery();
   const {colors} = useMantineTheme();
-  const {data} = useSWR('/api/admin/stats', (url: string) => fetch(url).then(r => r.json()), {
+  const {data} = useFetch('/api/admin/stats', {
     refreshInterval: 10e3
   });
-  const {data: logs} = useSWR('/api/admin/logs', (url: string) => fetch(url).then(r => r.json()), {
+  const {data: logs} = useFetch('/api/admin/logs', {
     refreshInterval: 5e3,
     fallbackData: []
   });
-  const createText = (label: string, value: string) => (
-    <TextPair label={label} value={value}/>
-  );
+  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
   const createLegend = (color: string, description: string) => (
-    <Group>
+    <Group key={description}>
       <ColorSwatch size={16} radius={0} color={color}/>
       <Text>{description}</Text>
     </Group>
@@ -57,31 +53,31 @@ export default function Page_Panel() {
     <Stack>
       <CardGrid itemSize={350}>
         <DashboardCard title='System' icon={<MdDesktopWindows/>}>
-          {[
-            createText('Manufacturer', data.system.manufacturer),
-            createText('BIOS vendor', data.bios.vendor),
-            createText('BIOS version', data.bios.version),
-            createText('BIOS release date', data.bios.releaseDate),
-            createText('Current time', new Date(data.time.current).toLocaleString()),
-            createText('Uptime', parseUptime(data.time.uptime * 1e3)),
-            createText('Timezone', data.time.timezone)
-          ]}
+          {render(
+            ['Manufacturer', data.system.manufacturer],
+            ['BIOS vendor', data.bios.vendor],
+            ['BIOS version', data.bios.version],
+            ['BIOS release date', data.bios.releaseDate],
+            ['Current time', new Date(data.time.current).toLocaleString()],
+            ['Uptime', parseUptime(data.time.uptime * 1e3)],
+            ['Timezone', data.time.timezone]
+          )}
         </DashboardCard>
         <DashboardCard title='CPU' icon={<MdMemory/>}>
-          {[
-            createText('Manufacturer', data.cpu.manufacturer),
-            createText('Name', data.cpu.brand),
-            createText('Speed', `${data.cpu.speed}GHz`),
-            createText('Min speed', `${data.cpu.speedMin}GHz`),
-            createText('Max speed', `${data.cpu.speedMax}GHz`),
-            createText('Governor', data.cpu.governor),
-            createText('Cores/Threads', `${data.cpu.physicalCores}C / ${data.cpu.cores}T`)
-          ]}
+          {render(
+            ['Manufacturer', data.cpu.manufacturer],
+            ['Name', data.cpu.brand],
+            ['Speed', `${data.cpu.speed}GHz`],
+            ['Min speed', `${data.cpu.speedMin}GHz`],
+            ['Max speed', `${data.cpu.speedMax}GHz`],
+            ['Governor', data.cpu.governor],
+            ['Cores/Threads', `${data.cpu.physicalCores}C / ${data.cpu.cores}T`]
+          )}
         </DashboardCard>
         <DashboardCard title='Memory' icon={<FaMemory/>}>
           <Group position='apart'>
             <div>
-              {[
+              {render(
                 ['Free', parseByte(data.memory.free)],
                 ['Used', parseByte(data.memory.used)],
                 ['Active', parseByte(data.memory.active)],
@@ -89,7 +85,7 @@ export default function Page_Panel() {
                 ['Buffers', parseByte(data.memory.buffers)],
                 ['Cached', parseByte(data.memory.cached)],
                 ['Total', parseByte(data.memory.total)]
-              ].map(([x, y]) => <TextPair label={x} value={y} key={x}/>)}
+              )}
             </div>
             <StyledTooltip label={
               <Stack spacing={0}>

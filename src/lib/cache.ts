@@ -3,7 +3,7 @@ import {VoidResponse} from 'middleware/withVoid';
 
 function getCache(): TTLCache<string, number> {
   if (!global.cache) global.cache = new TTLCache({
-    max: 10000,
+    max: 10000, // allow 10000 users concurrently
     ttl: 60 * 60 * 1e3,
     noUpdateTTL: true
   });

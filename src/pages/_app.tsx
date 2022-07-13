@@ -59,7 +59,7 @@ export default function Void({Component, pageProps: {...pageProps}, router}) {
           }
         }} withNormalizeCSS theme={{
           colorScheme,
-          loader: 'bars',
+          loader: 'dots',
           primaryColor: 'void',
           fontFamily: 'Source Sans Pro, sans-serif',
           fontFamilyMonospace: 'JetBrains Mono, Source Code Pro, monospace',

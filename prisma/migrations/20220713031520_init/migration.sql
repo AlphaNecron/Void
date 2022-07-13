@@ -8,16 +8,21 @@ CREATE TABLE "User" (
     "emailVerified" TIMESTAMP(3),
     "privateToken" TEXT,
     "roleName" TEXT NOT NULL DEFAULT 'User',
-    "embedEnabled" BOOLEAN NOT NULL DEFAULT true,
-    "embedSiteName" TEXT DEFAULT 'Void',
-    "embedSiteNameUrl" TEXT,
-    "embedTitle" TEXT,
-    "embedColor" TEXT DEFAULT '#B794F4',
-    "embedDescription" TEXT,
-    "embedAuthor" TEXT,
-    "embedAuthorUrl" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "EmbedOptions" (
+    "id" TEXT NOT NULL,
+    "enabled" BOOLEAN NOT NULL DEFAULT true,
+    "siteName" TEXT DEFAULT 'Void',
+    "siteNameUrl" TEXT,
+    "title" TEXT,
+    "color" TEXT DEFAULT '#B794F4',
+    "description" TEXT,
+    "author" TEXT,
+    "authorUrl" TEXT
 );
 
 -- CreateTable
@@ -29,11 +34,13 @@ CREATE TABLE "Avatar" (
 -- CreateTable
 CREATE TABLE "Discord" (
     "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "tag" TEXT NOT NULL,
     "accessToken" TEXT NOT NULL,
     "refreshToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-
-    CONSTRAINT "Discord_pkey" PRIMARY KEY ("id")
+    "expiresIn" TIMESTAMP(3) NOT NULL,
+    "avatar" TEXT NOT NULL,
+    "userId" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -104,7 +111,13 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_privateToken_key" ON "User"("privateToken");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "EmbedOptions_id_key" ON "EmbedOptions"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Avatar_userId_key" ON "Avatar"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Discord_id_key" ON "Discord"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Discord_accessToken_key" ON "Discord"("accessToken");
@@ -132,6 +145,9 @@ CREATE INDEX "_DomainToUser_B_index" ON "_DomainToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_roleName_fkey" FOREIGN KEY ("roleName") REFERENCES "Role"("name") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EmbedOptions" ADD CONSTRAINT "EmbedOptions_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Avatar" ADD CONSTRAINT "Avatar_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

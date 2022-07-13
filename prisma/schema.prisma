@@ -7,52 +7,60 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// TODO: Split embed options into a model.
-
 model User {
-  id               String    @id      @default(cuid())
-  username         String    @unique
-  name             String?
-  password         String?
-  avatar           Avatar?
-  discord          Discord?
-  email            String?   @unique
-  emailVerified    DateTime?
-  privateToken     String?   @unique
-  roleName         String    @default("User")
-  role             Role?     @relation(fields: [roleName], references: [name], onDelete: Cascade)
-  embedEnabled     Boolean   @default(true)
-  embedSiteName    String?   @default("Void")
-  embedSiteNameUrl String?
-  embedTitle       String?
-  embedColor       String?   @default("#B794F4")
-  embedDescription String?
-  embedAuthor      String?
-  embedAuthorUrl   String?
-  domains          Domain[]
-  files            File[]
-  urls             Url[]
+  id            String        @id @default(cuid())
+  username      String        @unique
+  name          String?
+  password      String?
+  avatar        Avatar?
+  discord       Discord?
+  email         String?       @unique
+  emailVerified DateTime?
+  embed         EmbedOptions?
+  privateToken  String?       @unique
+  roleName      String        @default("User")
+  role          Role?         @relation(fields: [roleName], references: [name], onDelete: Cascade)
+  domains       Domain[]
+  files         File[]
+  urls          Url[]
+}
+
+model EmbedOptions {
+  id          String  @unique
+  user        User    @relation(fields: [id], references: [id], onDelete: Cascade)
+  enabled     Boolean @default(true)
+  siteName    String? @default("Void")
+  siteNameUrl String?
+  title       String?
+  color       String? @default("#B794F4")
+  description String?
+  author      String?
+  authorUrl   String?
 }
 
 model Avatar {
-  mimetype        String      @default("image/png")
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String      @unique
+  mimetype String @default("image/png")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @unique
 }
 
 model Discord {
-  id               String      @id
-  accessToken      String      @unique
-  refreshToken     String      @unique
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String      @unique
+  id           String   @unique
+  username     String
+  tag          String
+  accessToken  String   @unique
+  refreshToken String   @unique
+  expiresIn    DateTime
+  avatar       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique
 }
 
 model Url {
-  id          String   @id    @default(cuid())
+  id          String   @id @default(cuid())
   destination String
   short       String   @unique
-  createdAt   DateTime        @default(now())
+  createdAt   DateTime @default(now())
   password    String?
   views       Int      @default(0)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -67,14 +75,14 @@ model Domain {
 }
 
 model Role {
-  name              String  @id
-  color             String? @default("#B794F4")
-  rolePriority      Int     @default(100)
-  permissions       Int     @default(0)
-  maxFileSize       BigInt  @default(104857600)
-  maxFileCount      Int     @default(5)
-  storageQuota      BigInt  @default(5368709120)
-  users             User[]
+  name         String  @id
+  color        String? @default("#B794F4")
+  rolePriority Int     @default(100)
+  permissions  Int     @default(0)
+  maxFileSize  BigInt  @default(104857600)
+  maxFileCount Int     @default(5)
+  storageQuota BigInt  @default(5368709120)
+  users        User[]
 }
 
 model File {

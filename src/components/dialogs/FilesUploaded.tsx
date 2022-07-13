@@ -1,4 +1,4 @@
-import {ActionIcon, Group, ScrollArea, Text} from '@mantine/core';
+import {ActionIcon, Group, Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import List from 'components/List';

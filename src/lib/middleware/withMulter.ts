@@ -1,5 +1,5 @@
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import multer, {Options} from 'multer';
+import multer from 'multer';
 import {NextApiRequest, NextApiResponse} from 'next';
 
 function run(middleware) {

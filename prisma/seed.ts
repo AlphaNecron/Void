@@ -1,7 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 import {hash} from 'argon2';
 import {fallback} from '../src/lib/logger';
-import {Permission} from '../src/lib/permission';
 
 const prisma = new PrismaClient();
 
