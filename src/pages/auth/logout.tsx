@@ -7,10 +7,8 @@ import {FiChevronLeft, FiLogOut} from 'react-icons/fi';
 
 export default function LogoutPage() {
   const { isLogged, user, revalidate } = useSession(true, () => router.push('/auth/login'));
-  const logOut = () => fetch('/api/auth/logout').finally(() => {
-    router.push('/auth/login');
-    revalidate();
-  });
+  const logOut = () => fetch('/api/auth/logout').finally(() =>
+    router.push('/auth/login').then(() => revalidate()));
   return isLogged && (
     <Container px={64} pt={32}>
       <Stack align='center'>

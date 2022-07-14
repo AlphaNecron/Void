@@ -15,6 +15,7 @@ import {
   Popover,
   Stack,
   Table,
+  Text,
   TextInput
 } from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
@@ -282,9 +283,9 @@ export default function Page_Account() {
       </form>
       <DashboardCard icon={<SiDiscord/>} title='Discord account'>
         {discordInfo && !error ? (
-          <div style={{ margin: 16, display: 'flex' }}>
+          <div style={{margin: 16, display: 'flex'}}>
             <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
-            <div style={{ flex: 1 }}>
+            <div style={{flex: 1}}>
               {render(
                 ['Status', discordInfo ? 'Linked' : 'Unlinked'],
                 ['ID', discordInfo.id],
@@ -301,12 +302,15 @@ export default function Page_Account() {
             </div>
           </div>
         ) : (
-          <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() => {
-            setBusy(true);
-            fetch('/api/discord/auth').then(r => r.json()).then(r => {
-              router.push(r.url);
-            }).finally(() => setBusy(false));
-          }} leftIcon={<SiDiscord/>}>Link</Button>
+          <Stack m='lg' align='start'>
+            <Text weight={700}>This account has not yet been linked, click the button below to link.</Text>
+            <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() => {
+              setBusy(true);
+              fetch('/api/discord/auth').then(r => r.json()).then(r => {
+                router.push(r.url);
+              }).finally(() => setBusy(false));
+            }} leftIcon={<SiDiscord/>}>Link</Button>
+          </Stack>
         )}
       </DashboardCard>
       <Affix position={{bottom: 32, right: 32}} zIndex={0}>

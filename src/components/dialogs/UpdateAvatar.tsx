@@ -1,7 +1,6 @@
 import {Avatar, Button, Center, Group, Modal, ModalProps, Title} from '@mantine/core';
 import {Dropzone, IMAGE_MIME_TYPE} from '@mantine/dropzone';
 import useAbort from 'lib/hooks/useAbort';
-import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {FiUploadCloud, FiX} from 'react-icons/fi';
 
