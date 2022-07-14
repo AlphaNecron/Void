@@ -1,8 +1,5 @@
 import {Migrate} from '@prisma/migrate/dist/Migrate';
-import {
-  ensureCanConnectToDatabase,
-  ensureDatabaseExists
-} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
+import {ensureCanConnectToDatabase, ensureDatabaseExists} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
 import {existsSync, readFileSync} from 'fs';
 import type {Config} from 'lib/types';
 import {resolve} from 'path';

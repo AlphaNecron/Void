@@ -8,10 +8,9 @@ import Dialog_FilesUploaded from 'dialogs/FilesUploaded';
 import Dialog_Qr from 'dialogs/Qr';
 import Dialog_UserInfo from 'dialogs/UserInfo';
 import useSession from 'lib/hooks/useSession';
-import {hasPermission, isAdmin, Permission} from 'lib/permission';
+import {hasPermission, isAdmin} from 'lib/permission';
 import Head from 'next/head';
-import type {NextRouter} from 'next/router';
-import {ReactNode, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 
 export default function Void({Component, pageProps: {...pageProps}, router}) {
@@ -124,7 +123,7 @@ function Auth({
   permission,
   adminOnly,
   router
-}: { children: ReactNode, permission: Permission, adminOnly: boolean, router: NextRouter }) {
+}) {
   const session = useSession(true, () => router.push('/auth/login'));
   const login = () => {
     router.push('/auth/login');

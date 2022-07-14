@@ -7,7 +7,6 @@ import {
   ColorInput,
   Container,
   CSSObject,
-  Group,
   Highlight,
   Image,
   LoadingOverlay,
@@ -165,20 +164,19 @@ export default function Page_Account() {
                 Update avatar
               </Button>
             </Stack>
-            <Stack style={{flex: 1}}>
-              <Group grow>
-                <TextInput label='Display name' description='Can be your real name or whatever you like'
-                  placeholder='Display name' {...form.getInputProps('name')}/>
-                <TextInput label='Username' description='The unique username used to login to your account'
-                  placeholder='Username' {...form.getInputProps('username')} required/>
-              </Group>
+            <div style={{ display: 'flex', columnGap: 16, rowGap: 8, flex: 1, flexFlow: 'wrap', justifyContent: 'space-between', flexDirection: 'row' }}>
+              <TextInput style={{ flexGrow: 1 }} label='Display name' description='Can be your real name or whatever you like'
+                placeholder='Display name' {...form.getInputProps('name')}/>
+              <TextInput style={{ flexGrow: 1 }} label='Username' description='The unique username used to login to your account'
+                placeholder='Username' {...form.getInputProps('username')} required/>
               <PasswordBox
+                style={{ flexGrow: 1 }}
                 label='Password'
                 autoComplete='new-password'
                 placeholder='New password'
                 description='Strong password should include letters in lower and uppercase, at least 1 number, at least 1 special symbol'
                 {...form.getInputProps('password')}/>
-            </Stack>
+            </div>
           </div>
         </DashboardCard>
         {dataToken && (
@@ -234,33 +232,29 @@ export default function Page_Account() {
             </Table>
           </Popover>
         } title='Embed' mb='md'>
-          <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
-            <Stack style={{flex: 1}}>
+          <div style={{ display: 'flex', marginTop: 8, flexWrap: 'wrap-reverse', gap: 16, alignItems: 'end' }}>
+            <div style={{ display: 'flex', flex: '1 1 300px', flexDirection: 'column' }}>
               <Checkbox label='Enable embed' {...form.getInputProps('enabled', {type: 'checkbox'})}/>
-              <Group grow>
-                <TextInput maxLength={32} label='Site name'
-                  placeholder='Embed site name' {...form.getInputProps('siteName')}/>
-                <TextInput maxLength={32} label='Site name URL'
-                  placeholder='Embed site name URL' {...form.getInputProps('siteNameUrl')}/>
-              </Group>
-              <Group grow>
-                <TextInput maxLength={32} label='Title'
-                  placeholder='Embed title' {...form.getInputProps('title')}/>
-                <ColorInput style={{flex: 1}} label='Color'
-                  placeholder='Embed color' {...form.getInputProps('color')}/>
-              </Group>
+              <TextInput maxLength={32} label='Site name'
+                placeholder='Embed site name' {...form.getInputProps('siteName')}/>
+              <TextInput maxLength={32} label='Site name URL'
+                placeholder='Embed site name URL' {...form.getInputProps('siteNameUrl')}/>
+              <TextInput maxLength={32} label='Title'
+                placeholder='Embed title' {...form.getInputProps('title')}/>
+              <ColorInput label='Color'
+                placeholder='Embed color' {...form.getInputProps('color')}/>
               <TextInput label='Description' maxLength={64}
                 placeholder='Embed description' {...form.getInputProps('description')}/>
-              <Group grow>
-                <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('author')}/>
-                <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('authorUrl')}/>
-              </Group>
-            </Stack>
-            <Container py={4} ml='md' px={10} style={{
+              <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('author')}/>
+              <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('authorUrl')}/>
+            </div>
+            <Container py={4} px={10} style={{
               borderLeft: `3px solid ${form.values.color}`,
               borderRadius: 4,
-              background: '#2F3136',
-              width: 480
+              flex: '1 1 360px',
+              maxHeight: 450,
+              maxWidth: 640,
+              background: '#2F3136'
             }}>
               <Highlight target='_blank' style={{fontSize: 12}} color='dimmed'
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a'
@@ -276,7 +270,7 @@ export default function Page_Account() {
               <Highlight style={{wordWrap: 'break-word', color: '#bbb'}}
                 highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} size='sm'
                 color='white'>{form.values.description || 'Description'}</Highlight>
-              <Image fit='contain' height={225} src='/banner.png' alt='Preview image'/>
+              <Image style={{ maxHeight: 360, maxWidth: 560 }} m='xl' fit='contain' width='100%' src='/banner.png' alt='Preview image'/>
             </Container>
           </div>
         </DashboardCard>

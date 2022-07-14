@@ -7,6 +7,8 @@ import {withMulter} from 'middleware/withMulter';
 import {VoidRequest, VoidResponse} from 'middleware/withVoid';
 import {resolve} from 'path';
 
+// TODO: optimize image before writing, convert it to webp.
+
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();

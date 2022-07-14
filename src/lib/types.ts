@@ -1,3 +1,5 @@
+import {Role} from '@prisma/client';
+
 export type Void = {
   useHttps: boolean;
   host: string;
@@ -11,6 +13,13 @@ export type Void = {
   domains?: string[];
   discordProvider: Provider;
   upload: UploadOptions;
+}
+
+export type SessionUser = {
+  id: string;
+  username: string;
+  name: string;
+  role: Role;
 }
 
 export type Provider = {

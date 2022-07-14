@@ -12,7 +12,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     },
     select: {
       id: true,
-      avatar: true,
       username: true,
       name: true,
       email: true,

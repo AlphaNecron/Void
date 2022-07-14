@@ -13,7 +13,7 @@ import {FiEdit, FiInfo, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
 export default function Page_Users() {
   const {data, mutate} = useFetch('/api/admin/users');
   const {query, handler} = useQuery();
-  const { openConfirmModal, openContextModal } = useModals();
+  const {openConfirmModal, openContextModal} = useModals();
   const session = useSession();
   const compRole = (a, b) => a.rolePriority > b.rolePriority && a.permissions < b.permissions;
   const deleteUser = () => fetch('/api/admin/users');
@@ -61,9 +61,9 @@ export default function Page_Users() {
                       </Title>
                     </Stack>
                   ),
-                  labels: { confirm: 'Delete', cancel: 'Cancel' },
-                  confirmProps: { color: 'red', leftIcon: <FiTrash/> },
-                  cancelProps: { leftIcon: <FiX/> }
+                  labels: {confirm: 'Delete', cancel: 'Cancel'},
+                  confirmProps: {color: 'red', leftIcon: <FiTrash/>},
+                  cancelProps: {leftIcon: <FiX/>}
                 });
               }
             }
@@ -71,7 +71,10 @@ export default function Page_Users() {
             <div style={{display: 'flex', alignItems: 'center', margin: 16}}>
               <Stack spacing={6} align='center'>
                 <UserAvatar size={80} user={user} ext={user.id !== session.user.id}/>
-                <Badge sx={({ fn }) => validateHex(user.role.color) ? { background: fn.rgba(user.role.color, 0.25) } : {}}>{user.role.name}</Badge>
+                <Badge
+                  sx={({fn}) => validateHex(user.role.color) ? {background: fn.rgba(user.role.color, 0.5)} : {}}>
+                  {user.role.name}
+                </Badge>
               </Stack>
               <Stack ml='xl' spacing={2}>
                 {[['ID', user.id], ['Username', user.username], ['Display name', user.name], ['Email', user.email]].map(([x, y]) =>

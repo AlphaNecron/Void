@@ -26,6 +26,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@next/next/no-img-element': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    'react/display-name': 'off'
+    'react/display-name': 'off',
+    '@typescript-eslint/no-empty-function': 'warn'
   }
 };

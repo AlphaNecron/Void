@@ -1,4 +1,3 @@
-import type {IronSessionData} from 'iron-session';
 import useFetch from 'lib/hooks/useFetch';
 import type {VoidUser} from 'middleware/withVoid';
 import {useEffect} from 'react';
@@ -7,7 +6,8 @@ type Session = {
   isReady: boolean;
   isLogged: boolean;
   revalidate: () => void;
-} & IronSessionData
+  user?: VoidUser;
+}
 
 export default function useSession(required = false, onUnauthenticated?: () => void, onAuthenticated?: (user: VoidUser) => void): Session {
   const {

@@ -1,4 +1,4 @@
-import {Avatar, EmbedOptions, Role} from '@prisma/client';
+import {EmbedOptions, Role} from '@prisma/client';
 import {IronSessionOptions} from 'iron-session';
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {check} from 'lib/cache';
@@ -28,8 +28,7 @@ export type VoidFile = {
 
 export type VoidUser = {
   id: string;
-  avatar?: Avatar;
-  username?: string;
+  username: string;
   name?: string;
   email?: string;
   role: Role;
@@ -101,7 +100,6 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
         },
         select: {
           id: true,
-          avatar: true,
           username: true,
           name: true,
           email: true,

@@ -86,7 +86,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         username: true,
         name: true,
         email: true,
-        avatar: true,
         id: true,
         embed: true,
         role: true

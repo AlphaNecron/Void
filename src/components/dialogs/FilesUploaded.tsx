@@ -3,12 +3,10 @@ import {ContextModalProps} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import List from 'components/List';
 import StyledTooltip from 'components/StyledTooltip';
-import useThemeValue from 'lib/hooks/useThemeValue';
 import {FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 import {RiClipboardFill} from 'react-icons/ri';
 
 export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: ContextModalProps<{ files: { name: string, url: string, deletionUrl: string }[], onCopy: (text: string) => void }>) {
-  const {value, colorValue} = useThemeValue();
   const LabelledAction = ({label, ...props}) => (
     <StyledTooltip label={label}>
       <ActionIcon {...props}/>
