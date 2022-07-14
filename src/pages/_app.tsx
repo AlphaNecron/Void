@@ -96,10 +96,10 @@ export default function Void({Component, pageProps: {...pageProps}, router}) {
           }}
           modalProps={{overlayBlur: 4, withCloseButton: true}}>
             <NotificationsProvider>
-              <Transition transition='slide-down' mounted={progress < 100 && progress > 0} duration={200}
+              <Transition transition='slide-down' mounted={progress > 0 && progress < 100} duration={200}
                 exitDuration={500}>
                 {styles => (
-                  <Progress size='xs' radius={0} value={progress} animate striped style={styles}/>
+                  <Progress size='xs' radius={0} value={progress} animate striped style={{ position: 'fixed', top: 0, left: 0, right: 0, ...styles }}/>
                 )}
               </Transition>
               {(Component.authRequired || Component.adminOnly) ? (

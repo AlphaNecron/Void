@@ -1,4 +1,4 @@
-import {Autocomplete, Button, LoadingOverlay, Stack, Title} from '@mantine/core';
+import {Autocomplete, Badge, Button, LoadingOverlay, Stack, Title} from '@mantine/core';
 import {useModals} from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
 import ItemCard from 'components/ItemCard';
@@ -7,6 +7,7 @@ import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useSession from 'lib/hooks/useSession';
+import {validateHex} from 'lib/utils';
 import {FiEdit, FiInfo, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
 
 export default function Page_Users() {
@@ -68,7 +69,10 @@ export default function Page_Users() {
             }
           ]}>
             <div style={{display: 'flex', alignItems: 'center', margin: 16}}>
-              <UserAvatar size={80} user={user} ext={user.id !== session.user.id}/>
+              <Stack spacing={6} align='center'>
+                <UserAvatar size={80} user={user} ext={user.id !== session.user.id}/>
+                <Badge sx={({ fn }) => validateHex(user.role.color) ? { background: fn.rgba(user.role.color, 0.25) } : {}}>{user.role.name}</Badge>
+              </Stack>
               <Stack ml='xl' spacing={2}>
                 {[['ID', user.id], ['Username', user.username], ['Display name', user.name], ['Email', user.email]].map(([x, y]) =>
                   <TextPair label={x} value={y || <span style={{color: 'lime'}}>Unset</span>} key={x}/>)}

@@ -1,4 +1,4 @@
-export default function ShareXIcon({size = 512, isDark = false, ...props}) {
+export default function ShareXIcon({size = 512}) {
   return (
     <svg xmlns='http://www.w3.org/2000/svg' width={size} height={size}>
       <path fill='#00000000' d='M0 3L4 1C1.58779 -0.354805 0.567617 0.35112 0 3z'/>

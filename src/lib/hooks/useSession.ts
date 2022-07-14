@@ -6,12 +6,8 @@ import {useEffect} from 'react';
 type Session = {
   isReady: boolean;
   isLogged: boolean;
-  mutate: () => void;
+  revalidate: () => void;
 } & IronSessionData
-
-type SessionEvent = {
-  type: 'logout' | 'login' | 'refresh' | 'err';
-}
 
 export default function useSession(required = false, onUnauthenticated?: () => void, onAuthenticated?: (user: VoidUser) => void): Session {
   const {
@@ -30,7 +26,10 @@ export default function useSession(required = false, onUnauthenticated?: () => v
   return {
     isReady: data || error,
     isLogged: data !== undefined,
-    mutate,
+    revalidate: () => mutate(null, {
+      revalidate: true,
+      rollbackOnError: false
+    }),
     user: data
   };
 }

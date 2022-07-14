@@ -23,6 +23,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/require-render-return': 'error',
     'react/style-prop-object': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@next/next/no-img-element': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'react/display-name': 'off'

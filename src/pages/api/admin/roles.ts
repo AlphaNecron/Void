@@ -6,7 +6,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!(user && user.role && isAdmin(user.role.permissions))) return res.unauthorized();
   const perms = Object.values(Permission).filter(y => typeof y === 'string');
-  if (req.method === 'GET') {
+  switch (req.method) {
+  case 'GET': {
     const roles = await prisma.role.findMany({
       orderBy: [
         {
@@ -29,7 +30,16 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       permissionInteger: x.permissions,
       permissions: perms.filter(y => hasPermission(x.permissions, Permission[y], false))
     })));
-  } else return res.notAllowed();
+  }
+  case 'POST': {
+    return res.success();
+  }
+  case 'DELETE': {
+    return res.success();
+  }
+  default:
+    return res.notAllowed();
+  }
 }
 
 export default withVoid(handler);

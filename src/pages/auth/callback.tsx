@@ -44,7 +44,10 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
   const {code, state} = query;
   const rUser = req.session.user;
   if (!(code && state)) return {
-    notFound: true
+    redirect: {
+      destination: '/',
+      statusCode: 307
+    }
   };
   try {
     const data = await oauth.tokenRequest({

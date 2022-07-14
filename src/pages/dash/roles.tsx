@@ -1,9 +1,11 @@
 import {
   Affix,
   Alert,
+  Badge,
   Button,
   ColorInput,
   LoadingOverlay,
+  Modal,
   NumberInput,
   Stack,
   Tabs,
@@ -11,11 +13,11 @@ import {
   TextInput,
   useMantineTheme
 } from '@mantine/core';
-import {useMediaQuery} from '@mantine/hooks';
+import {useDisclosure, useMediaQuery} from '@mantine/hooks';
 import List from 'components/List';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
-import {validateHex} from 'lib/utils';
+import {parseByte, validateHex} from 'lib/utils';
 import {FiPlus} from 'react-icons/fi';
 import {RiAlertFill} from 'react-icons/ri';
 
@@ -25,11 +27,13 @@ function Color({color}) {
 
 export default function Page_Roles() {
   const {user} = useSession();
-  const {data, mutate} = useFetch('/api/admin/roles');
+  const {data} = useFetch('/api/admin/roles');
   const {breakpoints} = useMantineTheme();
   const isSmall = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+  const [opened, handler] = useDisclosure(false);
   return data ? (
     <>
+      <Modal opened={opened} onClose={handler.close} title='Create a new role'></Modal>
       <Tabs grow orientation={isSmall ? 'horizontal' : 'vertical'} variant='pills' styles={({fontSizes: {md}}) => ({
         tabInner: {
           fontSize: md,
@@ -59,8 +63,10 @@ export default function Page_Roles() {
                 <ColorInput disabled={isCurrent || isHigher} label='Color' defaultValue={role.color}/>
                 <NumberInput disabled={isCurrent || isHigher} label='Priority' min={user.role.rolePriority + 1}
                   defaultValue={role.rolePriority}/>
-                <NumberInput disabled={isCurrent || isHigher} label='Max file size (in bytes)'
-                  defaultValue={role.maxFileSize} min={107374182} step={1048576}/>
+                <NumberInput disabled={isCurrent || isHigher} hideControls={false} rightSectionWidth={72} rightSection={
+                  <Badge radius='xs' color='dark' mr='xs' fullWidth>{parseByte(role.maxFileSize)}</Badge>
+                } label='Max file size (in bytes)'
+                defaultValue={role.maxFileSize} min={107374182} step={1048576}/>
                 <div>
                   <Text size='xs' mb={4}>Permissions</Text>
                   <List items={role.permissions}>
@@ -97,7 +103,7 @@ export default function Page_Roles() {
         })}
       </Tabs>
       <Affix zIndex={0} position={{bottom: 32, right: 32}}>
-        <Button leftIcon={<FiPlus/>}>New role</Button>
+        <Button leftIcon={<FiPlus/>} onClick={handler.open}>New role</Button>
       </Affix>
     </>
   ) : <LoadingOverlay visible/>;

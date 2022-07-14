@@ -6,7 +6,7 @@ export default function List({
   items,
   children,
   height = 200
-}: { items: any[], children(item): ReactNode, height?: number }) {
+}: { items: unknown[], children(item): ReactNode, height?: number }) {
   const {value, colorValue} = useThemeValue();
   return (
     <ScrollArea scrollbarSize={4} style={{

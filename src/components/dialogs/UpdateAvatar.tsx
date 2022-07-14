@@ -10,7 +10,6 @@ export default function UpdateAvatar({ onClose, onDone, ...props}: ModalProps & 
   const [busy, setBusy] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const { abort, signal } = useAbort();
-  const router = useRouter();
   useEffect(() => {
     if (previewUrl.length > 0) {
       URL.revokeObjectURL(previewUrl);

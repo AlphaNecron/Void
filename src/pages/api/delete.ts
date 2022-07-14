@@ -1,3 +1,4 @@
+import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import {rm} from 'fs/promises';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 import {resolve} from 'path';
@@ -44,12 +45,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           user: true
         }
       });
-      if (file) {
-        await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
-        logger.info(`Deleted ${file.fileName} (${file.id}).`);
-        return res.success();
-      } else return res.forbid('File not found');
-    } catch {
+      await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
+      logger.info(`Deleted ${file.fileName} (${file.id}).`);
+      return res.success({ fileName: file.fileName });
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError)
+        return res.notFound('File with specified token does not exist.');
       return res.forbid('Failed to delete the file');
     }
   }

@@ -26,7 +26,7 @@ import {SiDiscord} from 'react-icons/si';
 export default function LoginPage() {
   const [mount, setMount] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { mutate } = useSession();
+  const { revalidate } = useSession();
   useEffect(() => {
     setMount(true);
     return () => setMount(false);
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 }).then(r => r.json()).then(r => {
                   if (r.success) {
                     showNotification({ title: 'Logged in successfully, redirecting to the Dashboard.', message: '', icon: <RiCheckFill/>, color: 'green' });
-                    mutate();
+                    revalidate();
                     router.push('/dash');
                   }
                   else
@@ -81,7 +81,7 @@ export default function LoginPage() {
                 </PasswordInput>
                 <Checkbox mt='md' label='Remember me' {...form.getInputProps('rememberMe', { type: 'checkbox' })}/>
                 {/*<Button leftIcon={<FiEdit />} variant='subtle'>Register</Button>*/}
-                <Button loading={busy} fullWidth leftIcon={<FiLogIn />} mt='xs' type='submit'>Login</Button>
+                <Button loading={busy} fullWidth leftIcon={<FiLogIn />} mt='xs' type='submit'>Login with credentials</Button>
                 <Divider my='xs' mx={128}/>
                 <Button loading={busy} fullWidth style={{ backgroundColor: '#7289DA' }} onClick={() =>
                   fetch('/api/discord/auth').then(r => r.json()).then(r => {
