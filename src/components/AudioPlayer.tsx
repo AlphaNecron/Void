@@ -2,7 +2,7 @@ import {ActionIcon, Center, Group, Slider, Stack, Title} from '@mantine/core';
 import {useBooleanToggle} from '@mantine/hooks';
 import StyledTooltip from 'components/StyledTooltip';
 import VolumeIndicator from 'components/VolumeIndicator';
-import {Duration} from 'luxon';
+import prettyMilliseconds from 'pretty-ms';
 import {useRef, useState} from 'react';
 import {FiFastForward, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
 import {RiMusicFill} from 'react-icons/ri';
@@ -14,7 +14,7 @@ export default function AudioPlayer({src, title, ...props}) {
   const [time, setTime] = useState(0);
   const [vol, setVol] = useState(0.5);
   const seek = (range: number) => { ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range; };
-  const s2m = (secs: number) => Duration.fromObject({seconds: secs}).toFormat('hh:mm:ss');
+  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, { colonNotation: true, secondsDecimalDigits: 0 });
   const onStateChanged = ({target}) => { setPlaying(!target.paused); setDura(target.duration); };
   const Action = ({ icon, label, ...props }) => (
     <StyledTooltip label={label}>

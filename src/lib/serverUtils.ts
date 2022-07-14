@@ -1,23 +1,32 @@
-import {spawn} from 'child_process';
+import {Migrate} from '@prisma/migrate/dist/Migrate';
+import {
+  ensureCanConnectToDatabase,
+  ensureDatabaseExists
+} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
 import {existsSync, readFileSync} from 'fs';
 import type {Config} from 'lib/types';
 import {resolve} from 'path';
 
-export async function runPrisma(url: string, args: string[], nostdout = false): Promise<string> {
-  return new Promise((res, rej) => {
-    const proc = spawn(resolve('node_modules', '.bin', 'prisma'), args);
-    let a = '';
-    proc.stdout.on('data', d => {
-      if (!nostdout) console.log(d.toString());
-      a += d.toString();
-    });
-    proc.stderr.on('data', d => {
-      if (!nostdout) console.log(d.toString());
-      rej(d.toString());
-    });
-    proc.stdout.on('end', () => res(a));
-    proc.stdout.on('close', () => res(a));
+export async function prismaCheck() { // https://github.com/diced/zipline/blob/trunk/src/server/util.ts
+  const schemaPath = resolve('prisma', 'schema.prisma');
+  const canConnect = await ensureCanConnectToDatabase(schemaPath);
+  if (!canConnect) throwAndExit('Could not connect to the database.');
+  const migrator = new Migrate(schemaPath);
+  await ensureDatabaseExists('apply', true, schemaPath);
+  const diagnose = await migrator.diagnoseMigrationHistory({
+    optInToShadowDatabase: false
   });
+  if (diagnose.history?.diagnostic === 'databaseIsBehind')
+    try {
+      global.logger.log('Applying Prisma migrations.');
+      await migrator.applyMigrations();
+      global.logger.log('Finished applying migrations.');
+    } catch (e) {
+      throwAndExit(e);
+    } finally {
+      migrator.stop();
+    }
+  else migrator.stop();
 }
 
 export function throwAndExit(msg: string) {
@@ -32,16 +41,6 @@ export function readConfig(): Config | void {
     global.logger.info('Reading config file');
     const str = readFileSync(resolve('config.json'), 'utf8');
     return JSON.parse(str);
-  }
-}
-
-export async function deploy(config: Config) {
-  try {
-    await runPrisma(config.void.databaseUrl, ['migrate', 'deploy']);
-    await runPrisma(config.void.databaseUrl, ['generate'], true);
-  } catch (e) {
-    console.log(e);
-    throwAndExit('There was an error, exiting...');
   }
 }
 

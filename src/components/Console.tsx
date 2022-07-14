@@ -1,5 +1,4 @@
 import {ScrollArea, ScrollAreaProps, Stack, useMantineTheme} from '@mantine/core';
-import {DateTime} from 'luxon';
 
 type ConsoleProps = {
     lines:
@@ -32,7 +31,7 @@ export default function Console({lines, ...props}: ConsoleProps) {
             <span>
             [
               <span style={{color: colors.blue[6]}}>
-                {DateTime.fromISO(line.timestamp).toFormat('D - TT')}
+                {line.timestamp}
               </span>
             ]
             </span>

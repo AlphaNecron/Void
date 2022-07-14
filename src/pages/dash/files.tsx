@@ -29,7 +29,7 @@ import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {isType} from 'lib/mime';
 import {parseByte} from 'lib/utils';
-import {Duration} from 'luxon';
+import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FaBomb, FaLock} from 'react-icons/fa';
 import {FiClipboard, FiExternalLink, FiSearch, FiTrash, FiUpload} from 'react-icons/fi';
@@ -145,7 +145,7 @@ export default function Page_Files() {
         </Title>
         <Title order={3}>
           Rate limit resets
-          in {Duration.fromMillis(data.nextReset).shiftTo('minutes', 'seconds').toHuman({maximumFractionDigits: 0})}
+          in {prettyMilliseconds(data.nextReset, { verbose: true, keepDecimalsOnWholeSeconds: false })}
         </Title>
       </Stack>
     </Center>

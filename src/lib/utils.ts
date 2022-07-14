@@ -1,8 +1,14 @@
 import {MANTINE_COLORS} from '@mantine/core';
+import prettyBytes from 'next/dist/lib/pretty-bytes';
 import generate from './urlGenerator';
 
 export function generateToken(): string {
-  return generate('alphanumeric', 16) + '.' + Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '');
+  return `${generate('alphanumeric', 16)}.${Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '')}`;
+}
+
+export function addToDate(date: Date, seconds: number): Date {
+  date.setSeconds(date.getSeconds() + seconds);
+  return date;
 }
 
 export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
@@ -23,17 +29,7 @@ export function validateHex(color: string): boolean { // https://gist.github.com
 export function validateColor(color: string, extraColors: string[] = [], fallback = 'void'): string {
   return [...MANTINE_COLORS, ...extraColors].includes(color) ? color : fallback;
 }
+
 export function parseByte(bytes: number): string {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-  let num = 0;
-  let isNegative = false;
-  if (bytes < 0) {
-    bytes *= -1;
-    isNegative = true;
-  }
-  while (bytes >= 1024 && num < units.length - 1) {
-    bytes /= 1024;
-    num++;
-  }
-  return `${+(isNaN(bytes) ? 0 : isNegative ? -bytes : bytes).toFixed(1)} ${units[Math.min(num, units.length - 1)]}`;
+  return prettyBytes(bytes);
 }

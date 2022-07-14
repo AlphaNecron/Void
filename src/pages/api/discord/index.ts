@@ -1,6 +1,6 @@
 import oauth from 'lib/oauth';
 import prisma from 'lib/prisma';
-import {DateTime} from 'luxon';
+import {addToDate} from 'lib/utils';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
@@ -32,6 +32,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           grantType: 'refresh_token',
           scope: ['identify']
         });
+        const date = addToDate(new Date(), data.expires_in);
         const r = await prisma.discord.update({
           where: {
             id: discord.id
@@ -39,7 +40,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           data: {
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
-            expiresIn: DateTime.now().plus({second: data.expires_in}).toJSDate()
+            expiresIn: date
           },
           select: {
             id: true,

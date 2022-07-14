@@ -53,7 +53,7 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
       if (!ticker.active) {
         const req = new XMLHttpRequest();
         req.responseType = 'json';
-        req.open('POST', '/api/upload');
+        req.open('POST', '/api/upload', true);
         for (const [key, value] of Object.entries(headers))
           req.setRequestHeader(key, value);
         onAbort(() =>

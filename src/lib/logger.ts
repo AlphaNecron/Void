@@ -1,5 +1,5 @@
 import colors from '@colors/colors';
-import {DateTime} from 'luxon';
+import {format} from 'fecha';
 import type {Logger, QueryOptions} from 'winston';
 
 colors.setTheme({
@@ -29,7 +29,7 @@ export const queryLog = (options?: QueryOptions) => new Promise<{
   });
 
 const log = (level, msg) => {
-  const date = DateTime.now().toFormat('D - TT');
+  const date = format(new Date(), 'DD/MM/YYYY - HH:mm:ss');
   console.log(`[${colors.blue(date)}] ${colors[level](level)}: ${msg}`);
 };
 

@@ -4,7 +4,7 @@ import StyledTooltip from 'components/StyledTooltip';
 import {withIronSessionSsr} from 'iron-session/next';
 import oauth from 'lib/oauth';
 import prisma from 'lib/prisma';
-import {DateTime} from 'luxon';
+import {addToDate} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
@@ -90,7 +90,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       tag: user.discriminator,
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
-      expiresIn: DateTime.now().plus({second: data.expires_in}).toJSDate()
+      expiresIn: addToDate(new Date(), data.expires_in)
     };
     const r = await prisma.discord.upsert({
       where: {

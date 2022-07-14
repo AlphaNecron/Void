@@ -24,10 +24,11 @@ import {showNotification} from '@mantine/notifications';
 import FileIndicator from 'components/FileIndicator';
 import StyledMenu from 'components/StyledMenu';
 import StyledTooltip from 'components/StyledTooltip';
+import {format} from 'fecha';
 import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';
 import {parseByte} from 'lib/utils';
-import {DateTime, Duration} from 'luxon';
+import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
 import {GoSettings} from 'react-icons/go';
@@ -148,7 +149,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     if (selected.length < 1) return;
     setBusy(true);
     const body = new FormData();
-    files.filter(f => f.selected).forEach(f => body.append('files', f));
+    selected.forEach(f => body.append('files', f));
     upload(body);
   };
   return (
@@ -201,7 +202,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
             <>
               <Title style={styles.text} order={5}>{progress.speed.toFixed(2)} Mbps
                 -
-                About {Duration.fromMillis(progress.estimated * 1e3).shiftTo('hours', 'minutes', 'seconds').toHuman({maximumFractionDigits: 0})} remaining.</Title>
+                About {prettyMilliseconds(progress.estimated * 1e3, { verbose: true, secondsDecimalDigits: 0 })} remaining.</Title>
               <Progress style={styles.bar} animate striped value={progress.progress}/>
             </>
           )}
@@ -231,7 +232,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                       )}
                       <Table>
                         <tbody>
-                          {[['Name', x.name], ['Size', parseByte(x.size)], ['Mimetype', x.type.length < 1 ? 'unknown' : x.type], ['Last modified', DateTime.fromMillis(x.lastModified || 0).toFormat('FFF')]].map(([x, y]) => (
+                          {[['Name', x.name], ['Size', parseByte(x.size)], ['Mimetype', x.type.length < 1 ? 'unknown' : x.type], ['Last modified', format(new Date(x.lastModified || 0), 'fullDate')]].map(([x, y]) => (
                             <tr key={x}>
                               <td>
                                 <strong>

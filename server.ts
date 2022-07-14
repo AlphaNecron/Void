@@ -1,14 +1,14 @@
 import {blue} from '@colors/colors';
 import {PrismaClient} from '@prisma/client';
 import DiscordOAuth from 'discord-oauth2';
+import {format as formatDate} from 'fecha';
 import {mkdirSync} from 'fs';
 import {createServer} from 'http';
-import {DateTime} from 'luxon';
 import next from 'next';
 import {resolve} from 'path';
 import {createLogger, format, transports} from 'winston';
 import {name, version} from './package.json';
-import {deploy, injectBigIntSerializer, readConfig, runPrisma, throwAndExit} from './src/lib/serverUtils';
+import {injectBigIntSerializer, prismaCheck, readConfig, throwAndExit} from './src/lib/serverUtils';
 import validate from './src/lib/validate';
 
 const dev = process.env.NODE_ENV === 'development';
@@ -17,7 +17,7 @@ const logger = createLogger({
   level: 'info',
   format: format.splat(),
   transports: [
-    new transports.File({ filename: `logs/void_${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.log`, format: format.combine(
+    new transports.File({ filename: `logs/void_${formatDate(new Date(), 'yyyy_MM_dd_HH_mm_ss')}.log`, format: format.combine(
       format.timestamp(),
       format.prettyPrint(),
       format.json()
@@ -49,13 +49,7 @@ async function initServer() {
     }
     process.env.DATABASE_URL = config.void.databaseUrl;
     global.prisma = new PrismaClient();
-    const data = await runPrisma(config.void.databaseUrl, ['migrate', 'status'], true);
-    if (data.match(/Following migrations? have not yet been applied/)) {
-      logger.info('Some migrations are not applied, applying them now...');
-      await deploy(config);
-      logger.info('Finished applying migrations');
-      await runPrisma(config.void.databaseUrl, ['db', 'seed']);
-    }
+    await prismaCheck();
     mkdirSync(resolve(config.void.upload.outputDirectory, 'avatars'), {recursive: true});
     logger.info(`Initialized ${name}@${version}`);
     const app = next({

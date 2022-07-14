@@ -20,7 +20,7 @@ import TextPair from 'components/TextPair';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {parseByte} from 'lib/utils';
-import {Duration} from 'luxon';
+import prettyMilliseconds from 'pretty-ms';
 import {CgSmartphoneRam} from 'react-icons/cg';
 import {FaMemory} from 'react-icons/fa';
 import {FiSearch, FiX} from 'react-icons/fi';
@@ -45,10 +45,6 @@ export default function Page_Panel() {
       <Text>{description}</Text>
     </Group>
   );
-  const parseUptime = (raw: number) => {
-    const {days, hours, minutes, seconds} = Duration.fromMillis(raw).shiftTo('days', 'hours', 'minutes', 'seconds');
-    return `${days}d ${hours}h ${minutes}m ${seconds.toFixed(0)}s`;
-  };
   return data ? (
     <Stack>
       <CardGrid itemSize={350}>
@@ -59,7 +55,7 @@ export default function Page_Panel() {
             ['BIOS version', data.bios.version],
             ['BIOS release date', data.bios.releaseDate],
             ['Current time', new Date(data.time.current).toLocaleString()],
-            ['Uptime', parseUptime(data.time.uptime * 1e3)],
+            ['Uptime', prettyMilliseconds(data.time.uptime * 1e3, { verbose: true, secondsDecimalDigits: 0 })],
             ['Timezone', data.time.timezone]
           )}
         </DashboardCard>

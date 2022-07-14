@@ -1,9 +1,11 @@
 const {name, version} = require('./package.json');
 
-module.exports = {
+const config = {
   reactStrictMode: true,
   swcMinify: true,
   env: {
     voidVersion: `${name}@${version}`
   }
 };
+
+module.exports = config;
