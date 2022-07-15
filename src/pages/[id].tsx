@@ -21,6 +21,7 @@ import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
 import StyledTooltip from 'components/StyledTooltip';
 import VideoPlayer from 'components/VideoPlayer';
+import {format} from 'fecha';
 import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
@@ -370,7 +371,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
           'File name': file.fileName,
           'Mimetype': file.mimetype,
           'Size': prettyBytes(Number(file.size)),
-          'Uploaded at': file.uploadedAt.toLocaleString(),
+          'Uploaded at': format(file.uploadedAt, 'longDate'),
           'Views': file.views,
           'Uploaded by': file.user.name || 'Unknown'
         },

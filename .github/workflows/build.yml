@@ -26,7 +26,7 @@ jobs:
       - name: "Setup Node environment"
         uses: actions/setup-node@v1
         with:
-          node-version: "16.x"
+          node-version: "14.x"
       - name: "Get yarn cache directory"
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
@@ -39,6 +39,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: "Install dependencies"
-        run: yarn install --immutable
+        run: yarn install
       - name: "Build"
         run: yarn build
