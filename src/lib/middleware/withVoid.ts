@@ -110,7 +110,10 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
       });
     };
     const ip = req.headers['x-forwarded-for']?.toString().split(',').shift() || req.headers['x-real-ip'] || req.connection.remoteAddress;
-    const rateLimited = check(res, isAdmin(user?.role.permissions) ? Number.MAX_SAFE_INTEGER : config.void.rateLimit, ip.toString());
-    return rateLimited ? res.rateLimited() : handler(req, res);
+    if (ip) {
+      const rateLimited = check(res, isAdmin(user?.role.permissions) ? Number.MAX_SAFE_INTEGER : config.void.rateLimit, ip.toString());
+      return rateLimited ? res.rateLimited() : handler(req, res);
+    }
+    return handler(req, res);
   }, ironOptions);
 }

@@ -1,14 +1,12 @@
 import {Migrate} from '@prisma/migrate/dist/Migrate';
-import {ensureCanConnectToDatabase, ensureDatabaseExists} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
+import {ensureDatabaseExists} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
+import {executeSeedCommand} from '@prisma/migrate/dist/utils/seed';
 import {existsSync, readFileSync} from 'fs';
 import type {Config} from 'lib/types';
 import {resolve} from 'path';
 
 export async function prismaCheck() { // https://github.com/diced/zipline/blob/trunk/src/server/util.ts
   const schemaPath = resolve('prisma', 'schema.prisma');
-  const canConnect = await ensureCanConnectToDatabase(schemaPath);
-  if (!canConnect)
-    return throwAndExit('Could not connect to the database.');
   const migrator = new Migrate(schemaPath);
   await ensureDatabaseExists('apply', true, schemaPath);
   const diagnose = await migrator.diagnoseMigrationHistory({
@@ -16,9 +14,10 @@ export async function prismaCheck() { // https://github.com/diced/zipline/blob/t
   });
   if (diagnose.history?.diagnostic === 'databaseIsBehind')
     try {
-      global.logger.log('Applying Prisma migrations.');
+      global.logger.info('Applying Prisma migrations.');
       await migrator.applyMigrations();
-      global.logger.log('Finished applying migrations.');
+      await executeSeedCommand('ts-node-esm --compiler-options {\"module\":\"CommonJS\"} --transpile-only prisma/seed.ts');
+      global.logger.info('Finished applying migrations.');
     } catch (e) {
       throwAndExit(e);
     } finally {

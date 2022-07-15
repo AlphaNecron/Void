@@ -18,7 +18,7 @@ export type Void = {
 export type SessionUser = {
   id: string;
   username: string;
-  name: string;
+  name?: string;
   role: Role;
 }
 

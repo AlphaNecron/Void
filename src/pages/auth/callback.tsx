@@ -64,14 +64,9 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       },
       select: {
         id: true,
-        avatar: true,
         username: true,
         name: true,
-        email: true,
-        embed: true,
         role: true,
-        privateToken: true,
-        password: true,
         discord: true
       }
     });

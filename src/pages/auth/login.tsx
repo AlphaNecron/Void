@@ -3,7 +3,6 @@ import {
   Affix,
   Badge,
   Button,
-  Checkbox,
   Divider,
   Group,
   Paper,

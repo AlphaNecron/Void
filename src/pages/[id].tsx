@@ -325,7 +325,12 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       }
     };
   }
-  const { enabled, title, siteName, siteNameUrl, color, description, author, authorUrl } = file.user.embed;
+  const { enabled, title, siteName, siteNameUrl, color, description, author, authorUrl } = file.user.embed || {
+    enabled: false,
+    siteNameUrl: '',
+    color: '',
+    authorUrl: ''
+  };
   const replace = (text: string) =>
     text ? text.replace(/{{filename}}/ig, file.fileName)
       .replace(/{{id}}/ig, file.id)

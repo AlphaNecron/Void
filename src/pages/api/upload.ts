@@ -2,12 +2,13 @@ import {mkdirSync} from 'fs';
 import {writeFile} from 'fs/promises';
 import cfg from 'lib/config';
 import {VoidRequest, VoidResponse} from 'lib/middleware/withVoid';
-import {getMimetype} from 'lib/mime';
+import {getMimetype, isType} from 'lib/mime';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import generate from 'lib/urlGenerator';
 import {withMulter} from 'middleware/withMulter';
 import {join, resolve} from 'path';
+import sharp from 'sharp';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   switch (req.method) {
@@ -58,6 +59,10 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       const path = resolve(cfg.void.upload.outputDirectory, user.id);
       mkdirSync(path, {recursive: true});
       await writeFile(join(path, file.id), f.buffer);
+      if (isType('image', file.mimetype))
+        await sharp(f.buffer).resize(500, 250, {
+          fit: 'outside'
+        }).toFormat('webp').toFile(join(path, `${file.id}.preview`));
       const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
       responses.push({
         name: file.fileName,

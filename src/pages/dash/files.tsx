@@ -226,7 +226,7 @@ export default function Page_Files() {
               }
             ]}>
               {isType('image', file.mimetype) ? (
-                <BackgroundImage src={`/api/file/${file.id}`}>
+                <BackgroundImage src={`/api/file/${file.id}?preview=true`}>
                   <div style={{height: 125, padding: 8}}>
                     <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
                       checked={items[i]?.checked} file={file}/>

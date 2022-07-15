@@ -14,10 +14,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       id: true,
       username: true,
       name: true,
-      email: true,
-      embed: true,
       role: true,
-      privateToken: true,
       password: true
     }
   });

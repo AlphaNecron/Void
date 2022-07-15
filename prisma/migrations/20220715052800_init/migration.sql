@@ -26,12 +26,6 @@ CREATE TABLE "EmbedOptions" (
 );
 
 -- CreateTable
-CREATE TABLE "Avatar" (
-    "mimetype" TEXT NOT NULL DEFAULT 'image/png',
-    "userId" TEXT NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "Discord" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
@@ -114,9 +108,6 @@ CREATE UNIQUE INDEX "User_privateToken_key" ON "User"("privateToken");
 CREATE UNIQUE INDEX "EmbedOptions_id_key" ON "EmbedOptions"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Avatar_userId_key" ON "Avatar"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Discord_id_key" ON "Discord"("id");
 
 -- CreateIndex
@@ -148,9 +139,6 @@ ALTER TABLE "User" ADD CONSTRAINT "User_roleName_fkey" FOREIGN KEY ("roleName") 
 
 -- AddForeignKey
 ALTER TABLE "EmbedOptions" ADD CONSTRAINT "EmbedOptions_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Avatar" ADD CONSTRAINT "Avatar_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Discord" ADD CONSTRAINT "Discord_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
