@@ -28,7 +28,7 @@ import Upload from 'dialogs/Upload';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {isType} from 'lib/mime';
-import {parseByte} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FaBomb, FaLock} from 'react-icons/fa';
@@ -61,7 +61,7 @@ function FileCardInner({handler, checked, file, ...props}) {
         <Group spacing={4} align='center' position='center'>
           <RiHardDriveFill size={12}/>
           <Text size='xs' weight={700}>
-            {parseByte(file.size)}
+            {prettyBytes(file.size)}
           </Text>
         </Group>
       </Badge>

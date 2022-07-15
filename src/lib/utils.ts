@@ -1,5 +1,5 @@
 import {MANTINE_COLORS} from '@mantine/core';
-import prettyBytes from 'next/dist/lib/pretty-bytes';
+import {units} from 'lib/constants';
 import generate from './urlGenerator';
 
 export function generateToken(): string {
@@ -9,6 +9,10 @@ export function generateToken(): string {
 export function addToDate(date: Date, seconds: number): Date {
   date.setSeconds(date.getSeconds() + seconds);
   return date;
+}
+
+export function log(base: number, num: number) {
+  return Math.log(num) / Math.log(base);
 }
 
 export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
@@ -30,6 +34,12 @@ export function validateColor(color: string, extraColors: string[] = [], fallbac
   return [...MANTINE_COLORS, ...extraColors].includes(color) ? color : fallback;
 }
 
-export function parseByte(bytes: number): string {
-  return prettyBytes(bytes);
+export function prettyBytes(bytes: number): string {
+  const isNegative = bytes < 0;
+  if (!Number.isFinite(bytes) || Number.isNaN(bytes)) return '0 B';
+  if (isNegative)
+    bytes *= -1;
+  const i = Math.min(Math.floor(log(1024, bytes)), units.length);
+  bytes /= 1024 ** i;
+  return `${isNegative ? '-' : ''}${parseFloat(bytes.toFixed(1))} ${units[i]}`;
 }

@@ -3,7 +3,7 @@ import CardGrid from 'components/CardGrid';
 import DashboardCard from 'components/DashboardCard';
 import StatCard from 'components/StatCard';
 import useFetch from 'lib/hooks/useFetch';
-import {parseByte} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import {FiFile, FiGlobe, FiHardDrive, FiLink2, FiStar, FiUser, FiUsers} from 'react-icons/fi';
 
 function Atd({ children, ...props }) {
@@ -17,7 +17,7 @@ export default function Page_Dashboard() {
     return (
       <>
         <CardGrid itemSize={180}>
-          <StatCard title='Total size' icon={<FiHardDrive size={14}/>} value={parseByte(stats.upload.totalSize || 0)} alt={`${parseByte(stats.upload.averageSize || 0)} on average.`}/>
+          <StatCard title='Total size' icon={<FiHardDrive size={14}/>} value={prettyBytes(stats.upload.totalSize || 0)} alt={`${prettyBytes(stats.upload.averageSize || 0)} on average.`}/>
           <StatCard title='Files' icon={<FiFile size={14}/>} value={stats.upload.totalFiles} alt={`You own ${stats.user.files} files.`}/>
           <StatCard title='Users' value={stats.users.count} icon={<FiUser size={14}/>}/>
           <StatCard title='URLs' icon={<FiLink2 size={14}/>} value={stats.urls} alt={`You have ${stats.user.urls} URLs.`}/>

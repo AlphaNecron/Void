@@ -25,7 +25,7 @@ import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
 import {isPreviewable, isText, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
-import {parseByte} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
 import Head from 'next/head';
@@ -333,7 +333,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       .replace(/{{time}}/ig, file.uploadedAt.toLocaleTimeString())
       .replace(/{{datetime}}/ig, file.uploadedAt.toLocaleString())
       .replace(/{{mimetype}}/ig, file.mimetype)
-      .replace(/{{size}}/ig, parseByte(Number(file.size)))
+      .replace(/{{size}}/ig, prettyBytes(Number(file.size)))
       .replace(/{{username}}/ig, file.user.username) : null;
   if (file.isPrivate) {
     if (!req.session.user)
@@ -364,7 +364,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
           'ID': file.id,
           'File name': file.fileName,
           'Mimetype': file.mimetype,
-          'Size': parseByte(Number(file.size)),
+          'Size': prettyBytes(Number(file.size)),
           'Uploaded at': file.uploadedAt.toLocaleString(),
           'Views': file.views,
           'Uploaded by': file.user.name || 'Unknown'

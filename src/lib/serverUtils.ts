@@ -7,7 +7,8 @@ import {resolve} from 'path';
 export async function prismaCheck() { // https://github.com/diced/zipline/blob/trunk/src/server/util.ts
   const schemaPath = resolve('prisma', 'schema.prisma');
   const canConnect = await ensureCanConnectToDatabase(schemaPath);
-  if (!canConnect) throwAndExit('Could not connect to the database.');
+  if (!canConnect)
+    return throwAndExit('Could not connect to the database.');
   const migrator = new Migrate(schemaPath);
   await ensureDatabaseExists('apply', true, schemaPath);
   const diagnose = await migrator.diagnoseMigrationHistory({

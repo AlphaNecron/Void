@@ -87,7 +87,6 @@ export default function Page_Account() {
   } = useFetch('/api/user/token');
   const {
     data: discordInfo,
-    error,
     mutate
   } = useFetch('/api/discord');
   const {value} = useThemeValue();
@@ -170,7 +169,7 @@ export default function Page_Account() {
               <TextInput style={{ flexGrow: 1 }} label='Username' description='The unique username used to login to your account'
                 placeholder='Username' {...form.getInputProps('username')} required/>
               <PasswordBox
-                style={{ flexGrow: 1 }}
+                style={{ flexBasis: '100%' }}
                 label='Password'
                 autoComplete='new-password'
                 placeholder='New password'
@@ -276,7 +275,7 @@ export default function Page_Account() {
         </DashboardCard>
       </form>
       <DashboardCard icon={<SiDiscord/>} title='Discord account'>
-        {discordInfo && !error ? (
+        {discordInfo ? (
           <div style={{margin: 16, display: 'flex'}}>
             <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
             <div style={{flex: 1}}>
@@ -289,7 +288,9 @@ export default function Page_Account() {
                 setBusy(true);
                 fetch('/api/discord', {
                   method: 'DELETE'
-                }).then(() => mutate()).finally(() => setBusy(false));
+                }).then(() => mutate(null, {
+                  rollbackOnError: false
+                })).finally(() => setBusy(false));
               }} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
                 Unlink this Discord account
               </ConfirmButton>

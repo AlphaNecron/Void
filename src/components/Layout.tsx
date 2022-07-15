@@ -31,7 +31,7 @@ import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {hasPermission, isAdmin, Permission} from 'lib/permission';
-import {parseByte, validateHex} from 'lib/utils';
+import {prettyBytes, validateHex} from 'lib/utils';
 import {useState} from 'react';
 import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
@@ -160,7 +160,7 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
             }>
               {quota && (
                 <>
-                  <Menu.Label>{parseByte(quota.used)} / {parseByte(quota.total)} used</Menu.Label>
+                  <Menu.Label>{prettyBytes(quota.used)} / {prettyBytes(quota.total)} used</Menu.Label>
                   <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs'/>
                 </>
               )}

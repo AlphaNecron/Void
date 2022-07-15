@@ -5,7 +5,7 @@ import {useEffect} from 'react';
 type Session = {
   isReady: boolean;
   isLogged: boolean;
-  revalidate: () => void;
+  revalidate: (callback?: () => void) => void;
   user?: VoidUser;
 }
 
@@ -26,9 +26,12 @@ export default function useSession(required = false, onUnauthenticated?: () => v
   return {
     isReady: data || error,
     isLogged: data !== undefined,
-    revalidate: () => mutate(null, {
+    revalidate: (callback?: () => void) => mutate(null, {
       revalidate: true,
       rollbackOnError: false
+    }).then(data => {
+      if (data)
+        callback();
     }),
     user: data
   };

@@ -17,7 +17,7 @@ import {useDisclosure, useMediaQuery} from '@mantine/hooks';
 import List from 'components/List';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
-import {parseByte, validateHex} from 'lib/utils';
+import {prettyBytes, validateHex} from 'lib/utils';
 import {FiPlus} from 'react-icons/fi';
 import {RiAlertFill} from 'react-icons/ri';
 
@@ -64,7 +64,7 @@ export default function Page_Roles() {
                 <NumberInput disabled={isCurrent || isHigher} label='Priority' min={user.role.rolePriority + 1}
                   defaultValue={role.rolePriority}/>
                 <NumberInput disabled={isCurrent || isHigher} hideControls={false} rightSectionWidth={72} rightSection={
-                  <Badge radius='xs' color='dark' mr='xs' fullWidth>{parseByte(role.maxFileSize)}</Badge>
+                  <Badge radius='xs' color='dark' mr='xs' fullWidth>{prettyBytes(role.maxFileSize)}</Badge>
                 } label='Max file size (in bytes)'
                 defaultValue={role.maxFileSize} min={107374182} step={1048576}/>
                 <div>

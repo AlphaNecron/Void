@@ -27,7 +27,7 @@ import StyledTooltip from 'components/StyledTooltip';
 import {format} from 'fecha';
 import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';
-import {parseByte} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
@@ -182,7 +182,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                   <>
                     <Text size='sm' color='dimmed' inline mt={7}>
                       Max {restrictions?.maxFileCount} file{restrictions?.maxFileCount > 1 && 's'}, each should not
-                      exceed {parseByte(restrictions?.maxSize)}.
+                      exceed {prettyBytes(restrictions?.maxSize)}.
                     </Text>
                     <Text size='sm' color='dimmed' inline>
                       Blacklisted
@@ -232,7 +232,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                       )}
                       <Table>
                         <tbody>
-                          {[['Name', x.name], ['Size', parseByte(x.size)], ['Mimetype', x.type.length < 1 ? 'unknown' : x.type], ['Last modified', format(new Date(x.lastModified || 0), 'fullDate')]].map(([x, y]) => (
+                          {[['Name', x.name], ['Size', prettyBytes(x.size)], ['Mimetype', x.type.length < 1 ? 'unknown' : x.type], ['Last modified', format(new Date(x.lastModified || 0), 'fullDate')]].map(([x, y]) => (
                             <tr key={x}>
                               <td>
                                 <strong>

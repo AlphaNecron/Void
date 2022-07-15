@@ -35,6 +35,8 @@ export const charsets = {
   	]
 };
 
+export const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
 export const highlightLanguages = { // https://gist.github.com/ppisarczyk/43962d06686722d26d176fad46879d41
   'Markup': ['markup', '.html', '.htm', '.xml', '.xaml', '.xhtml', '.axaml'],
   'Bash': ['bash', '.sh', '.bash', '.zsh'],

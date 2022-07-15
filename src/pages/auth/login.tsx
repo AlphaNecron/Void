@@ -60,8 +60,7 @@ export default function LoginPage() {
                 }).then(r => r.json()).then(r => {
                   if (r.success) {
                     showNotification({ title: 'Logged in successfully, redirecting to the Dashboard.', message: '', icon: <RiCheckFill/>, color: 'green' });
-                    revalidate();
-                    router.push('/dash');
+                    revalidate(() => router.push('/dash'));
                   }
                   else
                     showNotification({ title: 'Failed to sign in.', color: 'red', icon: <RiErrorWarningFill/>, message: r.error });

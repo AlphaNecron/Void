@@ -19,7 +19,7 @@ import StyledTooltip from 'components/StyledTooltip';
 import TextPair from 'components/TextPair';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
-import {parseByte} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {CgSmartphoneRam} from 'react-icons/cg';
 import {FaMemory} from 'react-icons/fa';
@@ -74,13 +74,13 @@ export default function Page_Panel() {
           <Group position='apart'>
             <div>
               {render(
-                ['Free', parseByte(data.memory.free)],
-                ['Used', parseByte(data.memory.used)],
-                ['Active', parseByte(data.memory.active)],
-                ['Available', parseByte(data.memory.available)],
-                ['Buffers', parseByte(data.memory.buffers)],
-                ['Cached', parseByte(data.memory.cached)],
-                ['Total', parseByte(data.memory.total)]
+                ['Free', prettyBytes(data.memory.free)],
+                ['Used', prettyBytes(data.memory.used)],
+                ['Active', prettyBytes(data.memory.active)],
+                ['Available', prettyBytes(data.memory.available)],
+                ['Buffers', prettyBytes(data.memory.buffers)],
+                ['Cached', prettyBytes(data.memory.cached)],
+                ['Total', prettyBytes(data.memory.total)]
               )}
             </div>
             <StyledTooltip label={
@@ -142,7 +142,7 @@ export default function Page_Panel() {
                   <td>{disk.type}</td>
                   <td>{disk.fsType}</td>
                   <td>{disk.mount}</td>
-                  <td>{parseByte(disk.size)}</td>
+                  <td>{prettyBytes(disk.size)}</td>
                   <td>{disk.physical}</td>
                   <td>{disk.uuid}</td>
                   <td>{disk.label}</td>
