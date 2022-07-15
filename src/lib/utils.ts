@@ -36,7 +36,7 @@ export function validateColor(color: string, extraColors: string[] = [], fallbac
 
 export function prettyBytes(bytes: number): string {
   const isNegative = bytes < 0;
-  if (!Number.isFinite(bytes) || Number.isNaN(bytes)) return '0 B';
+  if (!bytes || !Number.isFinite(bytes) || Number.isNaN(bytes)) return '0 B';
   if (isNegative)
     bytes *= -1;
   const i = Math.min(Math.floor(log(1024, bytes)), units.length);
