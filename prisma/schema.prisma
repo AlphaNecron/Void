@@ -61,10 +61,11 @@ model Url {
 }
 
 model Domain {
-  name    String   @id
-  addedAt DateTime @default(now())
-  private Boolean  @default(false)
-  Users   User[]   @relation()
+  name      String   @id
+  addedAt   DateTime @default(now())
+  private   Boolean  @default(false)
+  expiresAt DateTime
+  Users     User[]   @relation()
 }
 
 model Role {
@@ -79,7 +80,7 @@ model Role {
 }
 
 model File {
-  id            String   @id @default(uuid())
+  id            String   @id @default(cuid())
   fileName      String
   mimetype      String   @default("application/octet-stream")
   isExploding   Boolean  @default(false)

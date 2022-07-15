@@ -71,12 +71,13 @@ export default function LoginPage() {
                   {...form.getInputProps('username')}
                 />
                 <PasswordInput
+                  my='xs'
                   required
                   icon={<FiLock />}
                   label='Password'
                   {...form.getInputProps('password')}>
                 </PasswordInput>
-                <Button loading={busy} fullWidth leftIcon={<FiLogIn />} mt='xs' type='submit'>Login with credentials</Button>
+                <Button loading={busy} fullWidth leftIcon={<FiLogIn />} type='submit'>Login with credentials</Button>
                 <Divider my='xs' mx={128}/>
                 <Button loading={busy} fullWidth style={{ backgroundColor: '#7289DA' }} onClick={() =>
                   fetch('/api/discord/auth').then(r => r.json()).then(r => {

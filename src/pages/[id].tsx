@@ -373,7 +373,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
           'Size': prettyBytes(Number(file.size)),
           'Uploaded at': format(file.uploadedAt, 'longDate'),
           'Views': file.views,
-          'Uploaded by': file.user.name || 'Unknown'
+          'Uploaded by': file.user.name || file.user.username || 'Unknown'
         },
         embed: {
           enabled: enabled,

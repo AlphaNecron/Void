@@ -55,6 +55,7 @@ CREATE TABLE "Domain" (
     "name" TEXT NOT NULL,
     "addedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "private" BOOLEAN NOT NULL DEFAULT false,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Domain_pkey" PRIMARY KEY ("name")
 );
