@@ -232,7 +232,7 @@ export default function Page_Account() {
           </Popover>
         } title='Embed' mb='md'>
           <div style={{ display: 'flex', marginTop: 8, flexWrap: 'wrap-reverse', gap: 16, alignItems: 'end' }}>
-            <div style={{ display: 'flex', flex: '1 1 300px', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flex: '1 1 300px', columnGap: 16, rowGap: 8, flexDirection: 'column' }}>
               <Checkbox label='Enable embed' {...form.getInputProps('enabled', {type: 'checkbox'})}/>
               <TextInput maxLength={32} label='Site name'
                 placeholder='Embed site name' {...form.getInputProps('siteName')}/>

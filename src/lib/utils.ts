@@ -11,10 +11,6 @@ export function addToDate(date: Date, seconds: number): Date {
   return date;
 }
 
-export function log(base: number, num: number) {
-  return Math.log(num) / Math.log(base);
-}
-
 export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
   if (color.substring(0, 1) !== '#') return false;
   color = color.substring(1);
@@ -35,11 +31,14 @@ export function validateColor(color: string, extraColors: string[] = [], fallbac
 }
 
 export function prettyBytes(bytes: number): string {
+  let i = 0;
+  if (isNaN(bytes) || !isFinite(bytes) || !bytes) return '0 B';
   const isNegative = bytes < 0;
-  if (!bytes || !Number.isFinite(bytes) || Number.isNaN(bytes)) return '0 B';
   if (isNegative)
     bytes *= -1;
-  const i = Math.min(Math.floor(log(1024, bytes)), units.length);
-  bytes /= 1024 ** i;
-  return `${isNegative ? '-' : ''}${parseFloat(bytes.toFixed(1))} ${units[i]}`;
+  while (bytes >= 1024 && i < units.length - 1) {
+    bytes /= 1024;
+    i++;
+  }
+  return `${+((isNegative ? -bytes : bytes).toFixed(1))} ${units[i]}`;
 }

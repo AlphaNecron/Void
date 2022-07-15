@@ -6,7 +6,7 @@ export default function TextPair({ label, value, ...props}) {
   return (
     <Text size='sm' weight={700} color='dimmed' {...props}>
       {label}: <Text size='sm' style={{display: 'inline'}}
-        color={themeValue('dark', 'white')}>{value}</Text>
+        color={themeValue('dark', 'white')}>{value || 'Unknown'}</Text>
     </Text>
   );
 }

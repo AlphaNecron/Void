@@ -34,8 +34,7 @@ export default function LoginPage() {
   const form = useForm({
     initialValues: {
       username: '',
-      password: '',
-      rememberMe: true
+      password: ''
     }
   });
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -78,8 +77,6 @@ export default function LoginPage() {
                   label='Password'
                   {...form.getInputProps('password')}>
                 </PasswordInput>
-                <Checkbox mt='md' label='Remember me' {...form.getInputProps('rememberMe', { type: 'checkbox' })}/>
-                {/*<Button leftIcon={<FiEdit />} variant='subtle'>Register</Button>*/}
                 <Button loading={busy} fullWidth leftIcon={<FiLogIn />} mt='xs' type='submit'>Login with credentials</Button>
                 <Divider my='xs' mx={128}/>
                 <Button loading={busy} fullWidth style={{ backgroundColor: '#7289DA' }} onClick={() =>
