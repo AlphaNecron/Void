@@ -115,6 +115,10 @@
 ### Contribution
   - All pull requests must be made in `dev` branch, pull requests in `v0` will be closed.
 
+### Default credentials
+  - Username: `admin`
+  - Password: `voiduser`
+
 ### Bot permissions
   #### These permissions are required for the bot to work properly (27712):
     - Add reactions
