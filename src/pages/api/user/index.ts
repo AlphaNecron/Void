@@ -91,7 +91,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           privateToken: true
         }
       });
-      logger.info(`User ${user.id} was updated`, updated);
+      logger.info(`User ${user.id} was updated`);
       req.session.user = updated;
       await req.session.save();
       return res.success();

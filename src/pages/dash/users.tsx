@@ -8,7 +8,7 @@ import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useSession from 'lib/hooks/useSession';
 import {validateHex} from 'lib/utils';
-import {FiEdit, FiInfo, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
+import {FiEdit, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
 
 export default function Page_Users() {
   const {data, mutate} = useFetch('/api/admin/users');
@@ -29,20 +29,10 @@ export default function Page_Users() {
         {handler.filterList(data, ['name', 'username', 'email', 'id']).map((user, i) => (
           <ItemCard key={i} actions={[
             {
-              label: 'Info',
-              icon: <FiInfo/>,
-              color: 'blue',
-              action: () => openContextModal('info', {
-                title: `${user.name || user.username || user.id}'s information`,
-                innerProps: {
-                  user
-                }
-              })
-            },
-            {
               label: 'Edit',
               icon: <FiEdit/>,
               color: 'teal',
+              disabled: session.user?.id === user.id || compRole(session.user?.role, user.role),
               action: () => console.log('edit')
             },
             {

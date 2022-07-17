@@ -1,55 +1,33 @@
-import {blue} from '@colors/colors';
 import {PrismaClient} from '@prisma/client';
 import DiscordOAuth from 'discord-oauth2';
-import {format as formatDate} from 'fecha';
 import {mkdirSync} from 'fs';
 import {createServer} from 'http';
+import logger from 'lib/logger';
+import {initNeutron} from 'neutron';
 import next from 'next';
 import {resolve} from 'path';
-import {createLogger, format, transports} from 'winston';
-import {name, version} from './package.json';
-import {injectBigIntSerializer, prismaCheck, readConfig, throwAndExit} from './src/lib/serverUtils';
-import validate from './src/lib/validate';
+import {name, version} from 'packageInfo';
+import {injectBigIntSerializer, prismaCheck, readConfig, throwAndExit} from 'lib/serverUtils';
+import validate from 'lib/validate';
 
 const dev = process.env.NODE_ENV === 'development';
 
-const logger = createLogger({
-  level: 'info',
-  format: format.splat(),
-  transports: [
-    new transports.File({ filename: `logs/void_${formatDate(new Date(), 'yyyy_MM_dd_HH_mm_ss')}.log`, format: format.combine(
-      format.timestamp(),
-      format.prettyPrint(),
-      format.json()
-    )}),
-    new transports.Console({
-      level: 'debug',
-      format: format.combine(
-        format.timestamp({ format: 'DD/MM/YYYY - HH:mm:ss' }),
-        format.colorize(),
-        format.simple(),
-        format.printf(({ level, message, timestamp }) => `[${blue(timestamp)}] ${level}: ${message}`)
-      )})
-  ],
-});
-
 async function initServer() {
-  global.logger = logger;
   try {
     injectBigIntSerializer();
     const config = await validate(readConfig());
     global.config = config;
+    process.env.DATABASE_URL = config.void.databaseUrl;
+    await prismaCheck();
+    global.prisma = new PrismaClient();
     if (config.void.discordProvider.clientSecret && config.void.discordProvider.clientId) {
-      const { defaultDomain, discordProvider: { clientSecret, clientId } } = config.void;
+      const {defaultDomain, discordProvider: {clientSecret, clientId}} = config.void;
       global.discordOauth = new DiscordOAuth({
         clientSecret,
         clientId,
         redirectUri: `${defaultDomain}/auth/callback`
       });
     }
-    process.env.DATABASE_URL = config.void.databaseUrl;
-    global.prisma = new PrismaClient();
-    await prismaCheck();
     mkdirSync(resolve(config.void.upload.outputDirectory, 'avatars'), {recursive: true});
     logger.info(`Initialized ${name}@${version}`);
     const app = next({
@@ -60,22 +38,22 @@ async function initServer() {
       quiet: !dev
     });
     const handler = app.getRequestHandler();
+    if (config.neutron.enabled && config.neutron.token && config.neutron.clientId && config.neutron.guildId)
+      initNeutron(config.neutron.token, config.neutron.clientId, config.neutron.guildId);
     app.prepare().then(() => {
       const srv = createServer(handler);
       if (process.env.VERBOSE === 'true' && dev)
         srv.on('request', (req, res) => {
-          if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs'))) {
-            res.statusCode < 400 ? logger.debug(`${res.statusCode} ${req.url}`) : logger.debug(`${res.statusCode} ${req.url}`);
-          }
+          if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs')))
+            logger.debug(`${res.statusCode} ${req.url}`);
         });
       srv.on('error', e => throwAndExit(e.message));
-      srv.on('listening', async () =>
-        logger.info(`Listening on ${config.void.host}:${config.void.port}`));
-      srv.listen(config.void.port, config.void.host);
+      srv.listen(config.void.port, config.void.host, null,
+        () => logger.info(`Listening on ${config.void.host}:${config.void.port}`));
     });
   } catch (e) {
     if ((e.message && e.message.startsWith('Could not find a production')) || (e.code && e.code === 'ENOENT' && e.path === './.next')) {
-      logger.error('There is no production build - run yarn build');
+      global.logger.error('There is no production build - run yarn build');
     } else throwAndExit(e);
   }
 }

@@ -15,20 +15,18 @@ import {
 } from '@mantine/core';
 import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
-import {Prism} from '@mantine/prism';
-import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
 import StyledTooltip from 'components/StyledTooltip';
-import VideoPlayer from 'components/VideoPlayer';
 import {format} from 'fecha';
 import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
-import {isPreviewable, isText, isType} from 'lib/mime';
+import {getType, isPreviewable, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
 import {prettyBytes} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
 import {Language} from 'prism-react-renderer';
@@ -37,6 +35,25 @@ import {BiNavigation} from 'react-icons/bi';
 import {FiDownload, FiFlag, FiInfo, FiSend} from 'react-icons/fi';
 import {RiErrorWarningFill, RiFlag2Fill, RiNavigationFill} from 'react-icons/ri';
 import {VscWordWrap} from 'react-icons/vsc';
+
+function FilePreview(type): any {
+  switch (type) {
+  case 'text':
+    return dynamic<any>(() => import('@mantine/prism').then(m => m.Prism), {
+      ssr: true
+    });
+  case 'audio':
+    return dynamic<any>(() => import('components/AudioPlayer'), {
+      ssr: true
+    });
+  case 'video':
+    return dynamic<any>(() => import('components/VideoPlayer'), {
+      ssr: true
+    });
+  default:
+    return <></>;
+  }
+}
 
 export function Preview({data: {isPrivate = false, isExploding = false, properties, embed}}) {
   const [open, handler] = useDisclosure(false);
@@ -85,7 +102,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
     dHandler.close();
   };
   useEffect(() => {
-    if (isText(mimetype)) {
+    if (isType('text', mimetype)) {
       fetch(src()).then(r => r.text()).then(setContent);
       detectLanguage();
     }
@@ -100,12 +117,16 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
     return url.toString();
   };
   const actions = (fluid = false, float = true) => (
-    <Group position='apart' grow={fluid} style={fluid || !float ? ({}) : ({ position: 'absolute', bottom: 24, right: 24, zIndex: 100 })} spacing={4}>
+    <Group position='apart' grow={fluid}
+      style={fluid || !float ? ({}) : ({position: 'absolute', bottom: 24, right: 24, zIndex: 100})} spacing={4}>
       <ResponsiveButton color='blue' onClick={handler.open} icon={<FiInfo/>} condition={fluid} label='Info'/>
-      {isExploding || <ResponsiveButton color='green' component='a' condition={fluid} href={src()} download={properties['File name']} label='Download' icon={<FiDownload/>}/>}
+      {isExploding ||
+        <ResponsiveButton color='green' component='a' condition={fluid} href={src()} download={properties['File name']}
+          label='Download' icon={<FiDownload/>}/>}
       <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag/>} label='Report' condition={fluid}/>
     </Group>
   );
+  const Previewer = FilePreview(getType(mimetype));
   return (
     <>
       <Head>
@@ -115,7 +136,8 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
             <meta property='og:title' content={embed.title}/>
             <meta property='og:description' content={embed.description}/>
             <meta property='theme-color' content={embed.color}/>
-            <link type='application/json+oembed' href={buildOEmbedUrl(embed.author, embed.authorUrl, embed.siteName, embed.siteNameUrl)}/>
+            <link type='application/json+oembed'
+              href={buildOEmbedUrl(embed.author, embed.authorUrl, embed.siteName, embed.siteNameUrl)}/>
             {isExploding ||
             isType('image', mimetype) ? (
                 <>
@@ -146,7 +168,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     {x}
                   </strong>
                 </td>
-                <td style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 200 }}>{y}</td>
+                <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 200}}>{y}</td>
               </tr>
             )}
           </tbody>
@@ -162,13 +184,15 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
       >
         <Stack>
           <Text size='xs' color='dimmed' weight={700}>
-          Why do you want to report this file?
+            Why do you want to report this file?
           </Text>
-          <TextInput value={reportReason} error={reportReason.length <= 3 ? 'Please provide a proper reason!' : null} onChange={setReportReason}/>
-          <Button size='xs' color='red' disabled={reportReason.length <= 3} onClick={report} leftIcon={<FiSend/>}>Submit report</Button>
+          <TextInput value={reportReason} error={reportReason.length <= 3 ? 'Please provide a proper reason!' : null}
+            onChange={setReportReason}/>
+          <Button size='xs' color='red' disabled={reportReason.length <= 3} onClick={report} leftIcon={<FiSend/>}>Submit
+            report</Button>
         </Stack>
       </Dialog>
-      <Container style={{ position: 'relative' }}>
+      <Container style={{position: 'relative'}}>
         {isPreviewable(mimetype) ? (
           isType('image', mimetype) ? (
             <>
@@ -183,15 +207,17 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
             </>
           ) : isType('audio', mimetype) ? (
             <Stack>
-              <AudioPlayer title={name} src={src()}/>
+              <Previewer title={name} src={src()}/>
               {actions(true, false)}
             </Stack>
           ) : isType('video', mimetype) ? (
-            <VideoPlayer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open} onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
-          ) : isText(mimetype) ? (
+            <Previewer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open}
+              onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
+          ) : isType('text', mimetype) ? (
             <Stack>
-              <div style={{ display: 'flex' }}>
-                <Select size='xs' searchable value={lang} onChange={setLang} style={{ flex: 1 }} variant='default' allowDeselect={false} creatable={false}
+              <div style={{display: 'flex'}}>
+                <Select size='xs' searchable value={lang} onChange={setLang} style={{flex: 1}} variant='default'
+                  allowDeselect={false} creatable={false}
                   clearable={false} mr={4}
                   data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
                 <Group spacing={4}>
@@ -203,7 +229,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                   {actions(false, false)}
                 </Group>
               </div>
-              <Prism withLineNumbers styles={
+              <Previewer withLineNumbers styles={
                 {
                   lineNumber: {
                     textAlign: 'left'
@@ -221,7 +247,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     }
                   })
                 }}
-              language={lang as Language}>{content}</Prism>
+              language={lang as Language}>{content}</Previewer>
             </Stack>
           ) : <></>) : (
           <Stack>
@@ -259,7 +285,7 @@ export function Url({id}) {
       <Head>
         <title>Protected URL</title>
       </Head>
-      <Container style={{ padding: 64 }}>
+      <Container style={{padding: 64}}>
         <Title mb='xl' order={4}>This URL is password-protected, please enter a password to continue.</Title>
         <div style={{display: 'flex'}}>
           <PasswordInput onKeyDown={e => e.key === 'Enter' && validate()} value={password}
@@ -326,7 +352,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       }
     };
   }
-  const { enabled, title, siteName, siteNameUrl, color, description, author, authorUrl } = file.user.embed || {
+  const {enabled, title, siteName, siteNameUrl, color, description, author, authorUrl} = file.user.embed || {
     enabled: false,
     siteNameUrl: '',
     color: '',

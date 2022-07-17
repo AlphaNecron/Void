@@ -22,7 +22,6 @@ import {
 } from '@mantine/core';
 import {useMediaQuery, useSetState} from '@mantine/hooks';
 import {NextLink} from '@mantine/next';
-import ShareX from 'components/dialogs/ShareX';
 import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
 import StyledTooltip from 'components/StyledTooltip';
@@ -46,6 +45,7 @@ import {
   RiTerminalWindowFill
 } from 'react-icons/ri';
 import {SiGithub} from 'react-icons/si';
+import ShareX from './dialogs/ShareX';
 
 function NavigationBar({user, onCollapse, route, quota, ...props}) {
   const [dialogOpen, setDialogOpen] = useSetState({sharex: false});

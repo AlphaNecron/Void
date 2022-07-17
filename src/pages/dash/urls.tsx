@@ -2,15 +2,17 @@ import {Autocomplete, Button, Stack, Text} from '@mantine/core';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
-import HiddenQR from 'components/HiddenQR';
 import ItemCard from 'components/ItemCard';
 import Spoil from 'components/Spoil';
 import ShortenDialog from 'dialogs/Shorten';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
+import dynamic from 'next/dynamic';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
 import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
+
+const HiddenQR = dynamic(() => import('components/HiddenQR'));
 
 export default function Page_URLs() {
   const {data, mutate} = useFetch('/api/user/urls');

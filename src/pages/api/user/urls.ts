@@ -24,7 +24,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         id: url.id
       }
     });
-    logger.info(`User ${user.id} deleted a url ${url.id}`, { meta: { url }});
+    logger.info(`User ${user.id} deleted a url ${url.id}`);
     return res.success();
   } else {
     const urls = await prisma.url.findMany({

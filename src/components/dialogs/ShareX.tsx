@@ -1,8 +1,10 @@
 import {Button, Checkbox, Group, Modal, Select, Stack, TextInput} from '@mantine/core';
 import {useSetState} from '@mantine/hooks';
-import {Prism} from '@mantine/prism';
 import useFetch from 'lib/hooks/useFetch';
-import {FiDownload, FiScissors} from 'react-icons/fi';
+import dynamic from 'next/dynamic';
+import {FiDownload} from 'react-icons/fi';
+
+const Preview = dynamic(() => import('components/ShareXPreview'));
 
 export default function Dialog_ShareX({open, onClose, ...props}) {
   const { data: token } = useFetch('/api/user/token');
@@ -55,14 +57,7 @@ export default function Dialog_ShareX({open, onClose, ...props}) {
           <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={shareXOptions.url} onChange={url => setShareXOptions({ url })}/>
           <Checkbox label='Ask password when shortening?' mt='xs' checked={shareXOptions.askPassword} onChange={e => setShareXOptions({ askPassword: e.target.checked })}/>
         </Stack>
-        <Prism.Tabs>
-          <Prism.Tab withLineNumbers icon={<FiDownload/>} language='json' noCopy label='Void_Uploader.sxcu'>
-            {JSON.stringify({...uploaderConfig, Headers: { ...uploaderConfig.Headers, Authorization: '<MASKED>' }}, null, '\t')}
-          </Prism.Tab>
-          <Prism.Tab withLineNumbers icon={<FiScissors/>} language='json' noCopy label='Void_Shortener.sxcu'>
-            {JSON.stringify({...shortenerConfig, Headers: { ...shortenerConfig.Headers, Authorization: '<MASKED>'}}, null, '\t')}
-          </Prism.Tab>
-        </Prism.Tabs>
+        <Preview uploaderConfig={uploaderConfig} shortenerConfig={shortenerConfig}/>
       </Group>
       <Group mt='md' style={{ position: 'absolute', right: 24, bottom: 16 }}>
         <Button leftIcon={<FiDownload/>} variant='gradient' gradient={{ from: 'yellow', to: 'red' }} download='Void_Uploader.sxcu' href={URL.createObjectURL(new Blob([JSON.stringify(uploaderConfig,null,'\t')],{type:'application/json'}))} component='a'>Uploader</Button>

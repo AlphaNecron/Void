@@ -1,4 +1,8 @@
+import {SlashCommandBuilder} from '@discordjs/builders';
 import {Role} from '@prisma/client';
+import {CommandInteraction, Interaction} from 'discord.js';
+
+// void related
 
 export type Void = {
   useHttps: boolean;
@@ -37,6 +41,16 @@ export type UploadOptions = {
   blacklistedExtensions: string[];
 }
 
+// neutron related
+
+export type Neutron = {
+  enabled: boolean;
+  token: string;
+  clientId: string;
+  guildId: string;
+}
+
 export type Config = {
   void: Void;
+  neutron: Neutron;
 }

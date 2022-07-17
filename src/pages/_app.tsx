@@ -2,18 +2,20 @@ import {ColorScheme, ColorSchemeProvider, MantineProvider, Progress, Transition}
 import {useInterval, useLocalStorage} from '@mantine/hooks';
 import {ModalsProvider} from '@mantine/modals';
 import {NotificationsProvider} from '@mantine/notifications';
-import Layout from 'components/Layout';
 import Dialog_FilesDeleted from 'dialogs/FilesDeleted';
 import Dialog_FilesUploaded from 'dialogs/FilesUploaded';
 import Dialog_Qr from 'dialogs/Qr';
-import Dialog_UserInfo from 'dialogs/UserInfo';
 import useSession from 'lib/hooks/useSession';
 import {hasPermission, isAdmin} from 'lib/permission';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import {useEffect, useState} from 'react';
 
+const Layout = dynamic(() => import('components/Layout'), {
+  ssr: false
+});
 
-export default function Void({Component, pageProps: {...pageProps}, router}) {
+export default function Void({Component, pageProps, router}) {
   const [progress, setProgress] = useState(0);
   const ticker = useInterval(() => setProgress(c => c <= 75 ? c + 1 : c), 15e1);
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -90,8 +92,7 @@ export default function Void({Component, pageProps: {...pageProps}, router}) {
           <ModalsProvider modals={{
             qr: Dialog_Qr,
             deleted: Dialog_FilesDeleted,
-            uploaded: Dialog_FilesUploaded,
-            info: Dialog_UserInfo
+            uploaded: Dialog_FilesUploaded
           }}
           modalProps={{overlayBlur: 4, withCloseButton: true}}>
             <NotificationsProvider>

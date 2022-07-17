@@ -65,7 +65,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     });
     delete newUser.password;
     delete newUser.email;
-    logger.info('Created a new user.', newUser);
+    logger.info('Created a new user.');
     return res.json(newUser);
   }
   case 'GET': {

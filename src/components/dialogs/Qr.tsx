@@ -1,6 +1,10 @@
 import {Stack, Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
-import ThemedQr from 'components/ThemedQr';
+import dynamic from 'next/dynamic';
+
+const ThemedQr = dynamic(() => import('components/ThemedQr'), {
+  ssr: false
+});
 
 export default function Dialog_Qr({ innerProps }: ContextModalProps<{ value: string }>) {
   return (

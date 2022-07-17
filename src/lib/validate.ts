@@ -23,6 +23,12 @@ const schema = yup.object({
       blacklistedExtensions: yup.array().default([])
     })
   }).required(),
+  neutron: yup.object({
+    enabled: yup.bool().default(false),
+    token: yup.string().nullable(),
+    clientId: yup.string().nullable(),
+    guildId: yup.string().nullable()
+  }).notRequired()
 });
 
 export default async function validate(config): Promise<Config> {

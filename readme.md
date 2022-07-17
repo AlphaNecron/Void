@@ -14,8 +14,8 @@
 
 ### Requirements
   - `node` >= 16
-  - PostgreSQL
-  - Either `yarn` or `npm`
+  - `postgresql` >= 14
+  - A package manager (preferred `yarn`)
 
 ### Installation / Deployment
   ```sh

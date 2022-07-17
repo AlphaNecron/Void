@@ -3,15 +3,17 @@ import type {PrismaClient} from '@prisma/client';
 import type DiscordOAuth from 'discord-oauth2';
 import type {Config, SessionUser} from 'lib/types';
 import type {Logger} from 'winston';
+import type { Neutron } from 'neutron';
 
 declare global {
-  namespace NodeJS {
-    interface Global {
+  declare namespace NodeJS {
+    declare interface Global {
       prisma: PrismaClient;
       config: Config;
       logger: Logger;
       cache: TTLCache;
-      discordOauth: DiscordOAuth
+      discordOauth: DiscordOAuth;
+      Neutron: Neutron;
     }
   }
 }
