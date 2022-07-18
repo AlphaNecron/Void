@@ -20,7 +20,6 @@ WORKDIR /void
 COPY --from=builder /build/node_modules ./node_modules
 
 COPY --from=builder /build/src ./src
-COPY --from=builder /build/server.ts ./server.ts
 COPY --from=builder /build/prisma ./prisma
 COPY --from=builder /build/.next ./.next
 COPY --from=builder /build/.eslintrc.js ./.eslintrc.js
