@@ -1,7 +1,7 @@
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {REST} from '@discordjs/rest';
 import {Routes} from 'discord-api-types/v10';
-import {Client, Intents} from 'discord.js';
+import {Client, Intents, MessageEmbed, TextChannel} from 'discord.js';
 import {readdirSync} from 'fs';
 import logger from 'lib/logger';
 import {isAdmin} from 'lib/permission';
@@ -19,7 +19,9 @@ export class Neutron {
   private _commands: Record<string, NeutronCommand> = {};
   private _userCache: Record<string, CachedUser> = {};
   
-  constructor(token: string, clientId: string, guildId: string) {
+  private _logChannel: TextChannel;
+  
+  constructor(token: string, clientId: string, guildId: string, logChannel: string) {
     this._client = new Client({intents: [Intents.FLAGS.GUILDS]});
     this._client.login(token);
     this._clientId = clientId;
@@ -27,10 +29,18 @@ export class Neutron {
     this._rest = new REST({version: '10'}).setToken(token);
     this._client.once('ready', () => {
       logger.info(`Initialized neutron@${neutronVersion}`, 'Neutron');
+      if (logChannel?.length > 0)
+        this._logChannel = this._client.guilds.cache.get(guildId).channels.cache.get(logChannel) as TextChannel;
     });
     this.initEvents();
     this.initCommands();
     this.initModalHandlers();
+  }
+  
+  public log(event: string, message: string, alt: string) {
+    if (!this._logChannel) return;
+    const embed = new MessageEmbed().setTitle(event).setFields({ name: message, value: alt });
+    this._logChannel.send({ embeds: [embed] });
   }
   
   protected resetCache = () => this._userCache = {};
@@ -112,7 +122,7 @@ export class Neutron {
   }
 }
 
-export function initNeutron(token: string, clientId: string, guildId: string) {
+export function initNeutron(token: string, clientId: string, guildId: string, logChannel: string) {
   if (!(token && clientId && guildId)) return;
-  global.neutron = new Neutron(token, clientId, guildId);
+  global.neutron = new Neutron(token, clientId, guildId, logChannel);
 }
