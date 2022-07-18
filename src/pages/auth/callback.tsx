@@ -125,7 +125,6 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       }
     };
   } catch (e) {
-    console.log(e);
     return {
       notFound: true
     };

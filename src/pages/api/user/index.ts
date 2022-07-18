@@ -20,7 +20,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           username: req.body.username
         }
       });
-      if (existing && user.username !== req.body.username)
+      if (existing)
         return res.forbid('Username is already taken');
       data['username'] = req.body.username;
     }
@@ -43,28 +43,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       embedData['author'] = req.body.author;
     if (req.body.authorUrl)
       embedData['authorUrl'] = req.body.authorUrl;
-    console.log({
-      where: {
-        id: user.id
-      },
-      data: {
-        ...data,
-        ...(embedData !== {} && {
-          embed: {
-            update: embedData
-          }
-        })
-      },
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        email: true,
-        embed: true,
-        role: true,
-        privateToken: true
-      }
-    });
     if (data !== {}) {
       const updated = await prisma.user.update({
         where: {

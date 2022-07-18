@@ -28,12 +28,12 @@ class Logger {
       return this.log(prefix, 'error', err as string);
     const e = err as Error;
     this.log(prefix, 'error', e.message || e.name);
-    console.log(gray(getStacktrace(e)));
+    console.error(gray(getStacktrace(e)));
   }
   
   private log(prefix: string, level: Level, msg: string) {
     const date = format(new Date(), 'mediumTime');
-    console.log(`${gray(`[${date}] ${prefix} ${this.getSymbol('pointer')}`)}\t${this.colorize(level)} ${msg}`);
+    console[level === 'error' ? 'error' : 'log'](`${gray(`[${date}] ${prefix} ${this.getSymbol('pointer')}`)}\t${this.colorize(level)} ${msg}`);
   }
 }
 

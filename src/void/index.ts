@@ -47,7 +47,7 @@ async function initServer() {
           if (!(req.url.startsWith('/_next') || req.url.startsWith('/__nextjs')))
             logger.debug(`${res.statusCode} ${req.url}`);
         });
-      srv.on('error', e => throwAndExit(e.message));
+      srv.on('error', e => throwAndExit(e));
       srv.listen(config.void.port, config.void.host, null,
         () => logger.info(`Listening on ${config.void.host}:${config.void.port}`));
     });

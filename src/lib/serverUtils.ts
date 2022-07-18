@@ -24,7 +24,7 @@ export async function prismaCheck() { // https://github.com/diced/zipline/blob/t
       logger.info('Applying Prisma migrations.');
       await migrator.applyMigrations();
       await migrator.tryToRunGenerate();
-      await executeSeedCommand('ts-node-esm --compiler-options {\"module\":\"CommonJS\"} --transpile-only prisma/seed.ts');
+      await executeSeedCommand('tsx prisma/seed.ts');
       logger.info('Finished applying migrations.');
     } catch (e) {
       throwAndExit(e);

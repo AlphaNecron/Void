@@ -11,6 +11,7 @@ import {join, resolve} from 'path';
 import sharp from 'sharp';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
+  const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
   switch (req.method) {
   case 'GET': {
     const user = await req.getUser();
@@ -63,7 +64,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         await sharp(f.buffer).resize(500, 250, {
           fit: 'outside'
         }).toFormat('webp').toFile(join(path, `${file.id}.preview`));
-      const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
       responses.push({
         name: file.fileName,
         url: `${baseUrl}/${file.slug}`,
