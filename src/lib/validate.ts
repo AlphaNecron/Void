@@ -27,7 +27,8 @@ const schema = yup.object({
     enabled: yup.bool().default(false),
     token: yup.string().nullable(),
     clientId: yup.string().nullable(),
-    guildId: yup.string().nullable()
+    guildId: yup.string().nullable(),
+    logChannel: yup.string().nullable()
   }).notRequired()
 });
 

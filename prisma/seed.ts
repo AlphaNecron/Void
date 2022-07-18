@@ -33,7 +33,7 @@ async function main() {
 }
 
 main()
-  .catch((e: PrismaClientInitializationError) => {
+  .catch(e => {
     throwAndExit(e);
   })
   .finally(async () => {

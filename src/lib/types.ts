@@ -48,6 +48,7 @@ export type Neutron = {
   token: string;
   clientId: string;
   guildId: string;
+  logChannel: string;
 }
 
 export type Config = {
