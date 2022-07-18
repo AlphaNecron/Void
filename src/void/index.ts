@@ -39,7 +39,7 @@ async function initServer() {
     });
     const handler = app.getRequestHandler();
     if (config.neutron.enabled && config.neutron.token && config.neutron.clientId && config.neutron.guildId)
-      initNeutron(config.neutron.token, config.neutron.clientId, config.neutron.guildId);
+      initNeutron(config.neutron.token, config.neutron.clientId, config.neutron.guildId, config.neutron.logChannel);
     app.prepare().then(() => {
       const srv = createServer(handler);
       if (process.env.VERBOSE === 'true' && dev)

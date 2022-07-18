@@ -1,7 +1,8 @@
 import {PrismaClient} from '@prisma/client';
+import {PrismaClientInitializationError} from '@prisma/client/runtime';
 import {hash} from 'argon2';
-import {throwAndExit} from '../src/lib/serverUtils';
-import logger from '../src/lib/logger';
+import {throwAndExit} from 'lib/serverUtils';
+import logger from 'lib/logger';
 
 const prisma = new PrismaClient();
 
@@ -32,7 +33,7 @@ async function main() {
 }
 
 main()
-  .catch(e => {
+  .catch((e: PrismaClientInitializationError) => {
     throwAndExit(e);
   })
   .finally(async () => {
