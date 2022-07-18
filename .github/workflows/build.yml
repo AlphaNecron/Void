@@ -27,14 +27,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "16.x"
-      - name: "Get yarn cache directory"
-        id: yarn-cache-dir
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
       - name: "Restore dependencies"
         id: cache-restore
         uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          path: "node_modules"
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-

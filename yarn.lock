@@ -7196,7 +7196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^4.0.0":
+"prisma@npm:4.0.0":
   version: 4.0.0
   resolution: "prisma@npm:4.0.0"
   dependencies:
@@ -9130,7 +9130,7 @@ __metadata:
     next: 12.2.2
     picocolors: ^1.0.0
     pretty-ms: ^8.0.0
-    prisma: ^4.0.0
+    prisma: 4.0.0
     react: 17.0.2
     react-dom: 17.0.2
     react-icons: ^4.4.0

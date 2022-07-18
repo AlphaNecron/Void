@@ -8,6 +8,7 @@ CREATE TABLE "User" (
     "emailVerified" TIMESTAMP(3),
     "privateToken" TEXT,
     "roleName" TEXT NOT NULL DEFAULT 'User',
+    "domain" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
