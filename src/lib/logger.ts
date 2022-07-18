@@ -6,7 +6,7 @@ import {getStacktrace, isUnicodeSupported} from './serverUtils';
 type Level = 'success' | 'info' | 'error' | 'warn' | 'debug';
 
 class Logger {
-  protected readonly _prefix: string;
+  private readonly _prefix: string;
   private readonly _useFallback = !isUnicodeSupported();
   
   constructor(prefix = 'Void') {
@@ -27,7 +27,7 @@ class Logger {
     if (err instanceof String)
       return this.log(prefix, 'error', err as string);
     const e = err as Error;
-    this.log(prefix, 'error', e.message);
+    this.log(prefix, 'error', e.message || e.name);
     console.log(gray(getStacktrace(e)));
   }
   

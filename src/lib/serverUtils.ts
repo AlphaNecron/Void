@@ -34,8 +34,8 @@ export async function prismaCheck() { // https://github.com/diced/zipline/blob/t
   else migrator.stop();
 }
 
-export function throwAndExit(msg: string) {
-  logger.error(msg);
+export function throwAndExit(err: Error | string) {
+  logger.error(err);
   process.exit(1);
 }
 
