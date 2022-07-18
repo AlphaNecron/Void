@@ -39,6 +39,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: "Install dependencies"
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: yarn install
       - name: "Build"
         run: yarn build
