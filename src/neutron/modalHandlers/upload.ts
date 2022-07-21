@@ -17,15 +17,13 @@ export default {
     const dataChunk = await blob.arrayBuffer();
     const slug = generate('alphanumeric', config.void.url.length);
     const ext = getExtension(blob.type);
-    const deletionToken = generate('alphanumeric', config.void.url.length * 4);
     const file = await prisma.file.create({
       data: {
         slug,
         fileName: `unknown.${ext}`,
         mimetype: blob.type === 'application/octet-stream' ? getMimetype(ext) || blob.type : blob.type,
         size: blob.size,
-        userId: user.id,
-        deletionToken
+        userId: user.id
       }
     });
     const path = resolve(config.void.upload.outputDirectory, user.id);

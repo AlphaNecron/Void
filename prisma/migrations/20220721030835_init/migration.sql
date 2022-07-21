@@ -33,7 +33,7 @@ CREATE TABLE "Discord" (
     "tag" TEXT NOT NULL,
     "accessToken" TEXT NOT NULL,
     "refreshToken" TEXT NOT NULL,
-    "expiresIn" TIMESTAMP(3) NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
     "avatar" TEXT NOT NULL,
     "userId" TEXT NOT NULL
 );
@@ -70,6 +70,7 @@ CREATE TABLE "Role" (
     "maxFileSize" BIGINT NOT NULL DEFAULT 104857600,
     "maxFileCount" INTEGER NOT NULL DEFAULT 5,
     "storageQuota" BIGINT NOT NULL DEFAULT 5368709120,
+    "maxRefCodes" INTEGER NOT NULL DEFAULT 5,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("name")
 );
@@ -89,6 +90,17 @@ CREATE TABLE "File" (
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "File_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ReferralCode" (
+    "code" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "consumedBy" TEXT,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "ReferralCode_pkey" PRIMARY KEY ("code")
 );
 
 -- CreateTable
@@ -125,6 +137,9 @@ CREATE UNIQUE INDEX "Discord_userId_key" ON "Discord"("userId");
 CREATE UNIQUE INDEX "Url_short_key" ON "Url"("short");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Role_rolePriority_key" ON "Role"("rolePriority");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "File_slug_key" ON "File"("slug");
 
 -- CreateIndex
@@ -150,6 +165,9 @@ ALTER TABLE "Url" ADD CONSTRAINT "Url_userId_fkey" FOREIGN KEY ("userId") REFERE
 
 -- AddForeignKey
 ALTER TABLE "File" ADD CONSTRAINT "File_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReferralCode" ADD CONSTRAINT "ReferralCode_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_DomainToUser" ADD CONSTRAINT "_DomainToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Domain"("name") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,8 +1,8 @@
 import {PrismaClient} from '@prisma/client';
-import {PrismaClientInitializationError} from '@prisma/client/runtime';
 import {hash} from 'argon2';
-import {throwAndExit} from 'lib/serverUtils';
 import logger from 'lib/logger';
+import {Permission} from 'lib/permission';
+import {throwAndExit} from 'lib/serverUtils';
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ async function main() {
             name: 'Owner',
             rolePriority: 0,
             color: '#E96565',
-            permissions: 62,
+            permissions: Permission.OWNER,
           }
         }
       }

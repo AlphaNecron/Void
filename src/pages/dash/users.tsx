@@ -1,4 +1,4 @@
-import {Autocomplete, Badge, Button, LoadingOverlay, Stack, Title} from '@mantine/core';
+import {Autocomplete, Badge, Button, LoadingOverlay, Stack, Text, Title} from '@mantine/core';
 import {useModals} from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
 import ItemCard from 'components/ItemCard';
@@ -7,16 +7,24 @@ import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useSession from 'lib/hooks/useSession';
-import {validateHex} from 'lib/utils';
+import {request, validateHex} from 'lib/utils';
+import {useState} from 'react';
 import {FiEdit, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
 
 export default function Page_Users() {
   const {data, mutate} = useFetch('/api/admin/users');
   const {query, handler} = useQuery();
-  const {openConfirmModal, openContextModal} = useModals();
+  const {openConfirmModal} = useModals();
   const session = useSession();
+  const [busy, setBusy] = useState(false);
   const compRole = (a, b) => a.rolePriority > b.rolePriority && a.permissions < b.permissions;
-  const deleteUser = () => fetch('/api/admin/users');
+  const deleteUser = (id: string) => request({
+    onStart: () => setBusy(true),
+    endpoint: '/api/admin/users',
+    method: 'DELETE',
+    body: {id},
+    onDone: () => setBusy(false)
+  });
   return data ? (
     <Stack>
       <div style={{display: 'flex'}}>
@@ -39,13 +47,14 @@ export default function Page_Users() {
               label: 'Delete',
               icon: <FiTrash/>,
               color: 'red',
+              busy,
               disabled: session.user?.id === user.id || compRole(session.user?.role, user.role),
               action: () => {
                 openConfirmModal({
                   title: 'Are you sure you want to delete this user?',
                   children: (
                     <Stack align='center'>
-                      <UserAvatar user={user} size={96} ext={session.user?.id !== user.id}/>
+                      <UserAvatar user={user} size={96}/>
                       <Title order={4}>
                         {user.name || user.username || user.id}
                       </Title>
@@ -53,6 +62,7 @@ export default function Page_Users() {
                   ),
                   labels: {confirm: 'Delete', cancel: 'Cancel'},
                   confirmProps: {color: 'red', leftIcon: <FiTrash/>},
+                  onConfirm: () => deleteUser(user.id),
                   cancelProps: {leftIcon: <FiX/>}
                 });
               }
@@ -60,10 +70,12 @@ export default function Page_Users() {
           ]}>
             <div style={{display: 'flex', alignItems: 'center', margin: 16}}>
               <Stack spacing={6} align='center'>
-                <UserAvatar size={80} user={user} ext={user.id !== session.user.id}/>
+                <UserAvatar size={80} user={user}/>
                 <Badge
                   sx={({fn}) => validateHex(user.role.color) ? {background: fn.rgba(user.role.color, 0.5)} : {}}>
-                  {user.role.name}
+                  <Text sx={({ colorScheme }) => ({ fontSize: 11, color: colorScheme === 'dark' ? 'white' : '#484848' })}>
+                    {user.role.name}
+                  </Text>
                 </Badge>
               </Stack>
               <Stack ml='xl' spacing={2}>

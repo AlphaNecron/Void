@@ -7,7 +7,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
   if (!user) return res.unauthorized();
   if (req.method === 'PATCH') {
-    const updated = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: user.id
       },
@@ -16,7 +16,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     logger.info(`User ${user.username} (${user.id}) reset their token`);
-    return res.success({ newToken: updated.privateToken });
+    return res.success();
   }
   else if (req.method === 'GET')
     return res.json({ privateToken: user.privateToken });

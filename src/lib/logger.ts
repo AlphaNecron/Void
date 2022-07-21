@@ -7,10 +7,13 @@ type Level = 'success' | 'info' | 'error' | 'warn' | 'debug';
 
 class Logger {
   private readonly _prefix: string;
-  private readonly _useFallback = !isUnicodeSupported();
+  private readonly _useFallback: boolean;
+  private readonly _verbose: boolean;
   
   constructor(prefix = 'Void') {
     this._prefix = prefix;
+    this._useFallback = !isUnicodeSupported();
+    this._verbose = process.env.NODE_ENV === 'development' || process.env.VERBOSE === 'true';
   }
   
   colorize = (level: Level): string =>
@@ -28,7 +31,8 @@ class Logger {
       return this.log(prefix, 'error', err as string);
     const e = err as Error;
     this.log(prefix, 'error', e.message || e.name);
-    console.error(gray(getStacktrace(e)));
+    if (this._verbose)
+      console.error(gray(getStacktrace(e)));
   }
   
   private log(prefix: string, level: Level, msg: string) {

@@ -28,7 +28,7 @@ import Upload from 'dialogs/Upload';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {isType} from 'lib/mime';
-import {prettyBytes} from 'lib/utils';
+import {prettyBytes, request} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FaBomb, FaLock} from 'react-icons/fa';
@@ -86,50 +86,41 @@ export default function Page_Files() {
     if (data)
       handler.setState(data.files.map(f => ({id: f.id, checked: false})));
   }, [data]);
-  const del = (tokens: string[]) => {
-    setBusy(true);
-    fetch('/api/delete', {
+  const del = (tokens: string[]) =>
+    request({
+      onStart: () => setBusy(true),
+      endpoint: '/api/delete',
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
+      body: tokens,
+      callback(j) {
+        if (j.deleted.length > 1) {
+          modals.openContextModal('deleted', {
+            title: 'Following files have been deleted successfully.',
+            innerProps: {
+              files: j.deleted
+            }
+          });
+        } else showNotification({
+          title: 'Successfully deleted the file!',
+          message: j.deleted[0].fileName,
+          color: 'green',
+          icon: <RiDeleteBinFill/>
+        });
       },
-      body: JSON.stringify(tokens)
-    }).then(res => res.json()).then(j => {
-      if (j.error) {
-        setBusy(false);
-        return showNotification({
-          title: 'Couldn\'t delete the file',
-          message: j.error,
+      onError(e) {
+        showNotification({
+          title: 'Failed to delete the file',
+          message: e.toString(),
           color: 'red',
           icon: <RiErrorWarningFill/>
         });
+        modals.closeAll();
+      },
+      onDone() {
+        mutate();
+        setBusy(false);
       }
-      if (j.deleted.length > 1) {
-        modals.openContextModal('deleted', {
-          title: 'Following files have been deleted successfully.',
-          innerProps: {
-            files: j.deleted
-          }
-        });
-      } else showNotification({
-        title: 'Successfully deleted the file!',
-        message: j.deleted[0].fileName,
-        color: 'green',
-        icon: <RiDeleteBinFill/>
-      });
-    }).catch(e => {
-      showNotification({
-        title: 'Failed to delete the file',
-        message: e.toString(),
-        color: 'red',
-        icon: <RiErrorWarningFill/>
-      });
-      modals.closeAll();
-    }).finally(() => {
-      mutate();
-      setBusy(false);
     });
-  };
   const deleteFiles = (ids: string[]) => {
     const tokens = data.files.filter(f => ids.includes(f.id)).map(f => f.deletionToken);
     if (tokens.length === 0) return;

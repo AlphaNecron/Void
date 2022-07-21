@@ -31,10 +31,11 @@ export class Neutron {
       logger.info(`Initialized neutron@${neutronVersion}`, 'Neutron');
       if (logChannel?.length > 0)
         this._logChannel = this._client.guilds.cache.get(guildId).channels.cache.get(logChannel) as TextChannel;
+      this.initPresenceStatus();
+      this.initEvents();
+      this.initCommands();
+      this.initModalHandlers();
     });
-    this.initEvents();
-    this.initCommands();
-    this.initModalHandlers();
   }
   
   public log(event: string, message: string, alt: string) {
@@ -43,9 +44,13 @@ export class Neutron {
     this._logChannel.send({ embeds: [embed] });
   }
   
-  protected resetCache = () => this._userCache = {};
+  public resetCache = () => this._userCache = {};
   
-  private async initModalHandlers() {
+  private initPresenceStatus() {
+    this._client.user.setActivity({ name: 'some users', type: 'WATCHING' });
+  }
+  
+  private initModalHandlers() {
     this._modalHandlers = {};
     const basePath = resolve('src', 'neutron', 'modalHandlers');
     const files = readdirSync(basePath).filter(file => file.endsWith('.ts'));
@@ -56,7 +61,7 @@ export class Neutron {
     logger.info(`Successfully loaded ${files.length} modal handlers.`, 'Neutron');
   }
   
-  private async initCommands() {
+  private initCommands() {
     this._commands = {};
     const basePath = resolve('src', 'neutron', 'commands');
     const files = readdirSync(basePath).filter(file => file.endsWith('.ts'));
@@ -68,10 +73,10 @@ export class Neutron {
     }
     if (payload.length === 0) return;
     logger.info(`Successfully loaded ${files.length} commands.`, 'Neutron');
-    await this._rest.put(
+    this._rest.put(
       Routes.applicationGuildCommands(this._clientId, this._guildId),
       {body: payload}
-    );
+    ).then(() => logger.info('Successfully pushed command payloads to the server.', 'Neutron'));
   }
   
   private initEvents() {

@@ -6,11 +6,10 @@ import router from 'next/router';
 import {FiChevronLeft, FiLogOut} from 'react-icons/fi';
 
 export default function LogoutPage() {
-  const { isLogged, user, revalidate } = useSession(true, () => router.push('/auth/login'));
-  const logOut = () => fetch('/api/auth/logout').finally(() =>
-    router.push('/auth/login').then(() => revalidate()));
-  return isLogged && (
-    <Container px={64} pt={32}>
+  const {isLogged, user, revalidate} = useSession(true, () => router.push('/auth/login'));
+  const logOut = () => fetch('/api/auth/logout').then(() => revalidate(() => router.push('/auth/login')));
+  return isLogged && user && (
+    <Container pt={32}>
       <Stack align='center'>
         <UserAvatar size={128} user={user}/>
         <Title order={4}>Signed in as {user.name || user.username || user.id}</Title>

@@ -1,9 +1,9 @@
 import {MessageEmbed} from 'discord.js';
 import type {NeutronCommand} from 'neutron/types';
 import {uptime} from 'os';
-import pretty from 'pretty-ms';
 
 import {neutronVersion, version} from 'packageInfo';
+import pretty from 'pretty-ms';
 
 export default {
   name: 'system',

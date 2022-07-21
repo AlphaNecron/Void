@@ -40,6 +40,8 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
   );
 }
 
+CallbackPage.title = 'Discord integration';
+
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {
   const {code, state} = query;
   const rUser = req.session.user;
@@ -72,8 +74,14 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
     });
     if (!rUser && !(dUser && dUser.discord)) return {
       redirect: {
-        destination: '/auth/login',
+        destination: '/auth/register',
         statusCode: 308
+      }
+    };
+    if (rUser && dUser.id !== rUser.id) return {
+      redirect: {
+        destination: '/dash',
+        statusCode: 307
       }
     };
     const avatar = user.avatar
@@ -85,7 +93,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
       tag: user.discriminator,
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
-      expiresIn: addToDate(new Date(), data.expires_in)
+      expiresAt: addToDate(new Date(), data.expires_in)
     };
     const r = await prisma.discord.upsert({
       where: {

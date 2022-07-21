@@ -23,7 +23,7 @@ import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
 import {getType, isPreviewable, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
-import {prettyBytes} from 'lib/utils';
+import {prettyBytes, request} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
 import dynamic from 'next/dynamic';
@@ -265,20 +265,19 @@ export function Url({id}) {
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
   const validate = () =>
-    fetch('/api/validate', {
+    request({
+      endpoint: '/api/validate',
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+      body: {
         id,
         password
-      })
-    }).then(r => r.json()).then(r => {
-      if (r.error)
-        return showNotification({title: r.error, message: '', color: 'red', icon: <RiErrorWarningFill/>});
-      showNotification({title: 'Redirecting...', message: '', color: 'green', icon: <RiNavigationFill/>});
-      router.push(r.destination);
+      },
+      callback(r) {
+        if (r.error)
+          return showNotification({title: r.error, message: '', color: 'red', icon: <RiErrorWarningFill/>});
+        showNotification({title: 'Redirecting...', message: '', color: 'green', icon: <RiNavigationFill/>});
+        router.push(r.destination);
+      }
     });
   return (
     <>
@@ -303,7 +302,6 @@ export default function Handler({type, data}) {
   return type === 'url' ? <Url id={data.id}/> : <Preview data={data}/>;
 }
 
-// eslint-disable-next-line
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {
   const file = await prisma.file.findUnique({
     where: {

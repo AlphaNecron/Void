@@ -16,13 +16,13 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       username: true,
       tag: true,
       avatar: true,
-      expiresIn: true,
+      expiresAt: true,
       refreshToken: true,
       accessToken: true
     }
   });
   if (!discord) return res.notFound('Discord profile not found, user is not linked with Discord.');
-  const expired = discord.expiresIn <= new Date();
+  const expired = discord.expiresAt <= new Date();
   switch (req.method) {
   case 'GET': {
     if (expired) {
@@ -40,7 +40,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           data: {
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
-            expiresIn: date
+            expiresAt: date
           },
           select: {
             id: true,
@@ -52,7 +52,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         return res.json(r);
       } catch (e) {}
     }
-    delete discord.expiresIn;
+    delete discord.expiresAt;
     delete discord.refreshToken;
     delete discord.accessToken;
     return res.json(discord);

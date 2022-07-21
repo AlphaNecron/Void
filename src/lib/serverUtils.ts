@@ -2,9 +2,9 @@ import {Migrate} from '@prisma/migrate/dist/Migrate';
 import {ensureDatabaseExists} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
 import {executeSeedCommand} from '@prisma/migrate/dist/utils/seed';
 import {existsSync, readFileSync} from 'fs';
-import {EOL} from 'os';
 import logger from 'lib/logger';
 import type {Config} from 'lib/types';
+import {EOL} from 'os';
 import {resolve} from 'path';
 
 export function getStacktrace(err: Error): string {

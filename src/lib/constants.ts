@@ -27,6 +27,8 @@ export const errors = {
   '505': 'HTTP Version Not Supported'
 };
 
+export const noop = () => {};
+
 export const charsets = {
   alphanumeric: 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890',
   invisible: ['\u200B', '\u2060', '\u200C', '\u200D'],

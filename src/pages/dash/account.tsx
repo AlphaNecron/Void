@@ -7,6 +7,7 @@ import {
   ColorInput,
   Container,
   CSSObject,
+  Group,
   Highlight,
   Image,
   LoadingOverlay,
@@ -15,7 +16,8 @@ import {
   Stack,
   Table,
   Text,
-  TextInput
+  TextInput,
+  Transition
 } from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
@@ -27,18 +29,21 @@ import PasswordBox from 'components/PasswordBox';
 import StyledTooltip from 'components/StyledTooltip';
 import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
+import {format} from 'fecha';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
+import {request} from 'lib/utils';
 import router, {useRouter} from 'next/router';
+import pretty from 'pretty-ms';
 import {useState} from 'react';
 import {FaUserCheck, FaUserCircle} from 'react-icons/fa';
 import {FiInfo, FiSave} from 'react-icons/fi';
 import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 'react-icons/io5';
-import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine} from 'react-icons/ri';
+import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine, RiStarFill} from 'react-icons/ri';
 import {SiDiscord} from 'react-icons/si';
 import {TbUnlink} from 'react-icons/tb';
-import * as yup from 'yup';
+import {bool as yupBool, object as yupObject, string as yupString} from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
@@ -61,21 +66,21 @@ export default function Page_Account() {
     delete values.embed;
     return values;
   };
-  const schema = yup.object({
-    name: yup.string().nullable().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
-    username: yup.string().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
-    password: yup.string().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, {
+  const schema = yupObject({
+    name: yupString().nullable().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
+    username: yupString().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
+    password: yupString().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, {
       excludeEmptyString: true,
       message: 'Password must match shown criteria.'
     }),
-    enabled: yup.boolean().required(),
-    color: yup.string().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {excludeEmptyString: false}),
-    siteName: yup.string().nullable(),
-    siteNameUrl: yup.string().url().nullable(),
-    title: yup.string().nullable(),
-    description: yup.string().nullable(),
-    author: yup.string().nullable(),
-    authorUrl: yup.string().url().nullable()
+    enabled: yupBool().required(),
+    color: yupString().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {excludeEmptyString: false}),
+    siteName: yupString().nullable(),
+    siteNameUrl: yupString().url().nullable(),
+    title: yupString().nullable(),
+    description: yupString().nullable(),
+    author: yupString().nullable(),
+    authorUrl: yupString().url().nullable()
   });
   const form = useForm({
     schema: yupResolver(schema),
@@ -89,24 +94,24 @@ export default function Page_Account() {
     data: discordInfo,
     mutate
   } = useFetch('/api/discord');
+  const {
+    data: refData
+  } = useFetch('/api/user/referral');
   const {value} = useThemeValue();
-  const regenToken = () => {
-    fetch('/api/user/token', {
+  const regenToken = () =>
+    request({
+      endpoint: '/api/user/token',
       method: 'PATCH',
-    })
-      .then(r => r.json())
-      .then(t => {
-        if (t.newToken) {
-          showNotification({
-            title: 'Successfully regenerated your private token.',
-            message: '',
-            color: 'green',
-            icon: <RiKey2Fill/>
-          });
-          mutateToken();
-        }
-      });
-  };
+      callback() {
+        showNotification({
+          title: 'Successfully regenerated your private token.',
+          message: '',
+          color: 'green',
+          icon: <RiKey2Fill/>
+        });
+        mutateToken();
+      }
+    });
   const variables = {
     'id': 'File\'s unique identifier',
     'size': 'File size',
@@ -126,60 +131,154 @@ export default function Page_Account() {
     borderRadius: theme.radius.sm
   });
   const updateUser = values =>
-    fetch('/api/user', {
+    request({
+      endpoint: '/api/user',
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(values)
-    }).then(r => r.json()).then(r => {
-      if (!r.error)
-        showNotification({
-          title: 'Successfully updated your user.',
-          icon: <FaUserCheck/>,
-          message: '',
-          color: 'green'
+      body: values,
+      callback(r) {
+        if (!r.error)
+          showNotification({
+            title: 'Successfully updated your user.',
+            icon: <FaUserCheck/>,
+            message: '',
+            color: 'green'
+          });
+        else showNotification({
+          title: 'Failed to update your user.',
+          message: r.error,
+          color: 'red',
+          icon: <RiErrorWarningFill/>
         });
-      else showNotification({
-        title: 'Failed to update your user.',
-        message: r.error,
-        color: 'red',
-        icon: <RiErrorWarningFill/>
-      });
-      reload();
+        reload();
+      }
     });
   const [opened, dHandler] = useDisclosure(false);
   const [busy, setBusy] = useState(false);
   const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
+  const deleteAvatar = () => request({
+    endpoint: '/api/user/avatar',
+    method: 'DELETE',
+    onDone: () => router.reload()
+  });
   return isLogged ? (
     <>
       <UpdateAvatarDialog opened={opened} onClose={dHandler.close} onDone={reload}/>
-      <form id='account_form' onSubmit={form.onSubmit(updateUser)}>
-        <DashboardCard icon={<FaUserCircle/>} title='Basic information' mb='md'>
-          <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
-            <Stack align='end' mr='sm'>
-              <UserAvatar size={128} mx='sm' user={user}/>
-              <Button variant='subtle' fullWidth onClick={dHandler.open}>
-                Update avatar
-              </Button>
-            </Stack>
-            <div style={{ display: 'flex', columnGap: 16, rowGap: 8, flex: 1, flexFlow: 'wrap', justifyContent: 'space-between', flexDirection: 'row' }}>
-              <TextInput style={{ flexGrow: 1 }} label='Display name' description='Can be your real name or whatever you like'
-                placeholder='Display name' {...form.getInputProps('name')}/>
-              <TextInput style={{ flexGrow: 1 }} label='Username' description='The unique username used to login to your account'
-                placeholder='Username' {...form.getInputProps('username')} required/>
-              <PasswordBox
-                style={{ flexBasis: '100%' }}
-                label='Password'
-                autoComplete='new-password'
-                placeholder='New password'
-                description='Strong password should include letters in lower and uppercase, at least 1 number, at least 1 special symbol'
-                {...form.getInputProps('password')}/>
+      <Stack>
+        <form id='account_form' onSubmit={form.onSubmit(updateUser)}>
+          <DashboardCard icon={<FaUserCircle/>} title='Basic information' mb='md'>
+            <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
+              <Stack align='center' mr='sm'>
+                <UserAvatar size={128} mx='sm' user={user}/>
+                <Group spacing={0}>
+                  <Button size='xs' variant='subtle' color='red' onClick={deleteAvatar}>
+                    Delete
+                  </Button>
+                  <Button size='xs' variant='subtle' onClick={dHandler.open}>
+                    Update
+                  </Button>
+                </Group>
+              </Stack>
+              <div style={{
+                display: 'flex',
+                columnGap: 16,
+                rowGap: 8,
+                flex: 1,
+                flexFlow: 'wrap',
+                justifyContent: 'space-between',
+                flexDirection: 'row'
+              }}>
+                <TextInput style={{flexGrow: 1}} label='Display name'
+                  description='Can be your real name or whatever you like'
+                  placeholder='Display name' {...form.getInputProps('name')}/>
+                <TextInput style={{flexGrow: 1}} label='Username'
+                  description='The unique username used to login to your account'
+                  placeholder='Username' {...form.getInputProps('username')} required/>
+                <PasswordBox
+                  style={{flexBasis: '100%'}}
+                  label='Password'
+                  autoComplete='new-password'
+                  placeholder='New password'
+                  description='Strong password should include letters in lower and uppercase, at least 1 number, at least 1 special symbol'
+                  {...form.getInputProps('password')}/>
+              </div>
             </div>
-          </div>
-        </DashboardCard>
+          </DashboardCard>
+          
+          <DashboardCard icon={<RiBracesFill/>} rightItem={
+            <Popover opened={open} onClose={handler.close} position='right' transition='skew-down' target={
+              <ActionIcon onClick={handler.toggle} variant='hover' color='blue'>
+                <FiInfo/>
+              </ActionIcon>
+            }>
+              <Table>
+                <caption>
+                  Embed variables
+                </caption>
+                <tbody>
+                  {Object.entries(variables).map(([x, y], i) => (
+                    <tr key={i}>
+                      <td>{`{{${x}}}`}</td>
+                      <td>{y}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Popover>
+          } title='Embed'>
+            <div style={{display: 'flex', flexWrap: 'wrap-reverse', gap: 16, alignItems: 'center'}}>
+              <div style={{display: 'flex', marginTop: 8, flex: '1 1 300px', columnGap: 16, rowGap: 8, flexDirection: 'column'}}>
+                <Checkbox label='Enable embed' {...form.getInputProps('enabled', {type: 'checkbox'})}/>
+                <TextInput maxLength={32} label='Site name'
+                  placeholder='Embed site name' {...form.getInputProps('siteName')}/>
+                <TextInput maxLength={32} label='Site name URL'
+                  placeholder='Embed site name URL' {...form.getInputProps('siteNameUrl')}/>
+                <TextInput maxLength={32} label='Title'
+                  placeholder='Embed title' {...form.getInputProps('title')}/>
+                <ColorInput label='Color'
+                  placeholder='Embed color' {...form.getInputProps('color')}/>
+                <TextInput label='Description' maxLength={64}
+                  placeholder='Embed description' {...form.getInputProps('description')}/>
+                <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('author')}/>
+                <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('authorUrl')}/>
+              </div>
+              <Transition transition='slide-left' mounted={form.values.enabled}>
+                {styles => (
+                  <Container py={4} px={10} style={{
+                    borderLeft: `3px solid ${form.values.color}`,
+                    borderRadius: 4,
+                    flex: '1 1 360px',
+                    maxHeight: 450,
+                    maxWidth: 640,
+                    background: '#2F3136',
+                    ...styles
+                  }}>
+                    <Highlight target='_blank' style={{fontSize: 12}} color='dimmed'
+                      highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle}
+                      component='a'
+                      variant='link'
+                      href={form.values.siteNameUrl}>{form.values.siteName || 'Site name'}</Highlight>
+                    <Highlight target='_blank' highlight={Object.keys(variables).map(x => `{{${x}}}`)}
+                      highlightStyles={hlStyle} component='a' variant='link'
+                      style={{fontSize: 14, display: 'block', color: 'white'}}
+                      href={form.values.authorUrl}>{form.values.author || 'Author'}</Highlight>
+                    <Highlight target='_blank' component='a' href='/random' variant='link'
+                      highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle}
+                      weight={600}
+                      color='blue' style={{fontSize: 16}}>{form.values.title || 'Title'}</Highlight>
+                    <Highlight style={{wordWrap: 'break-word', color: '#bbb'}}
+                      highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} size='sm'
+                      color='white'>{form.values.description || 'Description'}</Highlight>
+                    <Image style={{maxHeight: 360, maxWidth: 560}} m='xl' fit='contain' width='100%' src='/banner.png'
+                      alt='Preview image'/>
+                  </Container>
+                )}
+              </Transition>
+            </div>
+          </DashboardCard>
+        </form>
+        
         {dataToken && (
-          <DashboardCard icon={<RiKey2Fill/>} title='Private token' mb='md'>
+          <DashboardCard icon={<RiKey2Fill/>} title='Private token'>
             <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'}
               description='Remember to keep it safe or people can upload on behalf of you'
               placeholder='Click Regenerate to generate one.' rightSectionWidth={96} rightSection={
@@ -207,107 +306,81 @@ export default function Page_Account() {
                     </ActionIcon>
                   </StyledTooltip>
                 </>
-              } readOnly icon={<RiKeyLine/>} autoComplete='one-time-code'/>
+              } readOnly icon={<RiKeyLine/>} autoComplete='off'/>
           </DashboardCard>
         )}
-        <DashboardCard icon={<RiBracesFill/>} rightItem={
-          <Popover opened={open} onClose={handler.close} position='right' transition='skew-down' target={
-            <ActionIcon onClick={handler.toggle} variant='hover' color='blue'>
-              <FiInfo/>
-            </ActionIcon>
-          }>
-            <Table>
-              <caption>
-                Embed variables
-              </caption>
-              <tbody>
-                {Object.entries(variables).map(([x, y], i) => (
-                  <tr key={i}>
-                    <td>{`{{${x}}}`}</td>
-                    <td>{y}</td>
+        
+        {refData && (
+          <DashboardCard icon={<RiStarFill/>} title='Referral'>
+            {refData.length > 0 ? (
+              <Table striped highlightOnHover>
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Created at</th>
+                    <th>Expires in</th>
+                    <th>Consumed</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Popover>
-        } title='Embed' mb='md'>
-          <div style={{ display: 'flex', marginTop: 8, flexWrap: 'wrap-reverse', gap: 16, alignItems: 'end' }}>
-            <div style={{ display: 'flex', flex: '1 1 300px', columnGap: 16, rowGap: 8, flexDirection: 'column' }}>
-              <Checkbox label='Enable embed' {...form.getInputProps('enabled', {type: 'checkbox'})}/>
-              <TextInput maxLength={32} label='Site name'
-                placeholder='Embed site name' {...form.getInputProps('siteName')}/>
-              <TextInput maxLength={32} label='Site name URL'
-                placeholder='Embed site name URL' {...form.getInputProps('siteNameUrl')}/>
-              <TextInput maxLength={32} label='Title'
-                placeholder='Embed title' {...form.getInputProps('title')}/>
-              <ColorInput label='Color'
-                placeholder='Embed color' {...form.getInputProps('color')}/>
-              <TextInput label='Description' maxLength={64}
-                placeholder='Embed description' {...form.getInputProps('description')}/>
-              <TextInput maxLength={32} label='Author' placeholder='Author' {...form.getInputProps('author')}/>
-              <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('authorUrl')}/>
-            </div>
-            <Container py={4} px={10} style={{
-              borderLeft: `3px solid ${form.values.color}`,
-              borderRadius: 4,
-              flex: '1 1 360px',
-              maxHeight: 450,
-              maxWidth: 640,
-              background: '#2F3136'
-            }}>
-              <Highlight target='_blank' style={{fontSize: 12}} color='dimmed'
-                highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} component='a'
-                variant='link'
-                href={form.values.siteNameUrl}>{form.values.siteName || 'Site name'}</Highlight>
-              <Highlight target='_blank' highlight={Object.keys(variables).map(x => `{{${x}}}`)}
-                highlightStyles={hlStyle} component='a' variant='link'
-                style={{fontSize: 14, display: 'block', color: 'white'}}
-                href={form.values.authorUrl}>{form.values.author || 'Author'}</Highlight>
-              <Highlight target='_blank' component='a' href='/random' variant='link'
-                highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} weight={600}
-                color='blue' style={{fontSize: 16}}>{form.values.title || 'Title'}</Highlight>
-              <Highlight style={{wordWrap: 'break-word', color: '#bbb'}}
-                highlight={Object.keys(variables).map(x => `{{${x}}}`)} highlightStyles={hlStyle} size='sm'
-                color='white'>{form.values.description || 'Description'}</Highlight>
-              <Image style={{ maxHeight: 360, maxWidth: 560 }} m='xl' fit='contain' width='100%' src='/banner.png' alt='Preview image'/>
-            </Container>
-          </div>
-        </DashboardCard>
-      </form>
-      <DashboardCard icon={<SiDiscord/>} title='Discord account'>
-        {discordInfo ? (
-          <div style={{margin: 16, display: 'flex'}}>
-            <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
-            <div style={{flex: 1}}>
-              {render(
-                ['Status', discordInfo ? 'Linked' : 'Unlinked'],
-                ['ID', discordInfo.id],
-                ['Username', `${discordInfo.username}#${discordInfo.tag}`]
-              )}
-              <ConfirmButton loading={busy} onClick={() => {
-                setBusy(true);
-                fetch('/api/discord', {
-                  method: 'DELETE'
-                }).then(() => mutate(null, {
-                  rollbackOnError: false
-                })).finally(() => setBusy(false));
-              }} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
-                Unlink this Discord account
-              </ConfirmButton>
-            </div>
-          </div>
-        ) : (
-          <Stack m='lg' align='start'>
-            <Text weight={700}>This account has not yet been linked, click the button below to link.</Text>
-            <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() => {
-              setBusy(true);
-              fetch('/api/discord/auth').then(r => r.json()).then(r => {
-                router.push(r.url);
-              }).finally(() => setBusy(false));
-            }} leftIcon={<SiDiscord/>}>Link</Button>
-          </Stack>
+                </thead>
+                <tbody>
+                  {refData.map((ref, i) => (
+                    <tr key={i}>
+                      <td>{ref.code}</td>
+                      <td>{format(new Date(ref.createdAt))}</td>
+                      <td>{pretty(Math.max(new Date(ref.expiresAt).getTime() - new Date().getTime(), 0), {secondsDecimalDigits: 0})}</td>
+                      <td>{ref.consumedBy ? 'Yes' : 'No'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            ) : (
+              <Text align='center' color='dimmed' weight={700} m='xl'>
+                You do not have any referral codes!
+              </Text>
+            )}
+          </DashboardCard>
         )}
-      </DashboardCard>
+        
+        <DashboardCard icon={<SiDiscord/>} title='Discord account'>
+          {discordInfo ? (
+            <div style={{margin: 16, display: 'flex'}}>
+              <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
+              <div style={{flex: 1}}>
+                {render(
+                  ['Status', discordInfo ? 'Linked' : 'Unlinked'],
+                  ['ID', discordInfo.id],
+                  ['Username', `${discordInfo.username}#${discordInfo.tag}`]
+                )}
+                <ConfirmButton loading={busy} onClick={() =>
+                  request({
+                    onStart: () => setBusy(true),
+                    endpoint: '/api/discord',
+                    method: 'DELETE',
+                    onDone() {
+                      mutate(null, {
+                        rollbackOnError: false
+                      });
+                      setBusy(false);
+                    }
+                  })} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
+                  Unlink
+                </ConfirmButton>
+              </div>
+            </div>
+          ) : (
+            <Stack m='lg' align='start'>
+              <Text weight={700}>This account has not yet been linked, click the button below to link.</Text>
+              <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() =>
+                request({
+                  onStart: () => setBusy(true),
+                  endpoint: '/api/discord/auth',
+                  callback: r => router.push(r.url),
+                  onDone: () => setBusy(false)
+                })} leftIcon={<SiDiscord/>}>Link</Button>
+            </Stack>
+          )}
+        </DashboardCard>
+      </Stack>
       <Affix position={{bottom: 32, right: 32}} zIndex={0}>
         <Button size='md' type='submit' form='account_form' color='green' variant={value('outline', 'light')}
           leftIcon={<FiSave/>}>Save</Button>

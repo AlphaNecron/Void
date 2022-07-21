@@ -165,7 +165,7 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                 </>
               )}
               <Divider/>
-              <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account'>Manage account</Menu.Item>
+              <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage account</Menu.Item>
               <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>ShareX
                 config</Menu.Item>
               <Divider/>

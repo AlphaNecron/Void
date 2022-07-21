@@ -14,7 +14,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!user) return res.unauthorized();
   const { id } = req.query;
   if (id && isAdmin(user.role.permissions) && req.method === 'GET') {
-    const path = resolve(cfg.void.upload.outputDirectory, 'avatars', user.id);
+    const path = resolve(cfg.void.upload.outputDirectory, 'avatars', id.toString());
     if (existsSync(path)) {
       res.setHeader('Content-Type', 'image/webp');
       return res.end(readFileSync(path));
@@ -39,7 +39,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     return res.end(readFileSync(path));
   }
   case 'DELETE': {
-    if (existsSync(path))
+    if (!existsSync(path))
       return res.notFound('Avatar not found.');
     unlinkSync(resolve(cfg.void.upload.outputDirectory, 'avatars', user.id));
     return res.success();

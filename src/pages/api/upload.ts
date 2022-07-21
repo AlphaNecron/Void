@@ -42,7 +42,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       let slug = generate('alphanumeric', cfg.void.url.length);
       if (req.headers.url && ['emoji', 'invisible'].includes(req.headers.url.toString()))
         slug = generate(req.headers.url.toString() as 'invisible' | 'emoji', cfg.void.url.length);
-      const deletionToken = generate('alphanumeric', cfg.void.url.length * 4);
       const ext = f.originalname.split('.').pop();
       const file = await prisma.file.create({
         data: {
@@ -53,8 +52,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           isExploding: (req.headers.exploding || 'false') === 'true',
           isPrivate: (req.headers.private || 'false') === 'true',
           size: f.size,
-          userId: user.id,
-          deletionToken
+          userId: user.id
         }
       });
       const path = resolve(cfg.void.upload.outputDirectory, user.id);
@@ -67,7 +65,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       responses.push({
         name: file.fileName,
         url: `${baseUrl}/${file.slug}`,
-        deletionUrl: `${baseUrl}/api/delete?token=${deletionToken}`,
+        deletionUrl: `${baseUrl}/api/delete?token=${file.deletionToken}`,
         thumbUrl: `${baseUrl}/api/file/${file.id}`
       });
     }

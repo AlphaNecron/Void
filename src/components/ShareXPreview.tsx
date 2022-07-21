@@ -1,4 +1,4 @@
-import { Prism } from '@mantine/prism';
+import {Prism} from '@mantine/prism';
 import {FiDownload, FiScissors} from 'react-icons/fi';
 
 export default function ShareXPreview({ uploaderConfig, shortenerConfig }) {

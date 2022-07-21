@@ -1,34 +1,34 @@
 import {Config} from 'lib/types';
-import * as yup from 'yup';
+import {array as yupArray, bool as yupBool, number as yupNumber, object as yupObject, string as yupString} from 'yup';
 
-const schema = yup.object({
-  void: yup.object({
-    useHttps: yup.bool().default(false),
-    host: yup.string().default('0.0.0.0'),
-    port: yup.number().default(3000),
-    secret: yup.string().test('secretCheck', 'void.secret must be either empty or at least 32 characters', t => t.length === 0 || t.length >= 32),
-    rateLimit: yup.number().min(1000),
-    databaseUrl: yup.string().default('postgres://postgres:postgres@postgres/postgres'),
-    defaultDomain: yup.string().required(),
-    discordProvider: yup.object({
-      clientId: yup.string().required(),
-      clientSecret: yup.string().required()
+const schema = yupObject({
+  void: yupObject({
+    useHttps: yupBool().default(false),
+    host: yupString().default('0.0.0.0'),
+    port: yupNumber().default(3000),
+    secret: yupString().test('secretCheck', 'void.secret must be either empty or at least 32 characters', t => t.length === 0 || t.length >= 32),
+    rateLimit: yupNumber().min(1000),
+    databaseUrl: yupString().default('postgres://postgres:postgres@postgres/postgres'),
+    defaultDomain: yupString().required(),
+    discordProvider: yupObject({
+      clientId: yupString().required(),
+      clientSecret: yupString().required()
     }).nullable(),
-    url: yup.object({
-      allowVanityUrl: yup.boolean().default(false),
-      length: yup.number().min(3).default(6)
+    url: yupObject({
+      allowVanityUrl: yupBool().default(false),
+      length: yupNumber().min(3).default(6)
     }),
-    upload: yup.object({
-      outputDirectory: yup.string().default('./uploads'),
-      blacklistedExtensions: yup.array().default([])
+    upload: yupObject({
+      outputDirectory: yupString().default('./uploads'),
+      blacklistedExtensions: yupArray().default([])
     })
   }).required(),
-  neutron: yup.object({
-    enabled: yup.bool().default(false),
-    token: yup.string().nullable(),
-    clientId: yup.string().nullable(),
-    guildId: yup.string().nullable(),
-    logChannel: yup.string().nullable()
+  neutron: yupObject({
+    enabled: yupBool().default(false),
+    token: yupString().nullable(),
+    clientId: yupString().nullable(),
+    guildId: yupString().nullable(),
+    logChannel: yupString().nullable()
   }).notRequired()
 });
 

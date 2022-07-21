@@ -6,7 +6,7 @@ export default function useThemeValue() {
   return {
     isDark,
     value: <T>(valueIfLight: T, valueIfDark: T) => isDark ? valueIfDark : valueIfLight,
-    colorValue: (color: MantineColor, shadeIfLight: number, shadeIfDark: number, lighten?: number): string => isDark ? colors[color][shadeIfDark] : lightenColor(colors[color][shadeIfLight], lighten || 0)
+    colorValue: (color: MantineColor | 'void', shadeIfLight: number, shadeIfDark: number, lighten?: number): string => isDark ? colors[color][shadeIfDark] : lightenColor(colors[color][shadeIfLight], lighten || 0)
   };
 }
 

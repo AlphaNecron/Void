@@ -11,9 +11,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import {useEffect, useState} from 'react';
 
-const Layout = dynamic(() => import('components/Layout'), {
-  ssr: false
-});
+const Layout = dynamic(() => import('components/Layout'));
 
 export default function Void({Component, pageProps, router}) {
   const [progress, setProgress] = useState(0);
@@ -46,7 +44,7 @@ export default function Void({Component, pageProps, router}) {
     <>
       <Head>
         <title>Void - {Component.title}</title>
-        <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width'/>
+        <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, viewport-fit=cover'/>
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider emotionOptions={{key: 'void'}} withGlobalStyles styles={{

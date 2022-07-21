@@ -1,9 +1,11 @@
 export enum Permission {
   SHORTEN = 2,
-  BYPASS_LIMIT = 4,
-  VANITY = 8,
-  ADMINISTRATION = 16,
-  OWNER = 32
+  USE_BOT = 4,
+  INVITE_USERS = 8,
+  VANITY = 16,
+  BYPASS_LIMIT = 32,
+  ADMINISTRATION = 64,
+  OWNER = 128
 }
 
 export function isAdmin(permInt: number): boolean {

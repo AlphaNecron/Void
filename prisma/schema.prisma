@@ -8,21 +8,22 @@ generator client {
 }
 
 model User {
-  id               String        @id @default(cuid())
-  username         String        @unique
+  id               String         @id @default(cuid())
+  username         String         @unique
   name             String?
   password         String?
   discord          Discord?
-  email            String?       @unique
+  email            String?        @unique
   emailVerified    DateTime?
   embed            EmbedOptions?
-  privateToken     String?       @unique
-  roleName         String        @default("User")
-  role             Role?         @relation(fields: [roleName], references: [name], onDelete: Cascade)
+  privateToken     String?        @unique
+  roleName         String         @default("User")
+  role             Role?          @relation(fields: [roleName], references: [name], onDelete: Cascade)
   domain           String?
   availableDomains Domain[]
   files            File[]
   urls             Url[]
+  referralCodes    ReferralCode[]
 }
 
 model EmbedOptions {
@@ -44,7 +45,7 @@ model Discord {
   tag          String
   accessToken  String   @unique
   refreshToken String   @unique
-  expiresIn    DateTime
+  expiresAt    DateTime
   avatar       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String   @unique
@@ -72,11 +73,12 @@ model Domain {
 model Role {
   name         String  @id
   color        String? @default("#B794F4")
-  rolePriority Int     @default(100)
+  rolePriority Int     @unique @default(100)
   permissions  Int     @default(0)
   maxFileSize  BigInt  @default(104857600)
   maxFileCount Int     @default(5)
   storageQuota BigInt  @default(5368709120)
+  maxRefCodes  Int     @default(5)
   users        User[]
 }
 
@@ -89,8 +91,17 @@ model File {
   size          BigInt   @default(0)
   slug          String   @unique
   uploadedAt    DateTime @default(now())
-  deletionToken String   @unique
+  deletionToken String   @unique @default(cuid())
   views         Int      @default(0)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
+}
+
+model ReferralCode {
+  code       String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  consumedBy String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
 }

@@ -8,6 +8,7 @@ import ShortenDialog from 'dialogs/Shorten';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import {Permission} from 'lib/permission';
+import {request} from 'lib/utils';
 import dynamic from 'next/dynamic';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
 import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
@@ -19,32 +20,25 @@ export default function Page_URLs() {
   const {query, handler} = useQuery();
   const [opened, dHandler] = useDisclosure(false);
   const clipboard = useClipboard();
-  const handleDelete = (id: string) => fetch('/api/user/urls', {
+  const handleDelete = (id: string) => request({
+    endpoint: '/api/user/urls',
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({id})
-  }).then(r => r.json()).then(r => {
-    if (r.success)
-      return showNotification({
+    body: {id},
+    callback: () =>
+      showNotification({
         title: 'Successfully deleted the URL.',
         icon: <RiDeleteBinFill/>,
         message: '',
         color: 'green'
-      });
-    showNotification({
-      title: 'Failed to delete the file',
-      message: '',
+      }),
+    onError: e => showNotification({
+      title: 'Failed to delete the URL.',
+      message: e,
       color: 'red',
       icon: <RiErrorWarningFill/>
-    });
-  }).catch(e => showNotification({
-    title: 'Failed to delete the file',
-    message: e.toString(),
-    color: 'red',
-    icon: <RiErrorWarningFill/>
-  })).finally(() => mutate());
+    }),
+    onDone: () => mutate()
+  });
   return (
     <>
       <ShortenDialog opened={opened} onClose={dHandler.close} onShorten={() => mutate()}/>

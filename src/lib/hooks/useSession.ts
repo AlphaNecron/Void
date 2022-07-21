@@ -5,7 +5,7 @@ import {useEffect} from 'react';
 type Session = {
   isReady: boolean;
   isLogged: boolean;
-  revalidate: (callback?: () => void) => void;
+  revalidate: (callback?: () => void) => Promise<void>;
   user?: VoidUser;
 }
 
@@ -15,16 +15,17 @@ export default function useSession(required = false, onUnauthenticated?: () => v
     error,
     mutate
   } = useFetch('/api/user', {
-    refreshInterval: 6e4
+    refreshInterval: 6e4,
+    shouldRetryOnError: false
   });
   useEffect(() => {
     if (error && required && onUnauthenticated)
       onUnauthenticated();
     else if (data && onAuthenticated)
       onAuthenticated(data);
-  }, [data, error, required]);
+  }, [data, error]);
   return {
-    isReady: data || error,
+    isReady: (data || error) !== undefined,
     isLogged: data !== undefined,
     revalidate: (callback?: () => void) => mutate(null, {
       revalidate: true,

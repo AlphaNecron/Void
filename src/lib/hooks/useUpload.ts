@@ -33,19 +33,18 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
       },
       'error': () => onError('Unknown error occurred.'),
       'abort': () => onError('User aborted the upload.'),
-      'timeout': () => onError('Request timed out.'),
-      'load': () => {
-        setTimeout(() => {
+      'timeout': () => onError('Request timed out.')
+    };
+    return {
+      register: () => {
+        req.onload = () => {
           if (req.status >= 400)
             onError(req.response.error);
           else onUploaded(req.response);
-        }, 0);
-        renew();
+          renew();
+        };
+        Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler);
       }
-    };
-    return {
-      register: () =>
-        Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler)
     };
   };
   return {

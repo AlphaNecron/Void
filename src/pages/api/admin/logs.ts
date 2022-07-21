@@ -1,4 +1,3 @@
-import {format} from 'fecha';
 import {isAdmin} from 'lib/permission';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 

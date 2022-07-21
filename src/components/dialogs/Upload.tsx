@@ -10,7 +10,7 @@ import {
   Popover,
   Progress,
   ScrollArea,
-  Select,
+  SegmentedControl,
   Stack,
   Table,
   Text,
@@ -27,7 +27,7 @@ import StyledTooltip from 'components/StyledTooltip';
 import {format} from 'fecha';
 import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';
-import {prettyBytes} from 'lib/utils';
+import {prettyBytes, request} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
@@ -66,7 +66,10 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     maxFileCount: 5
   });
   useEffect(() => {
-    fetch('/api/upload').then(res => res.json()).then(setRestrictions);
+    request({
+      endpoint: '/api/upload',
+      callback: setRestrictions
+    });
   }, []);
   let previews = [];
   const preview = (file: File): string => {
@@ -282,7 +285,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
             </Button>
           }>
             <Stack p={16}>
-              <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={prefs.url}
+              <SegmentedControl data={['alphanumeric', 'emoji', 'invisible']} value={prefs.url}
                 onChange={url => setPrefs({url})}/>
               <Checkbox checked={prefs.exploding} onChange={e => setPrefs({exploding: e.target.checked})}
                 label='Exploding'/>

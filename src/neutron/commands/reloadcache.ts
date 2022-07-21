@@ -1,4 +1,3 @@
-import {CommandInteraction} from 'discord.js';
 import type {NeutronCommand} from 'neutron/types';
 
 export default {

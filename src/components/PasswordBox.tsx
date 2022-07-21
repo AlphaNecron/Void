@@ -46,7 +46,7 @@ export default function PasswordBox({ value = '', ...props }) {
       transition='pop-top-left'
       onFocusCapture={() => setPopoverOpened(true)}
       onBlurCapture={() => setPopoverOpened(false)}
-      {...props}
+      style={{ width: '100%' }}
       target={
         <PasswordInput
           {...props}

@@ -3,12 +3,12 @@ import DiscordOAuth from 'discord-oauth2';
 import {mkdirSync} from 'fs';
 import {createServer} from 'http';
 import logger from 'lib/logger';
-import {initNeutron} from 'neutron';
-import next from 'next';
-import {resolve} from 'path';
-import {name, version} from 'packageInfo';
 import {injectBigIntSerializer, prismaCheck, readConfig, throwAndExit} from 'lib/serverUtils';
 import validate from 'lib/validate';
+import {initNeutron} from 'neutron';
+import next from 'next';
+import {name, version} from 'packageInfo';
+import {resolve} from 'path';
 
 const dev = process.env.NODE_ENV === 'development';
 
