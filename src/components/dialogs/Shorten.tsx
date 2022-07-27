@@ -18,7 +18,7 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
     Password: yupString().nullable()
   });
   const form = useForm({
-    schema: yupResolver(schema),
+    validate: yupResolver(schema),
     initialValues: {
       Destination: '',
       URL: 'alphanumeric',
@@ -57,7 +57,7 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
         })
     });
   return (
-    <Modal size={600} opened={opened} overlayBlur={4} onClose={onClose} {...props} title='Shorten URLs'>
+    <Modal size={600} opened={opened} onClose={onClose} {...props} title='Shorten URLs'>
       <form onSubmit={form.onSubmit(shorten)}>
         <Stack>
           <TextInput required placeholder='Paste your long URL here' {...form.getInputProps('Destination')}/>

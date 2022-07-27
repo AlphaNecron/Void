@@ -1,15 +1,24 @@
 import {Prism} from '@mantine/prism';
-import {FiDownload, FiScissors} from 'react-icons/fi';
+import {FiDownload, FiScissors, FiUpload} from 'react-icons/fi';
 
-export default function ShareXPreview({ uploaderConfig, shortenerConfig }) {
+export default function ShareXPreview({ name, uploaderConfig, shortenerConfig, ...props }) {
+  const indentChar = '  '; // use \t for a tab if you want.
   return (
-    <Prism.Tabs>
-      <Prism.Tab withLineNumbers icon={<FiDownload/>} language='json' noCopy label='Void_Uploader.sxcu'>
-        {JSON.stringify({...uploaderConfig, Headers: { ...uploaderConfig.Headers, Authorization: '<MASKED>' }}, null, '\t')}
-      </Prism.Tab>
-      <Prism.Tab withLineNumbers icon={<FiScissors/>} language='json' noCopy label='Void_Shortener.sxcu'>
-        {JSON.stringify({...shortenerConfig, Headers: { ...shortenerConfig.Headers, Authorization: '<MASKED>'}}, null, '\t')}
-      </Prism.Tab>
+    <Prism.Tabs style={{ flex: 1 }} {...props} defaultValue='uploader'>
+      <Prism.TabsList>
+        <Prism.Tab icon={<FiUpload/>} value='uploader'>
+          {`${name || 'Void'}_Uploader.sxcu`}
+        </Prism.Tab>
+        <Prism.Tab icon={<FiScissors/>} value='shortener'>
+          {`${name || 'Void'}_Shortener.sxcu`}
+        </Prism.Tab>
+      </Prism.TabsList>
+      <Prism.Panel withLineNumbers language='json' noCopy value='uploader'>
+        {JSON.stringify({...uploaderConfig, Headers: { ...uploaderConfig.Headers, Authorization: '<MASKED>' }}, null, indentChar)}
+      </Prism.Panel>
+      <Prism.Panel withLineNumbers language='json' noCopy value='shortener'>
+        {JSON.stringify({...shortenerConfig, Headers: { ...shortenerConfig.Headers, Authorization: '<MASKED>'}}, null, indentChar)}
+      </Prism.Panel>
     </Prism.Tabs>
   );
 }

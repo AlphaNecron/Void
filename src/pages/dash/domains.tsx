@@ -1,3 +1,6 @@
+import {Button, CopyButton} from '@mantine/core';
+import Fallback from 'components/Fallback';
+
 export default function Page_Domains() {
   return (
     <></>

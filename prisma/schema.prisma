@@ -8,22 +8,21 @@ generator client {
 }
 
 model User {
-  id               String         @id @default(cuid())
-  username         String         @unique
-  name             String?
-  password         String?
-  discord          Discord?
-  email            String?        @unique
-  emailVerified    DateTime?
-  embed            EmbedOptions?
-  privateToken     String?        @unique
-  roleName         String         @default("User")
-  role             Role?          @relation(fields: [roleName], references: [name], onDelete: Cascade)
-  domain           String?
-  availableDomains Domain[]
-  files            File[]
-  urls             Url[]
-  referralCodes    ReferralCode[]
+  id            String         @id @default(cuid())
+  username      String         @unique
+  name          String?
+  password      String?
+  discord       Discord?
+  email         String?        @unique
+  emailVerified DateTime?
+  embed         EmbedOptions?
+  privateToken  String?        @unique
+  roleName      String         @default("User")
+  role          Role?          @relation(fields: [roleName], references: [name], onDelete: Cascade)
+  domain        String?
+  files         File[]
+  urls          Url[]
+  referralCodes ReferralCode[]
 }
 
 model EmbedOptions {
@@ -63,11 +62,11 @@ model Url {
 }
 
 model Domain {
-  name      String   @id
+  id        String   @id @default(cuid())
+  name      String   @unique
   addedAt   DateTime @default(now())
-  private   Boolean  @default(false)
+  isPrivate Boolean  @default(false)
   expiresAt DateTime
-  Users     User[]   @relation()
 }
 
 model Role {

@@ -1,21 +1,21 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v1/public/banner.png" width="480" height="270"/>
+  <img src="https://raw.githubusercontent.com/AlphaNecron/Void/v1/public/banner.png" width="480" height="270" alt="Banner"/>
 
-  <h4> A self-hosted file hosting service based on Zipline with many features.</h4>
+  <h4> A feature-rich self-hosted file hosting service.</h4>
   
-  ![Build v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=68D391&label=V1&logo=github&style=for-the-badge)
-  ![Docker v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?color=0db7ed&label=DOCKER&logo=docker&style=for-the-badge)
-  ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?color=%23B794F4&logo=github&style=for-the-badge)
-  ![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v1?color=%23B794F4&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
-  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?color=%234FD1C5&logo=github&style=for-the-badge)
+  ![Build v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?colorA=000000&colorB=68D391&label=V1&logo=github&style=for-the-badge)
+  ![Docker v1](https://img.shields.io/github/workflow/status/AlphaNecron/Void/Build/v1?colorA=000000&colorB=0db7ed&label=DOCKER&logo=docker&style=for-the-badge)
+  ![Stars](https://img.shields.io/github/stars/AlphaNecron/Void?colorA=000000&colorB=4527A0&logo=github&style=for-the-badge)
+  ![Version](https://img.shields.io/github/package-json/v/AlphaNecron/Void/v1?colorA=000000&colorB=4527A0&label=latest&logo=react&logoColor=ffffff&style=for-the-badge)
+  ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?colorA=000000&colorB=4527A0&logo=github&style=for-the-badge)
 </div>
 
 > ⚠️ This is just a development branch, it **should not** be used for production.
 
 ### Requirements
-  - `node` >= 16
-  - `postgresql` >= 14
-  - A package manager (preferred `yarn`)
+  - `node >= 16`
+  - `postgresql >= 14`
+  - `yarn >= 3`
 
 ### Installation / Deployment
   ```sh
@@ -99,11 +99,14 @@
 ### Features
   - Configurable
   - Fast with eye-catching UI
-  - Easy to setup
+  - Easy to install
   - Embed customization
   - Custom file viewer
   - Multiple URL charsets (`alphanumeric`, `emoji` and `invisible`)
   - Comes with Docker image
+  - Discord integration (Login with Discord)
+  - Open registration with referral codes
+  - Web upload with progress
   - Dedicated Discord bot, mobile application as well as desktop application.  
   and more...
 
@@ -119,11 +122,8 @@
 - [Yarn](https://yarnpkg.com) (Package manager)
 - [TypeScript](https://www.typescriptlang.org) (Programming language)
 
-### Contribution
-  - All pull requests must be made in `dev` branch, pull requests in other branches will be rejected.
-
 ### Credits
-  - Some ideas and initial codebase from `diced/zipline`
+  - Some ideas from `diced/zipline`
   - Logo and favicon from `icons8`
 
 ### Default credentials

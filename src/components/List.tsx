@@ -10,7 +10,6 @@ export default function List({
   const {value, colorValue} = useThemeValue();
   return (
     <ScrollArea scrollbarSize={4} style={{
-      border: `2px solid ${colorValue('dark', 0, 6)}`,
       maxHeight: height,
       display: 'flex',
       flexDirection: 'column'

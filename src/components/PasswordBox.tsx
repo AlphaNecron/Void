@@ -38,25 +38,25 @@ export default function PasswordBox({ value = '', ...props }) {
   return (
     <Popover
       opened={popoverOpened}
-      position='bottom'
-      placement='start'
+      position='bottom-start'
       withArrow
-      styles={{ popover: { width: '100%' } }}
+      withinPortal
       trapFocus={false}
       transition='pop-top-left'
-      onFocusCapture={() => setPopoverOpened(true)}
-      onBlurCapture={() => setPopoverOpened(false)}
-      style={{ width: '100%' }}
-      target={
+    >
+      <Popover.Target>
         <PasswordInput
+          onFocusCapture={() => setPopoverOpened(true)}
+          onBlurCapture={() => setPopoverOpened(false)}
           {...props}
           value={value}
         />
-      }
-    >
-      <Progress color={color} value={strength} size={5} style={{ marginBottom: 10 }} />
-      <PasswordRequirement label='Includes at least 6 characters' meets={value.length > 5} />
-      {checks}
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Progress color={color} value={strength} size={5} style={{ marginBottom: 10 }} />
+        <PasswordRequirement label='Includes at least 6 characters' meets={value.length > 5} />
+        {checks}
+      </Popover.Dropdown>
     </Popover>
   );
 }

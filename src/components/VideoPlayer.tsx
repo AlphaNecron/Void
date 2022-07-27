@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Button,
   Group,
   LoadingOverlay,
   MantineNumberSize,
@@ -9,17 +10,16 @@ import {
   Stack,
   Transition
 } from '@mantine/core';
-import {useBooleanToggle} from '@mantine/hooks';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
 import prettyMilliseconds from 'pretty-ms';
 import {useRef, useState} from 'react';
-import {FiDownload, FiFastForward, FiFlag, FiInfo, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
+import {FiDownload, FiFastForward, FiFlag, FiInfo, FiMoreHorizontal, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
 import {TbPin, TbPinnedOff} from 'react-icons/tb';
 
 export default function VideoPlayer({src, canDownload, fileName, onInfo, onReport, ...props}) {
   const ref = useRef<HTMLVideoElement>();
-  const [playing, togglePlaying] = useBooleanToggle(false);
+  const [playing, setPlaying] = useState(false);
   const [dura, setDura] = useState(0);
   const [time, setTime] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -39,11 +39,11 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
     ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range;
   };
   const Action = ({icon, label, size = 'lg', ...props}) => (
-    <StyledTooltip label={label}>
+    <Tooltip label={label}>
       <ActionIcon variant='transparent' size={size as MantineNumberSize} {...props}>
         {icon}
       </ActionIcon>
-    </StyledTooltip>
+    </Tooltip>
   );
   return (
     <div style={{ margin: -16 }}>
@@ -56,8 +56,8 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
       onTimeUpdate={({currentTarget: {currentTime}}) => setTime(currentTime)} onWaiting={() => setBusy(true)}
       onPlaying={() => setBusy(false)} onDurationChange={onDurationChanged}
       style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0}} onClick={toggle} src={src} ref={ref} {...props}
-      onPause={() => togglePlaying(false)} onPlay={e => {
-        togglePlaying(true);
+      onPause={() => setPlaying(false)} onPlay={e => {
+        setPlaying(true);
         onDurationChanged(e);
       }} {...props}/>
       <LoadingOverlay zIndex={100} visible={busy}/>
@@ -91,17 +91,26 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
                   setVol(v);
                 }} label={v => (v * 100).toFixed(0)} min={0} step={0.01} max={1} style={{width: 80}}/>
                 <Action icon={pin ? <TbPinnedOff/> : <TbPin/>} label={pin ? 'Unpin' : 'Pin'} onClick={() => setPin(p => !p)}/>
-                <Menu position='top'>
-                  <Menu.Label>Playback rate</Menu.Label>
-                  <SegmentedControl mb={4} value={rate.toString()} fullWidth onChange={v => {
-                    const r = Number(v);
-                    ref.current.playbackRate = r;
-                    setRate(r);
-                  }} size='xs' data={rates.map(r => ({label: <strong>x{r}</strong>, value: r.toString()}))}/>
-                  <Menu.Item onClick={onInfo} icon={<FiInfo size={14}/>}>Info</Menu.Item>
-                  {canDownload && <Menu.Item icon={<FiDownload size={14}/>} component='a' href={src}
-                    download={fileName}>Download</Menu.Item>}
-                  <Menu.Item color='red' onClick={onReport} icon={<FiFlag size={14}/>}>Report</Menu.Item>
+                <Menu>
+                  <Tooltip label='More'>
+                    <Menu.Target>
+                      <ActionIcon variant='transparent' size='lg'>
+                        <FiMoreHorizontal/>
+                      </ActionIcon>
+                    </Menu.Target>
+                  </Tooltip>
+                  <Menu.Dropdown>
+                    <Menu.Label>Playback rate</Menu.Label>
+                    <SegmentedControl mb={4} value={rate.toString()} fullWidth onChange={v => {
+                      const r = Number(v);
+                      ref.current.playbackRate = r;
+                      setRate(r);
+                    }} size='xs' data={rates.map(r => ({label: `x${r}`, value: r.toString()}))}/>
+                    <Menu.Item onClick={onInfo} icon={<FiInfo size={14}/>}>Info</Menu.Item>
+                    {canDownload && <Menu.Item icon={<FiDownload size={14}/>} component='a' href={src}
+                      download={fileName}>Download</Menu.Item>}
+                    <Menu.Item color='red' onClick={onReport} icon={<FiFlag size={14}/>}>Report</Menu.Item>
+                  </Menu.Dropdown>
                 </Menu>
               </Group>
             </Group>

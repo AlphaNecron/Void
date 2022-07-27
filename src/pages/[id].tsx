@@ -15,9 +15,12 @@ import {
 } from '@mantine/core';
 import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
+import {Prism} from '@mantine/prism';
+import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
+import VideoPlayer from 'components/VideoPlayer';
 import {format} from 'fecha';
 import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
@@ -35,25 +38,6 @@ import {BiNavigation} from 'react-icons/bi';
 import {FiDownload, FiFlag, FiInfo, FiSend} from 'react-icons/fi';
 import {RiErrorWarningFill, RiFlag2Fill, RiNavigationFill} from 'react-icons/ri';
 import {VscWordWrap} from 'react-icons/vsc';
-
-function FilePreview(type): any {
-  switch (type) {
-  case 'text':
-    return dynamic<any>(() => import('@mantine/prism').then(m => m.Prism), {
-      ssr: true
-    });
-  case 'audio':
-    return dynamic<any>(() => import('components/AudioPlayer'), {
-      ssr: true
-    });
-  case 'video':
-    return dynamic<any>(() => import('components/VideoPlayer'), {
-      ssr: true
-    });
-  default:
-    return <></>;
-  }
-}
 
 export function Preview({data: {isPrivate = false, isExploding = false, properties, embed}}) {
   const [open, handler] = useDisclosure(false);
@@ -126,7 +110,6 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
       <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag/>} label='Report' condition={fluid}/>
     </Group>
   );
-  const Previewer = FilePreview(getType(mimetype));
   return (
     <>
       <Head>
@@ -192,7 +175,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
             report</Button>
         </Stack>
       </Dialog>
-      <Container style={{position: 'relative'}}>
+      <Container style={{position: 'relative', minWidth: 150}}>
         {isPreviewable(mimetype) ? (
           isType('image', mimetype) ? (
             <>
@@ -207,11 +190,11 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
             </>
           ) : isType('audio', mimetype) ? (
             <Stack>
-              <Previewer title={name} src={src()}/>
+              <AudioPlayer title={name} src={src()}/>
               {actions(true, false)}
             </Stack>
           ) : isType('video', mimetype) ? (
-            <Previewer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open}
+            <VideoPlayer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open}
               onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
           ) : isType('text', mimetype) ? (
             <Stack>
@@ -221,15 +204,15 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                   clearable={false} mr={4}
                   data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
                 <Group spacing={4}>
-                  <StyledTooltip label='Toggle word wrap'>
+                  <Tooltip label='Toggle word wrap'>
                     <ActionIcon variant='filled' color={wrap ? 'void' : 'gray'} onClick={() => setWrap(w => !w)}>
                       <VscWordWrap/>
                     </ActionIcon>
-                  </StyledTooltip>
+                  </Tooltip>
                   {actions(false, false)}
                 </Group>
               </div>
-              <Previewer withLineNumbers styles={
+              <Prism withLineNumbers styles={
                 {
                   lineNumber: {
                     textAlign: 'left'
@@ -247,7 +230,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     }
                   })
                 }}
-              language={lang as Language}>{content}</Previewer>
+              language={lang as Language}>{content}</Prism>
             </Stack>
           ) : <></>) : (
           <Stack>

@@ -1,14 +1,15 @@
-import {Button, Divider, Stack, Text, TextInput} from '@mantine/core';
+import {ActionIcon, Button, Divider, Stack, Text, TextInput} from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
+import {NextLink} from '@mantine/next';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
 import PasswordBox from 'components/PasswordBox';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import useSession from 'lib/hooks/useSession';
 import {request} from 'lib/utils';
 import {useRouter} from 'next/router';
 import {useState} from 'react';
-import {FiLock, FiMail, FiSend, FiStar, FiUser} from 'react-icons/fi';
+import {FiChevronLeft, FiLock, FiMail, FiSend, FiStar, FiUser} from 'react-icons/fi';
 import {RiCheckFill, RiErrorWarningFill} from 'react-icons/ri';
 import {object as yupObject, string as yupString} from 'yup';
 
@@ -29,14 +30,19 @@ export default function RegisterPage() {
       username: '',
       password: ''
     },
-    schema: yupResolver(schema)
+    validate: yupResolver(schema)
   });
   return (
-    <Container style={{ minWidth: 500 }}>
+    <Container style={{ minWidth: 500, position: 'relative' }}>
+      <Tooltip label='Back to Login'>
+        <ActionIcon style={{ position: 'absolute', left: 16, top: 16 }} component={NextLink} href='/auth/login'>
+          <FiChevronLeft/>
+        </ActionIcon>
+      </Tooltip>
       <Text size='xl' align='center' weight={700}>Apply to the
-        <StyledTooltip label={process.env.voidVersion}>
+        <Tooltip label={process.env.voidVersion}>
           <Text size='xl' ml={4} variant='gradient' gradient={{ from: '#D1C4E9', to: '#5E35B1', deg: 150 }} weight={700} component='span'>Void</Text>
-        </StyledTooltip>
+        </Tooltip>
       </Text>
       <Divider mx={196} my='xs'/>
       <form style={{ minWidth: 360 }} onSubmit={form.onSubmit(values =>
@@ -45,8 +51,8 @@ export default function RegisterPage() {
           endpoint: '/api/auth/register',
           method: 'POST',
           body: values,
-          callback() {
-            showNotification({ title: 'Registered successfully, redirecting to the login page.', message: '', icon: <RiCheckFill/>, color: 'green' });
+          callback({ ref }) {
+            showNotification({ title: 'Registered successfully, redirecting to the login page.', message: `Referred by ${ref}`, icon: <RiCheckFill/>, color: 'green' });
             router.push('/auth/login');
           },
           onError: e =>

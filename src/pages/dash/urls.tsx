@@ -1,4 +1,4 @@
-import {Autocomplete, Button, Stack, Text} from '@mantine/core';
+import {Autocomplete, Button, Stack, Text, TextInput} from '@mantine/core';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
@@ -47,9 +47,8 @@ export default function Page_URLs() {
           <Button leftIcon={<FiScissors/>} onClick={dHandler.open}>
             Shorten
           </Button>
-          <Autocomplete ml='xs' style={{flex: 1}} icon={<FiSearch/>} placeholder='Search something' value={query}
-            onChange={handler.set}
-            data={(data && data.files) ? Array.from(new Set([...data.map(url => url.destination), ...data.map(url => url.short)])) : []}/>
+          <TextInput ml='xs' style={{flex: 1}} icon={<FiSearch/>} placeholder='Search something' value={query}
+            onChange={e => handler.set(e.target.value)}/>
         </div>
         <CardGrid itemSize={375}>
           {data && handler.filterList(data, ['short', 'destination']).map((url, i) =>
@@ -58,7 +57,7 @@ export default function Page_URLs() {
                 label: 'Copy to clipboard',
                 color: 'green',
                 icon: <FiClipboard/>,
-                action: () => clipboard.copy(`${window.location.origin}/${url.short}`)
+                value: `${window.location.origin}/${url.short}`
               }, {
                 label: 'Open in new tab',
                 color: 'blue',

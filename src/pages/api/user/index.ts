@@ -9,12 +9,11 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!user) return res.unauthorized();
   switch (req.method) {
   case 'PATCH': {
-    const data = {};
-    const embedData = {};
+    const data = { embed: {} };
     if (req.body.password) {
       data['password'] = await hash(req.body.password);
     }
-    if (req.body.username) {
+    if (req.body.username && req.body.username.toLowerCase() !== user.username.toLowerCase()) {
       const existing = await prisma.user.findUnique({
         where: {
           username: req.body.username
@@ -27,34 +26,36 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     /// TODO: OPTIMIZE THIS SH!T
     if (req.body.name)
       data['name'] = req.body.name;
-    if (req.body.enabled !== undefined)
-      embedData['enabled'] = req.body.enabled === true;
-    if (req.body.siteName)
-      embedData['siteName'] = req.body.siteName;
-    if (req.body.siteNameUrl)
-      embedData['siteNameUrl'] = req.body.siteNameUrl;
-    if (req.body.title)
-      embedData['title'] = req.body.title;
-    if (req.body.color && validateHex(req.body.color))
-      embedData['color'] = req.body.color;
-    if (req.body.description)
-      embedData['description'] = req.body.description;
-    if (req.body.author)
-      embedData['author'] = req.body.author;
-    if (req.body.authorUrl)
-      embedData['authorUrl'] = req.body.authorUrl;
-    if (data !== {}) {
+    if (req.body.embed) {
+      if (req.body.embed.enabled !== undefined)
+        data['embed']['enabled'] = req.body.embed.enabled === true;
+      if (req.body.embed.siteName)
+        data['embed']['siteName'] = req.body.embed.siteName;
+      if (req.body.embed.siteNameUrl)
+        data['embed']['siteNameUrl'] = req.body.embed.siteNameUrl;
+      if (req.body.embed.title)
+        data['embed']['title'] = req.body.embed.title;
+      if (req.body.embed.color && validateHex(req.body.embed.color))
+        data['embed']['color'] = req.body.embed.color;
+      if (req.body.embed.description)
+        data['embed']['description'] = req.body.embed.description;
+      if (req.body.embed.author)
+        data['embed']['author'] = req.body.embed.author;
+      if (req.body.embed.authorUrl)
+        data['embed']['authorUrl'] = req.body.embed.authorUrl;
+    }
+    if (data !== { embed: {} }) {
       const updated = await prisma.user.update({
         where: {
           id: user.id
         },
         data: {
           ...data,
-          ...(embedData !== {} && {
+          ...(data['embed'] !== {} && {
             embed: {
               upsert: {
-                update: embedData,
-                create: embedData
+                update: data['embed'],
+                create: data['embed']
               }
             }
           })

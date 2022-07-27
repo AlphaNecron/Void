@@ -18,7 +18,7 @@ function maskEmail(email: string): string {
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
-  if (!user || !user.role) return res.unauthorized();
+  if (!user) return res.unauthorized();
   const isAdmin = hasPermission(user.role.permissions, Permission.ADMINISTRATION);
   if (!isAdmin) return res.forbid('You are not an administrator.');
   switch (req.method) {

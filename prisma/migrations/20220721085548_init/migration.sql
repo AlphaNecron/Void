@@ -53,12 +53,13 @@ CREATE TABLE "Url" (
 
 -- CreateTable
 CREATE TABLE "Domain" (
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "addedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "private" BOOLEAN NOT NULL DEFAULT false,
+    "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     "expiresAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Domain_pkey" PRIMARY KEY ("name")
+    CONSTRAINT "Domain_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -103,12 +104,6 @@ CREATE TABLE "ReferralCode" (
     CONSTRAINT "ReferralCode_pkey" PRIMARY KEY ("code")
 );
 
--- CreateTable
-CREATE TABLE "_DomainToUser" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
@@ -137,6 +132,9 @@ CREATE UNIQUE INDEX "Discord_userId_key" ON "Discord"("userId");
 CREATE UNIQUE INDEX "Url_short_key" ON "Url"("short");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Domain_name_key" ON "Domain"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Role_rolePriority_key" ON "Role"("rolePriority");
 
 -- CreateIndex
@@ -144,12 +142,6 @@ CREATE UNIQUE INDEX "File_slug_key" ON "File"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "File_deletionToken_key" ON "File"("deletionToken");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_DomainToUser_AB_unique" ON "_DomainToUser"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_DomainToUser_B_index" ON "_DomainToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_roleName_fkey" FOREIGN KEY ("roleName") REFERENCES "Role"("name") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -168,9 +160,3 @@ ALTER TABLE "File" ADD CONSTRAINT "File_userId_fkey" FOREIGN KEY ("userId") REFE
 
 -- AddForeignKey
 ALTER TABLE "ReferralCode" ADD CONSTRAINT "ReferralCode_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_DomainToUser" ADD CONSTRAINT "_DomainToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Domain"("name") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_DomainToUser" ADD CONSTRAINT "_DomainToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

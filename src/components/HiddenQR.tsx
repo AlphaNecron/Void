@@ -1,5 +1,5 @@
 import {Center, Paper, Text, useMantineTheme} from '@mantine/core';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {useState} from 'react';
 import {QRCode} from 'react-qrcode-logo';
@@ -10,7 +10,7 @@ export default function HiddenQR({ value, size = 96 }: { value: string, size?: n
   const { value: themeValue, colorValue } = useThemeValue();
   return (
     show ? (
-      <StyledTooltip position='right' withArrow label={
+      <Tooltip position='right' withArrow label={
         <Center style={{ height: '100%' }}>
           <QRCode bgColor={colorValue('dark', 0, 6, 0.5)} fgColor={colorValue('dark', 9, 0)} value={value} size={192}/>
         </Center>
@@ -23,7 +23,7 @@ export default function HiddenQR({ value, size = 96 }: { value: string, size?: n
         }} onClick={() => setShow(false)}>
           <QRCode bgColor={themeValue('white', colors.dark[6])} fgColor={themeValue('black', colors[primaryColor][0])} quietZone={4} size={size} qrStyle='dots' ecLevel='M' value={value}/>
         </div>
-      </StyledTooltip>
+      </Tooltip>
     ) : <Paper style={{height: size + 6 * 2, width: size + 6 * 2}} onClick={() => setShow(true)}>
       <Center style={{height: '100%'}}>
         <Text style={{userSelect: 'none'}} weight={700}>Reveal QR</Text>

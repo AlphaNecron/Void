@@ -39,7 +39,15 @@ export default function UpdateAvatar({ onClose, onDone, ...props}: ModalProps & 
     <Modal title='Update avatar' onClose={() => busy || onClose()} {...props}>
       <Center>
         <Dropzone maxSize={2 * 1048576} radius={100} p={0} m='xl' multiple={false} accept={IMAGE_MIME_TYPE} onDrop={([f]) => setFile(f)}>
-          {status => status.accepted ? wrap('Drag the image here.') : status.rejected ? wrap('This file is not allowed.') : <Avatar size={192} radius={100} src={previewUrl}/>}
+          <Dropzone.Idle>
+            <Avatar size={192} radius={100} src={previewUrl}/>
+          </Dropzone.Idle>
+          <Dropzone.Reject>
+            {wrap('This file is not allowed.')}
+          </Dropzone.Reject>
+          <Dropzone.Accept>
+            {wrap('Drop the file here.')}
+          </Dropzone.Accept>
         </Dropzone>
       </Center>
       <Group spacing={4} position='right'>

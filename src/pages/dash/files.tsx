@@ -10,11 +10,12 @@ import {
   Group,
   LoadingOverlay,
   Pagination,
+  Paper,
   Select,
   Stack,
   Text,
   ThemeIcon,
-  Title,
+  Title, Tooltip,
   Transition
 } from '@mantine/core';
 import {useClipboard, useDisclosure, useListState, useWindowScroll} from '@mantine/hooks';
@@ -23,7 +24,7 @@ import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
 import FileIndicator from 'components/FileIndicator';
 import ItemCard from 'components/ItemCard';
-import StyledTooltip from 'components/StyledTooltip';
+import Fallback from 'components/Fallback';
 import Upload from 'dialogs/Upload';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
@@ -43,18 +44,18 @@ function FileCardInner({handler, checked, file, ...props}) {
       <Group spacing={4}>
         <Checkbox value={file.id} mb={2} mr={1} onChange={handler} checked={checked}/>
         {file.isExploding && (
-          <StyledTooltip label='Exploding'>
+          <Tooltip label='Exploding'>
             <ThemeIcon color='red' size={20}>
               <FaBomb size={12}/>
             </ThemeIcon>
-          </StyledTooltip>
+          </Tooltip>
         )}
         {file.isPrivate && (
-          <StyledTooltip label='Private'>
+          <Tooltip label='Private'>
             <ThemeIcon color='teal' size={20}>
               <FaLock size={12}/>
             </ThemeIcon>
-          </StyledTooltip>
+          </Tooltip>
         )}
       </Group>
       <Badge px='xs' variant='filled' radius='xs'>
@@ -128,7 +129,7 @@ export default function Page_Files() {
   };
   const [opened, dHandler] = useDisclosure(false);
   const [scroll, scrollTo] = useWindowScroll();
-  return data ? (data.error ? (
+  return data && data.error ? (
     <Center style={{height: '90vh'}}>
       <Stack align='center'>
         <Title order={2}>
@@ -136,110 +137,133 @@ export default function Page_Files() {
         </Title>
         <Title order={3}>
           Rate limit resets
-          in {prettyMilliseconds(data.nextReset, { verbose: true, keepDecimalsOnWholeSeconds: false })}
+          in {prettyMilliseconds(data.nextReset, {verbose: true, keepDecimalsOnWholeSeconds: false})}
         </Title>
       </Stack>
     </Center>
   ) : (
-    <>
-      <Upload opened={opened} onClose={dHandler.close} onUpload={mutate}/>
-      <Affix zIndex={0} position={{bottom: '2%', right: '2%'}}>
-        <Group spacing={4}>
-          <Transition transition='slide-up' duration={200} mounted={selected.length < data.files.length}>
-            {styles => (
-              <ActionIcon style={styles} onClick={() => handler.apply(i => ({checked: true, id: i.id}))} color='green'
-                variant='light'
-                size='lg'>
-                <MdChecklist/>
-              </ActionIcon>
-            )}
-          </Transition>
-          <Transition transition='slide-left' duration={200} mounted={selected.length > 0}>
-            {styles => (
-              <Group spacing={4} style={styles}>
-                <ActionIcon onClick={() => handler.apply(i => ({checked: false, id: i.id}))} color='yellow'
-                  variant='light' size='lg'>
-                  <MdClearAll/>
-                </ActionIcon>
-                <ActionIcon onClick={() => deleteFiles(selected.map(s => s.id))} loading={busy} variant='light'
-                  size='lg' color='red'>
-                  <MdDelete/>
-                </ActionIcon>
+    <Fallback loaded={data}>
+      {() => (
+        <>
+          <Upload opened={opened} onClose={dHandler.close} onUpload={mutate}/>
+          <Affix zIndex={0} position={{
+            bottom: '2%',
+            right: '2%'
+          }}>
+            <Paper>
+              <Group spacing={4}>
+                <Transition transition='skew-up' mounted={selected.length > 0}>
+                  {styles => (
+                    <Text size='xs' weight={700} style={styles} ml='sm'>
+                      Selected {selected.length} files
+                    </Text>
+                  )}
+                </Transition>
+                <Transition transition='slide-up' duration={200} mounted={selected.length < data.files.length}>
+                  {styles => (
+                    <ActionIcon style={styles} onClick={() => handler.apply(i => ({checked: true, id: i.id}))}
+                      color='green'
+                      variant='transparent'
+                      size='lg'>
+                      <MdChecklist/>
+                    </ActionIcon>
+                  )}
+                </Transition>
+                <Transition transition='slide-left' duration={200} mounted={selected.length > 0}>
+                  {styles => (
+                    <Group spacing={4} style={styles}>
+                      <ActionIcon onClick={() => handler.apply(i => ({checked: false, id: i.id}))} color='yellow'
+                        variant='transparent' size='lg'>
+                        <MdClearAll/>
+                      </ActionIcon>
+                      <ActionIcon onClick={() => deleteFiles(selected.map(s => s.id))} loading={busy} variant='transparent'
+                        size='lg' color='red'>
+                        <MdDelete/>
+                      </ActionIcon>
+                    </Group>
+                  )}
+                </Transition>
+                <Transition mounted={scroll.y > 0} transition='slide-left' duration={200}>
+                  {styles => (
+                    <ActionIcon variant='light' color='blue' size='lg' onClick={() => scrollTo({y: 0})} style={styles}>
+                      <MdArrowUpward/>
+                    </ActionIcon>
+                  )}
+                </Transition>
               </Group>
-            )}
-          </Transition>
-          <Transition mounted={scroll.y > 0} transition='slide-left' duration={200}>
-            {styles => (
-              <ActionIcon variant='light' color='blue' size='lg' onClick={() => scrollTo({y: 0})} style={styles}>
-                <MdArrowUpward/>
-              </ActionIcon>
-            )}
-          </Transition>
-        </Group>
-      </Affix>
-      <Stack>
-        <div style={{display: 'flex', position: 'sticky'}}>
-          <Button leftIcon={<FiUpload/>} onClick={dHandler.open}>Upload</Button>
-          <Autocomplete style={{flex: 1}} mx='xs' icon={<FiSearch/>} placeholder='Search something' value={query}
-            onChange={qHandler.set}
-            data={(data && data.files) ? Array.from(new Set(data.files?.map(file => file.fileName))) : []}/>
-          <StyledTooltip label='Items per page'>
-            <Select style={{width: 72}} data={['30', '60', '90']} value={chunk}
-              onChange={setChunk}/>
-          </StyledTooltip>
-        </div>
-        <CardGrid itemSize={300}>
-          {data.files && qHandler.filterList(data.files, ['fileName']).map((file, i) =>
-            <ItemCard key={i} title={file.fileName} actions={[
-              {
-                label: 'Show QR code', color: 'yellow', action: () =>
-                  modals.openContextModal('qr', {
-                    innerProps: {
-                      value: `${window.location.origin}/${file.slug}`
-                    }
-                  }), icon: <ImQrcode/>
-              }, {
-                label: 'Open in new tab',
-                color: 'blue',
-                icon: <FiExternalLink/>,
-                action: () => window?.open(`/${file.slug}`, '_blank')
-              }, {
-                label: 'Copy to clipboard',
-                color: 'green',
-                icon: <FiClipboard/>,
-                action: () => clipboard.copy(`${window.location.origin}/${file.slug}`)
-              }, {
-                label: 'Delete',
-                busy,
-                color: 'red',
-                icon: <FiTrash/>,
-                action: () => del([file.deletionToken])
-              }
-            ]}>
-              {isType('image', file.mimetype) ? (
-                <BackgroundImage src={`/api/file/${file.id}?preview=true`}>
-                  <div style={{height: 125, padding: 8}}>
+            </Paper>
+          </Affix>
+          <Stack>
+            <div style={{display: 'flex'}}>
+              <Button leftIcon={<FiUpload/>} onClick={dHandler.open}>Upload</Button>
+              <Autocomplete style={{flex: 1}} mx='xs' icon={<FiSearch/>} placeholder='Search something' value={query}
+                onChange={qHandler.set}
+                data={(data && data.files) ? Array.from(new Set(data.files?.map(file => file.fileName))) : []}/>
+              <Tooltip label='Items per page'>
+                <Select style={{width: 72}} data={['30', '60', '90']} value={chunk}
+                  onChange={setChunk}/>
+              </Tooltip>
+            </div>
+            <CardGrid itemSize={300}>
+              {data.files && qHandler.filterList(data.files, ['fileName']).map((file, i) => <ItemCard key={i}
+                title={file.fileName}
+                actions={[
+                  {
+                    label: 'Show QR code',
+                    color: 'yellow',
+                    action: () => modals.openContextModal('qr', {
+                      innerProps: {
+                        value: `${window.location.origin}/${file.slug}`
+                      }
+                    }),
+                    icon:
+                      <ImQrcode/>
+                  }, {
+                    label: 'Open in new tab',
+                    color: 'blue',
+                    icon:
+                      <FiExternalLink/>,
+                    action: () => window?.open(`/${file.slug}`, '_blank')
+                  }, {
+                    label: 'Copy to clipboard',
+                    color: 'green',
+                    icon:
+                      <FiClipboard/>,
+                    value: `${window.location.origin}/${file.slug}`
+                  }, {
+                    label: 'Delete',
+                    busy,
+                    color: 'red',
+                    icon:
+                      <FiTrash/>,
+                    action: () => del([file.deletionToken])
+                  }
+                ]}>
+                {isType('image', file.mimetype) ? (
+                  <BackgroundImage src={`/api/file/${file.id}?preview=true`}>
+                    <div style={{height: 125, padding: 8}}>
+                      <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
+                        checked={items[i]?.checked} file={file}/>
+                    </div>
+                  </BackgroundImage>
+                ) : (
+                  <Center
+                    sx={theme => ({height: 125, background: theme.colors.dark[theme.colorScheme === 'dark' ? 8 : 0]})}>
                     <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
-                      checked={items[i]?.checked} file={file}/>
-                  </div>
-                </BackgroundImage>
-              ) : (
-                <Center
-                  sx={theme => ({height: 125, background: theme.colors.dark[theme.colorScheme === 'dark' ? 8 : 0]})}>
-                  <FileCardInner handler={() => handler.setItemProp(i, 'checked', !items[i].checked)}
-                    checked={items[i]?.checked} file={file}
-                    style={{position: 'absolute', top: 8, left: 8, right: 8}}/>
-                  <FileIndicator size={64} mimetype={file.mimetype}/>
-                </Center>
+                      checked={items[i]?.checked} file={file}
+                      style={{position: 'absolute', top: 8, left: 8, right: 8}}/>
+                    <FileIndicator size={64} mimetype={file.mimetype}/>
+                  </Center>
+                )}
+              </ItemCard>
               )}
-            </ItemCard>
-          )}
-        </CardGrid>
-      </Stack>
-      <Pagination mt='xl' withEdges position='center' page={page} onChange={setPage}
-        total={data?.totalPages || 0}/>
-    </>
-  )) : <LoadingOverlay visible/>;
+            </CardGrid>
+          </Stack>
+          <Pagination mt='xl' withEdges position='center' page={page} onChange={setPage}
+            total={data?.totalPages || 0}/></>
+      )}
+    </Fallback>
+  );
 }
 
 Page_Files.title = 'Files';

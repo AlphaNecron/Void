@@ -5,7 +5,7 @@ import {
   Group,
   PasswordInput,
   Text,
-  TextInput,
+  TextInput, Tooltip,
   Transition,
   useMantineColorScheme
 } from '@mantine/core';
@@ -13,7 +13,6 @@ import {useForm} from '@mantine/form';
 import {NextLink} from '@mantine/next';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
-import StyledTooltip from 'components/StyledTooltip';
 import useSession from 'lib/hooks/useSession';
 import {request} from 'lib/utils';
 import router from 'next/router';
@@ -42,20 +41,19 @@ export default function LoginPage() {
     <Transition transition='slide-right' duration={600} mounted={mount}>
       {styles => (
         <Container style={styles}>
-          <Group position='apart'>
+          <Group position='apart' mb='xl'>
             <Text size='xl' weight={700}>Enter the
-              <StyledTooltip label={process.env.voidVersion}>
+              <Tooltip label={process.env.voidVersion}>
                 <Text size='xl' ml={4} variant='gradient' gradient={{from: '#D1C4E9', to: '#5E35B1', deg: 150}}
                   weight={700} component='span'>Void</Text>
-              </StyledTooltip>
+              </Tooltip>
             </Text>
-            <StyledTooltip label={`Use ${isDark ? 'light' : 'dark'} theme`}>
+            <Tooltip label={`Use ${isDark ? 'light' : 'dark'} theme`}>
               <ActionIcon color={isDark ? 'orange' : 'void'} onClick={() => toggleColorScheme()}>
                 {isDark ? <FiSun/> : <FiMoon/>}
               </ActionIcon>
-            </StyledTooltip>
+            </Tooltip>
           </Group>
-          <Divider style={{width: 64}} my='xs' ml='xl'/>
           <form style={{minWidth: 360}} onSubmit={form.onSubmit(values =>
             request({
               onStart: () => setBusy(true),
@@ -93,15 +91,15 @@ export default function LoginPage() {
               label='Password'
               {...form.getInputProps('password')}>
             </PasswordInput>
-            <div style={{display: 'flex', columnGap: 8, alignItems: 'center'}}>
-              <Button variant='outline' leftIcon={<FiEdit/>} component={NextLink} href='/auth/register'>Register now</Button>
-              <Button loading={busy} style={{flex: 1}} leftIcon={<FiLogIn/>} type='submit'>Login</Button>
-            </div>
+            <Button mt='lg' fullWidth loading={busy} style={{flex: 1}} leftIcon={<FiLogIn/>} type='submit'>Login</Button>
             <Divider my='xs' mx={128}/>
-            <Button loading={busy} fullWidth style={{backgroundColor: '#7289DA'}} onClick={() =>
-              fetch('/api/discord/auth').then(r => r.json()).then(r => {
-                router.push(r.url);
-              })} leftIcon={<SiDiscord/>}>Login with Discord</Button>
+            <Group grow>
+              <Button color='violet' leftIcon={<FiEdit/>} component={NextLink} href='/auth/register'>Register now</Button>
+              <Button loading={busy} fullWidth style={{backgroundColor: '#7289DA'}} onClick={() =>
+                fetch('/api/discord/auth').then(r => r.json()).then(r => {
+                  router.push(r.url);
+                })} leftIcon={<SiDiscord/>}>Login with Discord</Button>
+            </Group>
           </form>
         </Container>
       )}

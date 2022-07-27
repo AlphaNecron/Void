@@ -3,7 +3,7 @@ import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
-  if (!user || !user.role) return res.unauthorized();
+  if (!user) return res.unauthorized();
   const users = await prisma.user.findMany({
     take: 10,
     select: {

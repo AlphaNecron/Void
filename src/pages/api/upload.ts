@@ -15,7 +15,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   switch (req.method) {
   case 'GET': {
     const user = await req.getUser();
-    if (!user || !user.role) return res.unauthorized();
+    if (!user) return res.unauthorized();
     const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT);
     return res.json({
       bypass,
@@ -26,7 +26,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   }
   case 'POST': {
     const user = await req.getUser(req.headers.authorization);
-    if (!user || !user.role) return res.unauthorized();
+    if (!user) return res.unauthorized();
     if (!req.files || req.files.length === 0) return res.error('No files uploaded.');
     const quota = await req.getUserQuota(user);
     if (!hasPermission(user.role.permissions, Permission.BYPASS_LIMIT)) {

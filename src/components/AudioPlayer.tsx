@@ -1,6 +1,4 @@
-import {ActionIcon, Center, Group, Slider, Stack, Title} from '@mantine/core';
-import {useBooleanToggle} from '@mantine/hooks';
-import StyledTooltip from 'components/StyledTooltip';
+import {ActionIcon, Center, Group, Slider, Stack, Title, Tooltip} from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
 import prettyMilliseconds from 'pretty-ms';
 import {useRef, useState} from 'react';
@@ -9,7 +7,7 @@ import {RiMusicFill} from 'react-icons/ri';
 
 export default function AudioPlayer({src, title, ...props}) {
   const ref = useRef<HTMLAudioElement>();
-  const [playing, setPlaying] = useBooleanToggle(false);
+  const [playing, setPlaying] = useState(false);
   const [dura, setDura] = useState(0);
   const [time, setTime] = useState(0);
   const [vol, setVol] = useState(0.5);
@@ -17,11 +15,11 @@ export default function AudioPlayer({src, title, ...props}) {
   const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, { colonNotation: true, secondsDecimalDigits: 0 });
   const onStateChanged = ({target}) => { setPlaying(!target.paused); setDura(target.duration); };
   const Action = ({ icon, label, ...props }) => (
-    <StyledTooltip label={label}>
-      <ActionIcon variant='hover' size='lg' {...props}>
+    <Tooltip label={label}>
+      <ActionIcon variant='subtle' size='lg' {...props}>
         {icon}
       </ActionIcon>
-    </StyledTooltip>
+    </Tooltip>
   );
   return (
     <Stack spacing='lg' style={{alignItems: 'center'}} {...props}>

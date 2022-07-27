@@ -2,21 +2,21 @@ import {ActionIcon, Group, Text} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import List from 'components/List';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import {FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 import {RiClipboardFill} from 'react-icons/ri';
 
 export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: ContextModalProps<{ files: { name: string, url: string, deletionUrl: string }[], onCopy: (text: string) => void }>) {
   const LabelledAction = ({label, ...props}) => (
-    <StyledTooltip label={label}>
+    <Tooltip label={label}>
       <ActionIcon {...props}/>
-    </StyledTooltip>
+    </Tooltip>
   );
   return (
     <List items={files}>
       {f => (
         <>
-          <StyledTooltip label={f.name}>
+          <Tooltip label={f.name}>
             <Text weight={700} style={{
               maxWidth: 250,
               overflow: 'hidden',
@@ -24,7 +24,7 @@ export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: Cont
               whiteSpace: 'nowrap'}}>
               {f.name}
             </Text>
-          </StyledTooltip>
+          </Tooltip>
           <Group spacing={4}>
             <LabelledAction color='blue' label='Open in new tab' component='a' href={f.url} target='_blank'>
               <FiExternalLink/>

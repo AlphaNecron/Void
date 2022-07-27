@@ -24,7 +24,7 @@ import {useMediaQuery, useSetState} from '@mantine/hooks';
 import {NextLink} from '@mantine/next';
 import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
@@ -125,51 +125,51 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
               borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`
             })}
           >
-            <Menu styles={{
-              root: {
-                width: '100%'
-              }
-            }} placement='start' withArrow control={
-              <UnstyledButton
-                sx={theme => ({
-                  display: 'block',
-                  width: '100%',
-                  padding: theme.spacing.xs,
-                  borderRadius: theme.radius.sm,
-                  background: route === '/dash/account' && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
-                  color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-                  '&:hover': {
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
-                  }
-                })}
-              >
-                <Group align='center'>
-                  <Indicator withBorder size={14} position='bottom-end' color='green' offset={5}>
-                    <UserAvatar
-                      user={user}
-                      radius='xl'/>
-                  </Indicator>
-                  <Box>
-                    <Text size='md' weight={600}>
-                      {user.name || user.username || <p style={{ color: 'green'}}>Unknown</p>}
-                    </Text>
-                    <Text weight={600} sx={validateHex(user.role.color) && { color: user.role.color }} size='sm'>{user.role.name}</Text>
-                  </Box>
-                </Group>
-              </UnstyledButton>
-            }>
-              {quota && (
-                <>
-                  <Menu.Label>{prettyBytes(quota.used)} / {prettyBytes(quota.total)} used</Menu.Label>
-                  <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs'/>
-                </>
-              )}
-              <Divider/>
-              <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage account</Menu.Item>
-              <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>ShareX
-                config</Menu.Item>
-              <Divider/>
-              <Menu.Item icon={<FiLogOut/>} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
+            <Menu withArrow position='top-start' transition='rotate-left'>
+              <Menu.Target>
+                <UnstyledButton
+                  sx={theme => ({
+                    display: 'block',
+                    width: '100%',
+                    padding: theme.spacing.xs,
+                    borderRadius: theme.radius.sm,
+                    background: route === '/dash/account' && (theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[1]),
+                    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+                    '&:hover': {
+                      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.dark[0]
+                    }
+                  })}
+                >
+                  <Group align='center'>
+                    <Indicator withBorder size={14} position='bottom-end' color='green' offset={5}>
+                      <UserAvatar
+                        user={user}
+                        radius='xl'/>
+                    </Indicator>
+                    <Box>
+                      <Text size='md' weight={600}>
+                        {user.name || user.username || <p style={{ color: 'green'}}>Unknown</p>}
+                      </Text>
+                      <Text weight={600} sx={validateHex(user.role.color) && { color: user.role.color }} size='sm'>{user.role.name}</Text>
+                    </Box>
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown style={{ minWidth: 175 }}>
+                {quota && (
+                  <>
+                    <Menu.Label>{prettyBytes(quota.used)} / {prettyBytes(quota.total)} used</Menu.Label>
+                    <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs'/>
+                  </>
+                )}
+                <Menu.Divider/>
+                <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage account</Menu.Item>
+                <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>
+                  ShareX config
+                </Menu.Item>
+                <Menu.Divider/>
+                <Menu.Item icon={<FiLogOut/>} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
+              </Menu.Dropdown>
             </Menu>
           </Box>
         </Navbar.Section>
@@ -187,17 +187,17 @@ function AppHeader({children}) {
         <Group position='apart' style={{width: '100%'}}>
           {children}
           <Group spacing={8}>
-            <StyledTooltip label='Void on GitHub'>
+            <Tooltip label='Void on GitHub'>
               <ActionIcon variant='filled' radius='md' size='lg' color='dark' component='a' target='_blank' href='https://github.com/AlphaNecron/Void'>
                 <SiGithub/>
               </ActionIcon>
-            </StyledTooltip>
-            <StyledTooltip label={`Toggle ${value('dark', 'light')} theme`}>
+            </Tooltip>
+            <Tooltip label={`Toggle ${value('dark', 'light')} theme`}>
               <ActionIcon variant='light' radius='md' color={value('purple', 'yellow')}
                 onClick={() => toggleColorScheme()} size='lg'>
                 {value(<RiMoonClearFill/>, <RiSunFill/>)}
               </ActionIcon>
-            </StyledTooltip>
+            </Tooltip>
           </Group>
         </Group>
       </Center>
@@ -238,9 +238,7 @@ export default function Layout({children, route}) {
       </AppHeader>
       }
     >
-      <Paper>
-        {children}
-      </Paper>
+      {children}
     </AppShell>
   ) : <Skeleton/>;
 }

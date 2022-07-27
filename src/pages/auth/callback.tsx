@@ -1,6 +1,6 @@
 import {Avatar, Button, Stack, Text} from '@mantine/core';
 import Container from 'components/Container';
-import StyledTooltip from 'components/StyledTooltip';
+import {Tooltip} from '@mantine/core';
 import {withIronSessionSsr} from 'iron-session/next';
 import oauth from 'lib/oauth';
 import prisma from 'lib/prisma';
@@ -26,14 +26,14 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
           </Text>
         </Text>
         <Avatar size={128} src={`${avatar}?size=128`} radius={100} mt='md' mx='md'/>
-        <StyledTooltip label={id}>
+        <Tooltip label={`ID: ${id}`}>
           <Text size='lg' weight={700}>
             {username}
             <Text component='span' color='dimmed' size='lg' weight={700}>
               #{tag}
             </Text>
           </Text>
-        </StyledTooltip>
+        </Tooltip>
         <Button leftIcon={<FiChevronLeft/>} onClick={() => router.push('/dash/account')}>Back to Account</Button>
       </Stack>
     </Container>
@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
         statusCode: 308
       }
     };
-    if (rUser && dUser.id !== rUser.id) return {
+    if (rUser && dUser && dUser.id !== rUser.id) return {
       redirect: {
         destination: '/dash',
         statusCode: 307
