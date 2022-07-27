@@ -47,7 +47,7 @@ import {bool as yupBool, object as yupObject, string as yupString} from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
-  const {isLogged, user} = useSession();
+  const {isLogged, user, revalidate} = useSession();
   const clipboard = useClipboard({timeout: 500});
   const {reload} = useRouter();
   const schema = yupObject({
@@ -141,7 +141,7 @@ export default function Page_Account() {
           message: '',
           color: 'green'
         });
-        reload();
+        revalidate();
       },
       onError: e => showNotification({
         title: 'Failed to update your user.',

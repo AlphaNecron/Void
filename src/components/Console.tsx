@@ -1,4 +1,4 @@
-import {ScrollArea, ScrollAreaProps, Stack, useMantineTheme} from '@mantine/core';
+import {Code, ScrollArea, ScrollAreaProps, useMantineTheme} from '@mantine/core';
 
 type ConsoleProps = {
     lines:
@@ -12,34 +12,25 @@ type ConsoleProps = {
 export default function Console({lines, ...props}: ConsoleProps) {
   const {colors} = useMantineTheme();
   const levelColors = {
-    info: 'green',
-    debug: 'blue',
+    info: 'blue',
+    success: 'green',
     warn: 'yellow',
     error: 'red'
   };
-  const colorize = (level: string) => colors[levelColors[level]][6] ?? 'gray';
+  const colorize = (level: string) => colors[levelColors[level]][6] ?? 'magenta';
   return (
     <ScrollArea scrollbarSize={4} offsetScrollbars {...props}>
-      <Stack spacing={0}>
+      <Code block style={{ lineHeight: 0.5, fontSize: 13, fontWeight: 700 }}>
         {lines.map((line, i) => (
-          <code style={{
-            fontSize: 13,
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-            fontFamily: 'JetBrains Mono, Source Code Pro, monospace'
-          }} key={i}>
-            <span>
-            [
-              <span style={{color: colors.blue[6]}}>
-                {line.timestamp}
-              </span>
-            ]
+          <p key={i}>
+            <span style={{color: colors.gray[7]}}>
+                [{line.timestamp}] ›
             </span>
-            <span style={{color: colorize(line.level)}}> {line.level}: </span>
+            <span style={{color: colorize(line.level)}}> {line.level} </span>
             <span>{line.message}</span>
-          </code>
+          </p>
         ))}
-      </Stack>
+      </Code>
     </ScrollArea>
   );
 }

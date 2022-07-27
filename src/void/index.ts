@@ -29,7 +29,7 @@ async function initServer() {
       });
     }
     mkdirSync(resolve(config.void.upload.outputDirectory, 'avatars'), {recursive: true});
-    logger.info(`Initialized ${name}@${version}`);
+    logger.info(`Initialized ${name}@${version}.`);
     const app = next({
       hostname: config.void.host,
       port: config.void.port,
@@ -49,11 +49,11 @@ async function initServer() {
         });
       srv.on('error', e => throwAndExit(e));
       srv.listen(config.void.port, config.void.host, null,
-        () => logger.info(`Listening on ${config.void.host}:${config.void.port}`));
+        () => logger.info(`Listening on ${config.void.host}:${config.void.port}.`));
     });
   } catch (e) {
     if ((e.message && e.message.startsWith('Could not find a production')) || (e.code && e.code === 'ENOENT' && e.path === './.next')) {
-      global.logger.error('There is no production build - run yarn build');
+      global.logger.error('There is no production build - run yarn build.');
     } else throwAndExit(e);
   }
 }

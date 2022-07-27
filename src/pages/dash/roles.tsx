@@ -61,7 +61,7 @@ export default function Page_Roles() {
       {() => (
         <>
           <Modal opened={opened} onClose={handler.close} title='Create a new role'>
-          
+  
           </Modal>
           <Tabs styles={({spacing}) => ({
             tab: {
@@ -77,6 +77,7 @@ export default function Page_Roles() {
           defaultValue={form.values.roles[0].name}>
             <ScrollArea scrollbarSize={0} offsetScrollbars={false} styles={isSmall ? {} : ({
               viewport: {
+                position: 'sticky',
                 '&>div': {
                   height: '100%'
                 }
@@ -88,8 +89,7 @@ export default function Page_Roles() {
                     icon={<Color color={role.color}/>}>
                     {role.name}
                   </Tabs.Tab>
-                )
-                )}
+                ))}
               </Tabs.List>
             </ScrollArea>
             {form.values.roles && form.values.roles.map((role, i) => {
@@ -103,31 +103,41 @@ export default function Page_Roles() {
                   <Stack>
                     {isCurrent && (
                       <Alert title='Small reminder' variant='outline' color='yellow' icon={<RiAlertFill/>}>
-                        This is your current role, so you are not allowed to modify it.
+                      This is your current role, so you are not allowed to modify it.
                       </Alert>
                     )}
                     {isHigher && (
                       <Alert title='Note' color='red' variant='outline' icon={<RiAlertFill/>}>
-                        This role is higher than yours so you are not allowed to modify it.
+                      This role is higher than yours so you are not allowed to modify it.
                       </Alert>
                     )}
-                    <TextInput disabled={!canEdit} label='Name' {...getListProp('name')}/>
-                    <ColorInput disabled={!canEdit} label='Color' {...getListProp('color')}/>
+                    <TextInput disabled={!canEdit} label='Name' {...getListProp('name')} />
+            
+                    <ColorInput disabled={!canEdit} label='Color' {...getListProp('color')} />
+            
                     <NumberInput disabled={!canEdit} label='Priority' min={user.role.rolePriority + 1}
-                      {...getListProp('rolePriority')}/>
-                    <NumberInput disabled={!canEdit} hideControls={false} rightSectionWidth={72} rightSection={
-                      <Badge radius='xs' color='dark' mr='xs' fullWidth>{prettyBytes(role.maxFileSize)}</Badge>
-                    } label='Max file size (in bytes)'
-                    defaultValue={role.maxFileSize} min={107374182} step={1048576}/>
+                      {...getListProp('rolePriority')} />
+            
+                    <NumberInput disabled={!canEdit} rightSectionWidth={84}
+                      rightSection={<Badge radius='xs' color='dark' mr='xs'
+                        fullWidth>{prettyBytes(role.storageQuota)}</Badge>}
+                      label='Storage quota (maximum total size)' min={104857600}
+                      step={1048576} {...getListProp('storageQuota')} />
+            
+                    <NumberInput disabled={!canEdit} rightSectionWidth={84}
+                      rightSection={<Badge radius='xs' color='dark' mr='xs'
+                        fullWidth>{prettyBytes(role.maxFileSize)}</Badge>}
+                      label='Max file size per upload (in bytes)' min={104857600}
+                      step={1048576} {...getListProp('maxFileSize')} />
+            
+                    <NumberInput disabled={!canEdit} label='Max file count per upload'
+                      min={1} {...getListProp('maxFileCount')} />
                     <div>
                       <Text size='xs' mb={4}>Permissions</Text>
                       {canEdit ? (
                         <TransferList breakpoint='sm' showTransferAll={false}
                           value={[role.permissions.map(toItem), allPerms.filter(perm => !role.permissions.includes(perm)).map(toItem)]}
-                          onChange={values => setListProp('permissions', {
-                            ...role,
-                            permissions: (values as { value: string }[][])[0].map(({value}) => value)
-                          })}/>
+                          onChange={values => setListProp('permissions', (values as { value: string; }[][])[0].map(({value}) => value))}/>
                       ) : (
                         <List items={role.permissions}>
                           {perm => (
@@ -143,6 +153,7 @@ export default function Page_Roles() {
                         </List>
                       )}
                     </div>
+            
                     <div>
                       <Text size='xs' mb={4}>Members</Text>
                       {canEdit ? (
@@ -166,8 +177,7 @@ export default function Page_Roles() {
                 </Tabs.Panel>
               );
             })}
-          </Tabs>
-          <Affix zIndex={0} position={{bottom: 32, right: 32}}>
+          </Tabs><Affix zIndex={0} position={{bottom: 32, right: 32}}>
             <Button leftIcon={<FiPlus/>} onClick={handler.open}>New role</Button>
           </Affix>
         </>

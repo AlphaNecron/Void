@@ -13,6 +13,7 @@ declare global {
     config: Config,
     logger: Logger,
     cache: TTLCache,
+    logCache: TTLCache,
     discordOauth: DiscordOAuth,
     neutron: Neutron;
 }

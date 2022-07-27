@@ -28,7 +28,7 @@ export class Neutron {
     this._guildId = guildId;
     this._rest = new REST({version: '10'}).setToken(token);
     this._client.once('ready', () => {
-      logger.info(`Initialized neutron@${neutronVersion}`, 'Neutron');
+      logger.info(`Initialized neutron@${neutronVersion}.`, 'Neutron');
       if (logChannel?.length > 0)
         this._logChannel = this._client.guilds.cache.get(guildId).channels.cache.get(logChannel) as TextChannel;
       this.initPresenceStatus();

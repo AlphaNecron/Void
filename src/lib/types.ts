@@ -18,6 +18,14 @@ export type Void = {
   upload: UploadOptions;
 }
 
+export type LogLevel = 'success' | 'info' | 'error' | 'warn' | 'debug';
+
+export type LogEntry = {
+  prefix: string;
+  timestamp: Date | string;
+  level: LogLevel;
+  message: string;
+}
 
 export type Provider = {
   clientId: string;

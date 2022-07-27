@@ -9,7 +9,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!user) return res.unauthorized();
   switch (req.method) {
   case 'PATCH': {
-    const data = { embed: {} };
+    const data = {};
     if (req.body.password) {
       data['password'] = await hash(req.body.password);
     }
@@ -27,6 +27,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (req.body.name)
       data['name'] = req.body.name;
     if (req.body.embed) {
+      data['embed'] = {};
       if (req.body.embed.enabled !== undefined)
         data['embed']['enabled'] = req.body.embed.enabled === true;
       if (req.body.embed.siteName)
@@ -44,14 +45,14 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       if (req.body.embed.authorUrl)
         data['embed']['authorUrl'] = req.body.embed.authorUrl;
     }
-    if (data !== { embed: {} }) {
+    if (data) {
       const updated = await prisma.user.update({
         where: {
           id: user.id
         },
         data: {
           ...data,
-          ...(data['embed'] !== {} && {
+          ...(data['embed'] && {
             embed: {
               upsert: {
                 update: data['embed'],

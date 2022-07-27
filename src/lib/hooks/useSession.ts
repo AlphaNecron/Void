@@ -23,7 +23,7 @@ export default function useSession(required = false, onUnauthenticated?: () => v
       onUnauthenticated();
     else if (data && onAuthenticated)
       onAuthenticated(data);
-  }, [data, error]);
+  }, [data, error, required, onAuthenticated, onUnauthenticated]);
   return {
     isReady: (data || error) !== undefined,
     isLogged: data !== undefined,
@@ -31,7 +31,7 @@ export default function useSession(required = false, onUnauthenticated?: () => v
       revalidate: true,
       rollbackOnError: false
     }).then(data => {
-      if (data)
+      if (data && callback)
         callback();
     }),
     user: data

@@ -1,7 +1,7 @@
 import {EmbedOptions, Role} from '@prisma/client';
 import {IronSessionOptions} from 'iron-session';
 import {withIronSessionApiRoute} from 'iron-session/next';
-import {check} from 'lib/cache';
+import {rateLimitCheck} from 'lib/cache';
 import config from 'lib/config';
 import {isAdmin, Permission} from 'lib/permission';
 import generate from 'lib/urlGenerator';
@@ -111,7 +111,7 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
     };
     const ip = req.headers['x-forwarded-for']?.toString().split(',').shift() || req.headers['x-real-ip'] || req.connection.remoteAddress;
     if (ip) {
-      const rateLimited = check(res, isAdmin(user?.role.permissions) ? Number.MAX_SAFE_INTEGER : config.void.rateLimit, ip.toString());
+      const rateLimited = rateLimitCheck(res, isAdmin(user?.role.permissions) ? Number.MAX_SAFE_INTEGER : config.void.rateLimit, ip.toString());
       return rateLimited ? res.rateLimited() : handler(req, res);
     }
     return handler(req, res);

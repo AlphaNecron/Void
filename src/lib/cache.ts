@@ -3,14 +3,14 @@ import {VoidResponse} from 'middleware/withVoid';
 
 function getCache(): TTLCache<string, number> {
   if (!global.cache) global.cache = new TTLCache({
-    max: 10000, // allow 10000 users concurrently
+    max: 100, // allow 1000 users concurrently
     ttl: 60 * 60 * 1e3,
     noUpdateTTL: true
   });
   return global.cache;
 }
 
-export function check(res: VoidResponse, limit: number, token: string): boolean {
+export function rateLimitCheck(res: VoidResponse, limit: number, token: string): boolean {
   const cache = getCache();
   let usage = cache.get(token) || 0;
   const exceeded = usage >= limit;

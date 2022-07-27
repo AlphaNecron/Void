@@ -19,6 +19,7 @@ import Fallback from 'components/Fallback';
 import TextPair from 'components/TextPair';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
+import {LogEntry} from 'lib/types';
 import {prettyBytes} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {CgSmartphoneRam} from 'react-icons/cg';
@@ -34,7 +35,7 @@ export default function Page_Panel() {
   const {data} = useFetch('/api/admin/stats', {
     refreshInterval: 10e3
   });
-  const {data: logs} = useFetch('/api/admin/logs', {
+  const {data: logs} = useFetch<LogEntry[]>('/api/admin/logs', {
     refreshInterval: 5e3,
     fallbackData: []
   });
