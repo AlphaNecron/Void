@@ -11,7 +11,8 @@ import {
   Table,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core';
 import {useDisclosure, useInputState} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
@@ -19,17 +20,15 @@ import {Prism} from '@mantine/prism';
 import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
-import {Tooltip} from '@mantine/core';
 import VideoPlayer from 'components/VideoPlayer';
 import {format} from 'fecha';
 import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
-import {getType, isPreviewable, isType} from 'lib/mime';
+import {isPreviewable, isType} from 'lib/mime';
 import prisma from 'lib/prisma';
 import {prettyBytes, request} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
-import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
 import {Language} from 'prism-react-renderer';

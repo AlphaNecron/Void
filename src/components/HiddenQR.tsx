@@ -1,5 +1,4 @@
-import {Center, Paper, Text, useMantineTheme} from '@mantine/core';
-import {Tooltip} from '@mantine/core';
+import {Center, Paper, Text, Tooltip, useMantineTheme} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {useState} from 'react';
 import {QRCode} from 'react-qrcode-logo';

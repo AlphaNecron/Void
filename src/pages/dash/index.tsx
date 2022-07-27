@@ -1,4 +1,4 @@
-import {LoadingOverlay, ScrollArea, Table, Text} from '@mantine/core';
+import {ScrollArea, Table, Text} from '@mantine/core';
 import CardGrid from 'components/CardGrid';
 import DashboardCard from 'components/DashboardCard';
 import Fallback from 'components/Fallback';

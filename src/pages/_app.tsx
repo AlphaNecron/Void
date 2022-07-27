@@ -1,12 +1,5 @@
-import {
-  ColorScheme,
-  ColorSchemeProvider,
-  createEmotionCache,
-  MantineProvider,
-  Progress,
-  Transition
-} from '@mantine/core';
-import {useInterval, useLocalStorage} from '@mantine/hooks';
+import {ColorScheme, ColorSchemeProvider, createEmotionCache, MantineProvider} from '@mantine/core';
+import {useLocalStorage} from '@mantine/hooks';
 import {ModalsProvider} from '@mantine/modals';
 import {NotificationsProvider} from '@mantine/notifications';
 import {NavigationProgress, resetNavigationProgress, startNavigationProgress} from '@mantine/nprogress';
@@ -18,7 +11,7 @@ import {hasPermission, isAdmin} from 'lib/permission';
 import {createTheme} from 'lib/theme';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 
 const cache = createEmotionCache({key: 'void'});
 

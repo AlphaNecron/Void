@@ -4,18 +4,17 @@ import {
   Box,
   Burger,
   Center,
-  Divider,
   Group,
   Header,
   Image,
   Indicator,
   Menu,
   Navbar,
-  Paper,
   Progress,
   ScrollArea,
   Skeleton,
   Text,
+  Tooltip,
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme
@@ -24,7 +23,6 @@ import {useMediaQuery, useSetState} from '@mantine/hooks';
 import {NextLink} from '@mantine/next';
 import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
-import {Tooltip} from '@mantine/core';
 import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';

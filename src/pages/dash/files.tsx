@@ -8,23 +8,23 @@ import {
   Center,
   Checkbox,
   Group,
-  LoadingOverlay,
   Pagination,
   Paper,
   Select,
   Stack,
   Text,
   ThemeIcon,
-  Title, Tooltip,
+  Title,
+  Tooltip,
   Transition
 } from '@mantine/core';
-import {useClipboard, useDisclosure, useListState, useWindowScroll} from '@mantine/hooks';
+import {useDisclosure, useListState, useWindowScroll} from '@mantine/hooks';
 import {useModals} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
+import Fallback from 'components/Fallback';
 import FileIndicator from 'components/FileIndicator';
 import ItemCard from 'components/ItemCard';
-import Fallback from 'components/Fallback';
 import Upload from 'dialogs/Upload';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
@@ -76,7 +76,6 @@ export default function Page_Files() {
   const modals = useModals();
   const [busy, setBusy] = useState(false);
   const {query, handler: qHandler} = useQuery();
-  const clipboard = useClipboard({timeout: 500});
   const [items, handler] = useListState<{ id: string, checked: boolean }>([]);
   const selected = items.filter(i => i.checked);
   const {

@@ -1,5 +1,4 @@
-import {Group, Text, ThemeIcon, UnstyledButton} from '@mantine/core';
-import {Tooltip} from '@mantine/core';
+import {Group, Text, ThemeIcon, Tooltip, UnstyledButton} from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 import {RiShieldStarFill} from 'react-icons/ri';
 

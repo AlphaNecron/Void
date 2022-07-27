@@ -1,5 +1,5 @@
-import {Autocomplete, Button, Stack, Text, TextInput} from '@mantine/core';
-import {useClipboard, useDisclosure} from '@mantine/hooks';
+import {Button, Stack, Text, TextInput} from '@mantine/core';
+import {useDisclosure} from '@mantine/hooks';
 import {showNotification} from '@mantine/notifications';
 import CardGrid from 'components/CardGrid';
 import ItemCard from 'components/ItemCard';
@@ -19,7 +19,6 @@ export default function Page_URLs() {
   const {data, mutate} = useFetch('/api/user/urls');
   const {query, handler} = useQuery();
   const [opened, dHandler] = useDisclosure(false);
-  const clipboard = useClipboard();
   const handleDelete = (id: string) => request({
     endpoint: '/api/user/urls',
     method: 'DELETE',

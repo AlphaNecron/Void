@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Button,
   Group,
   LoadingOverlay,
   MantineNumberSize,
@@ -8,9 +7,9 @@ import {
   SegmentedControl,
   Slider,
   Stack,
+  Tooltip,
   Transition
 } from '@mantine/core';
-import {Tooltip} from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
 import prettyMilliseconds from 'pretty-ms';
 import {useRef, useState} from 'react';

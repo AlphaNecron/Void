@@ -4,9 +4,9 @@ import {
   Badge,
   Button,
   ColorInput,
-  LoadingOverlay,
   Modal,
-  NumberInput, ScrollArea,
+  NumberInput,
+  ScrollArea,
   Stack,
   Tabs,
   Text,
@@ -60,25 +60,38 @@ export default function Page_Roles() {
     <Fallback loaded={form.values.roles && form.values.roles.length === data.length}>
       {() => (
         <>
-          <Modal opened={opened} onClose={handler.close} title='Create a new role'></Modal>
+          <Modal opened={opened} onClose={handler.close} title='Create a new role'>
+          
+          </Modal>
           <Tabs styles={({spacing}) => ({
             tab: {
-              minWidth: 125, justifyContent: 'center', fontWeight: 600
+              minWidth: isSmall ? 125 : 150, justifyContent: 'center', fontWeight: 600
+            },
+            tabsList: {
+              display: isSmall ? '' : 'table-cell'
             },
             panel: {
               [isSmall ? 'paddingTop' : 'paddingLeft']: spacing.md
             }
           })} orientation={isSmall ? 'horizontal' : 'vertical'} style={{height: '100%'}}
           defaultValue={form.values.roles[0].name}>
-            <Tabs.List grow={isSmall}>
-              {data.map((role, i) => (
-                <Tabs.Tab key={i} value={role.name}
-                  icon={<Color color={role.color}/>}>
-                  {role.name}
-                </Tabs.Tab>
-              )
-              )}
-            </Tabs.List>
+            <ScrollArea scrollbarSize={0} offsetScrollbars={false} styles={isSmall ? {} : ({
+              viewport: {
+                '&>div': {
+                  height: '100%'
+                }
+              }
+            })}>
+              <Tabs.List grow={isSmall}>
+                {data.map((role, i) => (
+                  <Tabs.Tab key={i} value={role.name}
+                    icon={<Color color={role.color}/>}>
+                    {role.name}
+                  </Tabs.Tab>
+                )
+                )}
+              </Tabs.List>
+            </ScrollArea>
             {form.values.roles && form.values.roles.map((role, i) => {
               const isCurrent = user.role.name === role.name;
               const isHigher = role.rolePriority <= user.role.rolePriority && !isCurrent;

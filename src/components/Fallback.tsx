@@ -1,5 +1,5 @@
 import {Center, Loader, Overlay} from '@mantine/core';
-import React, {ReactNode} from 'react';
+import React from 'react';
 
 export default function Fallback({loaded, children}: { loaded: boolean, children: () => any }) {
   return loaded ? children() : (

@@ -1,6 +1,5 @@
-import {Avatar, Button, Stack, Text} from '@mantine/core';
+import {Avatar, Button, Stack, Text, Tooltip} from '@mantine/core';
 import Container from 'components/Container';
-import {Tooltip} from '@mantine/core';
 import {withIronSessionSsr} from 'iron-session/next';
 import oauth from 'lib/oauth';
 import prisma from 'lib/prisma';

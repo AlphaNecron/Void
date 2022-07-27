@@ -10,7 +10,6 @@ import {
   Group,
   Highlight,
   Image,
-  LoadingOverlay,
   MantineTheme,
   Popover,
   ScrollArea,
@@ -18,6 +17,7 @@ import {
   Table,
   Text,
   TextInput,
+  Tooltip,
   Transition
 } from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
@@ -28,19 +28,17 @@ import DashboardCard from 'components/DashboardCard';
 import UpdateAvatarDialog from 'components/dialogs/UpdateAvatar';
 import Fallback from 'components/Fallback';
 import PasswordBox from 'components/PasswordBox';
-import {Tooltip} from '@mantine/core';
 import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
 import {format} from 'fecha';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
-import useThemeValue from 'lib/hooks/useThemeValue';
 import {request} from 'lib/utils';
 import router, {useRouter} from 'next/router';
 import pretty from 'pretty-ms';
 import {useState} from 'react';
 import {FaUserCheck, FaUserCircle} from 'react-icons/fa';
-import {FiInfo, FiSave} from 'react-icons/fi';
+import {FiInfo, FiSave, FiX} from 'react-icons/fi';
 import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 'react-icons/io5';
 import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine, RiStarFill} from 'react-icons/ri';
 import {SiDiscord} from 'react-icons/si';
@@ -99,7 +97,6 @@ export default function Page_Account() {
   const {
     data: refData
   } = useFetch('/api/user/referral');
-  const {value} = useThemeValue();
   const regenToken = () =>
     request({
       endpoint: '/api/user/token',
@@ -399,9 +396,16 @@ export default function Page_Account() {
               )}
             </DashboardCard>
           </Stack>
+          
           <Affix position={{bottom: 32, right: 32}} zIndex={0}>
-            <Button size='md' type='submit' form='account_form' color='green' variant={value('outline', 'light')}
-              leftIcon={<FiSave/>}>Save</Button>
+            <Button.Group>
+              <Button type='reset' form='account_form' leftIcon={<FiX/>} variant='default'>
+                Reset
+              </Button>
+              <Button type='submit' form='account_form' variant='default' leftIcon={<FiSave/>}>
+                Save
+              </Button>
+            </Button.Group>
           </Affix>
         </>
       )}

@@ -1,10 +1,9 @@
-import {ActionIcon, Button, Divider, Stack, Text, TextInput} from '@mantine/core';
+import {ActionIcon, Button, Divider, Stack, Text, TextInput, Tooltip} from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {NextLink} from '@mantine/next';
 import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
 import PasswordBox from 'components/PasswordBox';
-import {Tooltip} from '@mantine/core';
 import useSession from 'lib/hooks/useSession';
 import {request} from 'lib/utils';
 import {useRouter} from 'next/router';

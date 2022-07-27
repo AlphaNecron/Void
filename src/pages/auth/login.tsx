@@ -5,7 +5,8 @@ import {
   Group,
   PasswordInput,
   Text,
-  TextInput, Tooltip,
+  TextInput,
+  Tooltip,
   Transition,
   useMantineColorScheme
 } from '@mantine/core';

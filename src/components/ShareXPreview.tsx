@@ -1,5 +1,5 @@
 import {Prism} from '@mantine/prism';
-import {FiDownload, FiScissors, FiUpload} from 'react-icons/fi';
+import {FiScissors, FiUpload} from 'react-icons/fi';
 
 export default function ShareXPreview({ name, uploaderConfig, shortenerConfig, ...props }) {
   const indentChar = '  '; // use \t for a tab if you want.

@@ -3,9 +3,9 @@ import {
   Checkbox,
   Divider,
   Group,
-  GroupedTransition, HoverCard,
+  GroupedTransition,
+  HoverCard,
   Image,
-  MantineTheme, Menu,
   Modal,
   Popover,
   Progress,
@@ -18,11 +18,10 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import {Dropzone} from '@mantine/dropzone';
-import {useClipboard, useDisclosure, useListState, useSetState} from '@mantine/hooks';
+import {useClipboard, useListState, useSetState} from '@mantine/hooks';
 import {useModals} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import FileIndicator from 'components/FileIndicator';
-import {Tooltip} from '@mantine/core';
 import {format} from 'fecha';
 import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';

@@ -1,8 +1,7 @@
-import {ActionIcon, Group, Text} from '@mantine/core';
+import {ActionIcon, Group, Text, Tooltip} from '@mantine/core';
 import {ContextModalProps} from '@mantine/modals';
 import {showNotification} from '@mantine/notifications';
 import List from 'components/List';
-import {Tooltip} from '@mantine/core';
 import {FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 import {RiClipboardFill} from 'react-icons/ri';
 
