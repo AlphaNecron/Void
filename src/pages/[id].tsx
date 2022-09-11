@@ -75,7 +75,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
       })
     }).then(r => r.json()).then(j => {
       if (j.success)
-        showSuccess('Reported the file.', <RiFlag2Fill/>);
+        showSuccess('Reported the file.', <RiFlag2Fill />);
     });
     setReportReason('');
     dHandler.close();
@@ -98,11 +98,12 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
   const actions = (fluid = false, float = true) => (
     <Group position='apart' grow={fluid}
       style={fluid || !float ? ({}) : ({position: 'absolute', bottom: 24, right: 24, zIndex: 100})} spacing={4}>
-      <ResponsiveButton color='blue' onClick={handler.open} icon={<FiInfo/>} condition={fluid} label='Info'/>
+      <ResponsiveButton color='blue' onClick={handler.open} icon={<FiInfo />} condition={fluid} label='Info' />
       {isExploding ||
-        <ResponsiveButton color='green' component='a' condition={fluid} href={src()} download={properties['File name']}
-          label='Download' icon={<FiDownload/>}/>}
-      <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag/>} label='Report' condition={fluid}/>
+          <ResponsiveButton color='green' component='a' condition={fluid} href={src()}
+            download={properties['File name']}
+            label='Download' icon={<FiDownload />} />}
+      <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag />} label='Report' condition={fluid} />
     </Group>
   );
   return (
@@ -111,27 +112,27 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
         <title>{isExploding ? '💣' : ''} {name}</title>
         {embed && (
           <>
-            <meta property='og:title' content={embed.title}/>
-            <meta property='og:description' content={embed.description}/>
-            <meta property='theme-color' content={embed.color}/>
+            <meta property='og:title' content={embed.title} />
+            <meta property='og:description' content={embed.description} />
+            <meta property='theme-color' content={embed.color} />
             <link type='application/json+oembed'
-              href={buildOEmbedUrl(embed.author, embed.authorUrl, embed.siteName, embed.siteNameUrl)}/>
+              href={buildOEmbedUrl(embed.author, embed.authorUrl, embed.siteName, embed.siteNameUrl)} />
             {isExploding ||
             isType('image', mimetype) ? (
                 <>
-                  <meta property='og:image' content={src()}/>
-                  <meta property='twitter:card' content='summary_large_image'/>
+                  <meta property='og:image' content={src()} />
+                  <meta property='twitter:card' content='summary_large_image' />
                 </>
               ) : isType('video', mimetype) ? (
                 <>
-                  <meta property='og:type' content='video.other'/>
-                  <meta property='og:video' content={src()}/>
-                  <meta property='og:video:url' content={src()}/>
-                  <meta property='og:video:secure_url' content={src()}/>
-                  <meta property='og:video:type' content={mimetype}/>
+                  <meta property='og:type' content='video.other' />
+                  <meta property='og:video' content={src()} />
+                  <meta property='og:video:url' content={src()} />
+                  <meta property='og:video:secure_url' content={src()} />
+                  <meta property='og:video:type' content={mimetype} />
                 </>
               ) : (
-                <meta property='og:image' content='/logo.png'/>
+                <meta property='og:image' content='/logo.png' />
               )}
           </>
         )}
@@ -165,8 +166,8 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
             Why do you want to report this file?
           </Text>
           <TextInput value={reportReason} error={reportReason.length <= 3 ? 'Please provide a proper reason!' : null}
-            onChange={setReportReason}/>
-          <Button size='xs' color='red' disabled={reportReason.length <= 3} onClick={report} leftIcon={<FiSend/>}>Submit
+            onChange={setReportReason} />
+          <Button size='xs' color='red' disabled={reportReason.length <= 3} onClick={report} leftIcon={<FiSend />}>Submit
             report</Button>
         </Stack>
       </Dialog>
@@ -181,27 +182,27 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                   maxWidth: '90vw',
                   maxHeight: '90vh'
                 }
-              }}/>
+              }} />
             </>
           ) : isType('audio', mimetype) ? (
             <Stack>
-              <AudioPlayer title={name} src={src()}/>
+              <AudioPlayer title={name} src={src()} />
               {actions(true, false)}
             </Stack>
           ) : isType('video', mimetype) ? (
             <VideoPlayer style={{maxHeight: '90vh', maxWidth: '90vw'}} src={src()} onReport={dHandler.open}
-              onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding}/>
+              onInfo={handler.open} fileName={properties['File name']} canDownload={!isExploding} />
           ) : isType('text', mimetype) ? (
             <Stack>
               <div style={{display: 'flex'}}>
                 <Select size='xs' searchable value={lang} onChange={setLang} style={{flex: 1}} variant='default'
                   allowDeselect={false} creatable={false}
                   clearable={false} mr={4}
-                  data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))}/>
+                  data={Object.entries(highlightLanguages).map(([label, lang]) => ({label, value: lang[0]}))} />
                 <Group spacing={4}>
                   <Tooltip label='Toggle word wrap'>
                     <ActionIcon variant='filled' color={wrap ? 'void' : 'gray'} onClick={() => setWrap(w => !w)}>
-                      <VscWordWrap/>
+                      <VscWordWrap />
                     </ActionIcon>
                   </Tooltip>
                   {actions(false, false)}
@@ -221,7 +222,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                   ...(wrap && {
                     lineContent: {
                       whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
+                      wordBreak: 'break-word'
                     }
                   })
                 }}
@@ -252,10 +253,10 @@ export function Url({id}) {
         password
       },
       callback({destination}) {
-        showSuccess('Redirecting...', <RiNavigationFill/>);
+        showSuccess('Redirecting...', <RiNavigationFill />);
         router.push(destination);
       },
-      onError: e => showError(e, <RiErrorWarningFill/>)
+      onError: e => showError(e, <RiErrorWarningFill />)
     });
   return (
     <>
@@ -266,9 +267,9 @@ export function Url({id}) {
         <Title mb='xl' order={4}>This URL is password-protected, please enter a password to continue.</Title>
         <div style={{display: 'flex'}}>
           <PasswordInput onKeyDown={e => e.key === 'Enter' && validate()} value={password}
-            onChange={e => setPassword(e.target.value)} style={{flex: 1}} autoComplete='off'/>
+            onChange={e => setPassword(e.target.value)} style={{flex: 1}} autoComplete='off' />
           <ActionIcon type='submit' onClick={validate} variant='filled' size='lg' mt={1} color='green' ml={4}>
-            <BiNavigation/>
+            <BiNavigation />
           </ActionIcon>
         </div>
       </Container>
@@ -277,7 +278,7 @@ export function Url({id}) {
 }
 
 export default function Handler({type, data}) {
-  return type === 'url' ? <Url id={data.id}/> : <Preview data={data}/>;
+  return type === 'url' ? <Url id={data.id} /> : <Preview data={data} />;
 }
 
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {

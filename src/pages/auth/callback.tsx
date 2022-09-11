@@ -24,7 +24,7 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
             {current}
           </Text>
         </Text>
-        <Avatar size={128} src={`${avatar}?size=128`} radius={100} mt='md' mx='md'/>
+        <Avatar size={128} src={`${avatar}?size=128`} radius={100} mt='md' mx='md' />
         <Tooltip label={`ID: ${id}`}>
           <Text size='lg' weight={700}>
             {username}
@@ -33,7 +33,7 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
             </Text>
           </Text>
         </Tooltip>
-        <Button leftIcon={<FiChevronLeft/>} onClick={() => router.push('/dash/account')}>Back to Account</Button>
+        <Button leftIcon={<FiChevronLeft />} onClick={() => router.push('/dash/account')}>Back to Account</Button>
       </Stack>
     </Container>
   );
@@ -136,5 +136,5 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (
       notFound: true
     };
   }
-  
+
 }, ironOptions);

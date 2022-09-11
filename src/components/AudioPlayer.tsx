@@ -35,7 +35,7 @@ export default function AudioPlayer({src, title, ...props}) {
           height: 128,
           background: theme.colors.dark[theme.colorScheme === 'dark' ? 6 : 0]
         })}>
-        <RiMusicFill size={72}/>
+        <RiMusicFill size={72} />
       </Center>
       <Title style={{
         maxWidth: '30vw',
@@ -44,12 +44,12 @@ export default function AudioPlayer({src, title, ...props}) {
         whiteSpace: 'nowrap'
       }} align='center' order={6}>{ref.current?.title || title}</Title>
       <Group spacing={4} grow my='-sm'>
-        <Action icon={<FiRewind/>} label='Backward 10 seconds'
-          onClick={() => seek(-10)}/>
-        <Action label={playing ? 'Pause' : 'Play'} icon={playing ? <FiPause/> : <FiPlay/>} onClick={() =>
-          ref.current[playing ? 'pause' : 'play']()}/>
-        <Action label='Forward 10 seconds' icon={<FiFastForward/>}
-          onClick={() => seek(10)}/>
+        <Action icon={<FiRewind />} label='Backward 10 seconds'
+          onClick={() => seek(-10)} />
+        <Action label={playing ? 'Pause' : 'Play'} icon={playing ? <FiPause /> : <FiPlay />} onClick={() =>
+          ref.current[playing ? 'pause' : 'play']()} />
+        <Action label='Forward 10 seconds' icon={<FiFastForward />}
+          onClick={() => seek(10)} />
       </Group>
       <div style={{display: 'flex', width: '100%', alignItems: 'center'}}>
         <Slider size='sm' style={{
@@ -58,11 +58,11 @@ export default function AudioPlayer({src, title, ...props}) {
           ref.current.currentTime = t;
           if (!playing)
             ref.current.play();
-        }} label={`${s2m(time)} / ${s2m(dura)}`}/>
-        <VolumeIndicator level={vol * 100}/>
+        }} label={`${s2m(time)} / ${s2m(dura)}`} />
+        <VolumeIndicator level={vol * 100} />
         <Slider size='sm' style={{width: 64}} color='yellow' ml={4} value={vol} label={Math.round(vol * 100)}
           onChange={v => ref.current.volume = v}
-          min={0} max={1} step={0.01}/>
+          min={0} max={1} step={0.01} />
         <audio style={{display: 'none'}} ref={ref} src={src}
           onVolumeChange={({currentTarget: {volume}}) => setVol(volume)}
           onPause={onStateChanged} onPlay={onStateChanged}
@@ -70,7 +70,7 @@ export default function AudioPlayer({src, title, ...props}) {
             setTime(currentTime);
           }} onCanPlayThrough={({currentTarget: {duration}}) =>
             setDura(duration)
-          } onEnded={() => setPlaying(false)}/>
+          } onEnded={() => setPlaying(false)} />
       </div>
     </Stack>
   )

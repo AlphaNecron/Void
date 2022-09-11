@@ -14,7 +14,7 @@ class Logger {
   private readonly _verbose: boolean;
   private readonly _logCache: TTLCache<number, LogEntry>;
   private readonly _logWriter: WriteStream;
-  
+
   constructor(defaultPrefix = 'Void') {
     this._logCache = new TTLCache({
       max: 50,
@@ -28,7 +28,7 @@ class Logger {
     process.once('exit', () => this._logWriter.close());
     this._verbose = process.env.NODE_ENV === 'development' || process.env.VERBOSE === 'true';
   }
-  
+
   public query(count = 25): LogEntry[] {
     const entries: LogEntry[] = [];
     for (const [i, entry] of this._logCache.entries()) {
@@ -37,7 +37,7 @@ class Logger {
     }
     return entries;
   }
-  
+
   save(message: string, level: LogLevel, prefix) {
     if (level === 'debug') return;
     const date = new Date();
@@ -55,7 +55,7 @@ class Logger {
       timestamp: format(date, 'HH:mm:ss DD/MM/YYYY')
     } as LogEntry);
   }
-  
+
   colorize = (level: LogLevel): string =>
     (level === 'success' ? green
       : level === 'warn' ? yellow
@@ -66,7 +66,7 @@ class Logger {
   info = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'info', msg);
   debug = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'debug', msg);
   warn = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'warn', msg);
-  
+
   error(err: string | Error, prefix = this._defaultPrefix) {
     if (err instanceof String)
       return this.log(prefix, 'error', err as string);
@@ -75,7 +75,7 @@ class Logger {
     if (this._verbose)
       console.error(gray(getStacktrace(e)));
   }
-  
+
   private log(prefix: string, level: LogLevel, msg: string) {
     const date = format(new Date(), 'mediumTime');
     console[level === 'error' ? 'error' : 'log'](`${gray(`[${date}] ${prefix} ${this.getSymbol('pointer')}`)}\t${this.colorize(level)} ${msg}`);

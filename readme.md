@@ -76,27 +76,43 @@
 
   ```json5
 {
-    "void": {
-        "useHttps": false, // Whether to enable HTTPS for URLs created returned by API.
-        "host": "0.0.0.0", // The host Void should run on.
-        "port": 3000, // The port Void should run on.
-        "secret": "secretmin32characters", // The secret key used to hash cookies. (*)
-        "rateLimit": 1200, // Rate limit for users per hour. (**)
-        "defaultDomain": "http://localhost:3000", // The base domain used for multiple purposes.
-        "databaseUrl": "postgres://postgres:postgres@postgres/postgres", // The Postgres database URL.
-        "url": {
-            "allowVanityUrl": true, // Whether to allow users to shorten with vanity URLs.
-            "length": 6 // The maximum length for URLs generated with shortener and uploader.
-        },
-        "discordProvider": {
-          "clientId": "YOUR DISCORD CLIENT ID", // Discord client id, you can grab one in the Application dashboard.
-          "clientSecret": "YOUR DISCORD CLIENT SECRET" // Discord client secret, you can grab one in the Application dashboard as well.
-        },
-        "file": {
-            "outputDirectory": "./uploads", // The directory to save upload files.
-            "blacklistedExtensions": [ ".zip", ".exe" ] // Prevent users from uploading files with certain extensions. (**)
-        }
+  "void": {
+    "useHttps": false,
+    // Whether to enable HTTPS for URLs created returned by API.
+    "host": "0.0.0.0",
+    // The host Void should run on.
+    "port": 3000,
+    // The port Void should run on.
+    "secret": "secretmin32characters",
+    // The secret key used to hash cookies. (*)
+    "rateLimit": 1200,
+    // Rate limit for users per hour. (**)
+    "defaultDomain": "http://localhost:3000",
+    // The base domain used for multiple purposes.
+    "databaseUrl": "postgres://postgres:postgres@postgres/postgres",
+    // The Postgres database URL.
+    "url": {
+      "allowVanityUrl": true,
+      // Whether to allow users to shorten with vanity URLs.
+      "length": 6
+      // The maximum length for URLs generated with shortener and uploader.
+    },
+    "discordProvider": {
+      "clientId": "YOUR DISCORD CLIENT ID",
+      // Discord client id, you can grab one in the Application dashboard.
+      "clientSecret": "YOUR DISCORD CLIENT SECRET"
+      // Discord client secret, you can grab one in the Application dashboard as well.
+    },
+    "file": {
+      "outputDirectory": "./uploads",
+      // The directory to save upload files.
+      "blacklistedExtensions": [
+        ".zip",
+        ".exe"
+      ]
+      // Prevent users from uploading files with certain extensions. (**)
     }
+  }
 }
   ```
 
@@ -120,12 +136,11 @@
 
 ### Techstack
 
-- [NextJS 12](https://nextjs.org) (Framework)
+- [NextJS](https://nextjs.org) (Framework)
 - [ReactJS](https://reactjs.org) (User interface)
 - [NodeJS](https://nodejs.org) (Back-end)
 - [Mantine](https://mantine.dev) (UI library)
 - [Iron Session](https://www.npmjs.com/package/iron-session) (Authentication)
-- [TTLCache](https://www.npmjs.com/package/@isaacs/ttlcache) (Caching)
 - [Prisma](https://www.prisma.io) (ORM)
 - [PostgreSQL](https://www.postgresql.org) (Database)
 - [Yarn](https://yarnpkg.com) (Package manager)
@@ -133,7 +148,7 @@
 
 ### Credits
 
-- Some ideas from `diced/zipline`
+- v0 codebase from `diced/zipline`
 - Logo and favicon from `icons8`
 
 ### Contributors

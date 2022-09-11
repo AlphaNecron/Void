@@ -41,26 +41,26 @@ export default function Dialog_Shorten({onClose, opened, onShorten, ...props}) {
         if (u.url) {
           clip.copy(u.url);
           onShorten();
-          return showSuccess('Copied the URL to your clipboard.', <RiClipboardFill/>, <Anchor target='_blank'
+          return showSuccess('Copied the URL to your clipboard.', <RiClipboardFill />, <Anchor target='_blank'
             href={u.url}>{u.url}</Anchor>);
         }
       },
-      onError: e => showError('Failed to shorten the URL.', <RiErrorWarningFill/>, e)
+      onError: e => showError('Failed to shorten the URL.', <RiErrorWarningFill />, e)
     });
   return (
     <Modal size={600} opened={opened} onClose={onClose} {...props} title='Shorten URLs'>
       <form onSubmit={form.onSubmit(shorten)}>
         <Stack>
-          <TextInput required placeholder='Paste your long URL here' {...form.getInputProps('Destination')}/>
+          <TextInput required placeholder='Paste your long URL here' {...form.getInputProps('Destination')} />
           <Group grow>
             <Select label='URL' required disabled={form.values.Vanity.length > 0}
-              data={['alphanumeric', 'emoji', 'invisible']} {...form.getInputProps('URL')}/>
+              data={['alphanumeric', 'emoji', 'invisible']} {...form.getInputProps('URL')} />
             {canUseVanity && <TextInput label='Vanity URL'
-              placeholder='Leave blank for random URL' {...form.getInputProps('Vanity')}/>}
+              placeholder='Leave blank for random URL' {...form.getInputProps('Vanity')} />}
           </Group>
           <PasswordInput autoComplete='one-time-code' label='Password'
-            placeholder='Leave blank for none' {...form.getInputProps('Password')}/>
-          <Button type='submit' leftIcon={<FiScissors/>}>Shorten</Button>
+            placeholder='Leave blank for none' {...form.getInputProps('Password')} />
+          <Button type='submit' leftIcon={<FiScissors />}>Shorten</Button>
         </Stack>
       </form>
     </Modal>

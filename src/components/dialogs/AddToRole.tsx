@@ -29,14 +29,14 @@ export default function Dialog_AddToRole({id, callback}) {
     });
   return (
     <Stack spacing='sm'>
-      <TextInput icon={<FiSearch/>} placeholder='Search a user' value={query}
-        onChange={e => handler.set(e.target.value)}/>
+      <TextInput icon={<FiSearch />} placeholder='Search a user' value={query}
+        onChange={e => handler.set(e.target.value)} />
       <ScrollArea>
         <Checkbox.Group spacing='xs' mt='-xs' orientation='vertical' value={selected} onChange={setSelected}>
           {data && handler.filterList(data, ['name']).map(user => (
             <Checkbox value={user.id} key={user.id} label={
               <Group spacing='xs'>
-                <UserAvatar user={user} size={28}/>
+                <UserAvatar user={user} size={28} />
                 {user.name && (
                   <Text weight={700}>
                     {user.name}
@@ -51,7 +51,7 @@ export default function Dialog_AddToRole({id, callback}) {
                   {user.username}
                 </Text>
               </Group>
-            }/>
+            } />
           ))}
         </Checkbox.Group>
       </ScrollArea>

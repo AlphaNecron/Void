@@ -720,135 +720,135 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/core@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/core@npm:5.2.7"
+"@mantine/core@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/core@npm:5.3.0"
   dependencies:
     "@floating-ui/react-dom-interactions": 0.6.6
-    "@mantine/styles": 5.2.7
-    "@mantine/utils": 5.2.7
+    "@mantine/styles": 5.3.0
+    "@mantine/utils": 5.3.0
     "@radix-ui/react-scroll-area": 1.0.0
     react-textarea-autosize: 8.3.4
   peerDependencies:
-    "@mantine/hooks": 5.2.7
+    "@mantine/hooks": 5.3.0
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 6aa4dbddaa9b52b587a1c53ca0ca42e938a2c7d5bc296028c6bd8c4d6d9e532d61e823d51b698b4e22a8706966167ea01d9e0671c406dadf690b98426574e977
+  checksum: b389c202c143c809611538e29912f994ae3e689e899958158264a996a55a5caec039a414251b5cea74f7fd6650baf026bbea709edf90bdcddf82afe314f331fb
   languageName: node
   linkType: hard
 
-"@mantine/dropzone@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/dropzone@npm:5.2.7"
+"@mantine/dropzone@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/dropzone@npm:5.3.0"
   dependencies:
-    "@mantine/utils": 5.2.7
+    "@mantine/utils": 5.3.0
     react-dropzone: 14.2.1
   peerDependencies:
-    "@mantine/core": 5.2.7
-    "@mantine/hooks": 5.2.7
+    "@mantine/core": 5.3.0
+    "@mantine/hooks": 5.3.0
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: ad04feed34efff300a2966db4b43af3c21c6801c1be07458073185549708d31b8716690ea5757ae2fe7aa103936f16c8b556bc0a6f4a350df0203857fcb3c893
+  checksum: f508eac5967fd704986af2b707ad7f3d81eca7ebea50c8bfa24d05a39b2748c9ebe811503608655a6182dc041c68d66f5c46b79be0f11269c50b1177542dc557
   languageName: node
   linkType: hard
 
-"@mantine/form@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/form@npm:5.2.7"
+"@mantine/form@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/form@npm:5.3.0"
   dependencies:
     fast-deep-equal: ^3.1.3
     klona: ^2.0.5
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 10704d93f9f3071953313567fd82f79d19bb8d9ef992e98308545d2c0e1b889a00a90f0f149cf755b5ac9c2349b71350ffbcb518df27c6bad5f33b11704442af
+  checksum: 8eee17fb974f9951627ae1a6577e27224353fa88d0a36e1731327088d1fe133771ecaf3ca79b6598de94e6651410736b35ebdc46a19b19639075fa540e7513b1
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/hooks@npm:5.2.7"
+"@mantine/hooks@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/hooks@npm:5.3.0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 6de7e545d222cad9c27b9322c7ffdbf84d527090aceefa96a52aeba42a762b179fd64129ca21725a607701b885faec6386137a494593955c11138ed832deda09
+  checksum: d028ffc99a30898a9ecf49a23184cdb73b666eb36126eb61689cd678f93a1efcbc70f515d1cc5c88715b33af3ac872f63161849de8730047f9aa9666b64b8220
   languageName: node
   linkType: hard
 
-"@mantine/modals@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/modals@npm:5.2.7"
+"@mantine/modals@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/modals@npm:5.3.0"
   dependencies:
-    "@mantine/utils": 5.2.7
+    "@mantine/utils": 5.3.0
   peerDependencies:
-    "@mantine/core": 5.2.7
-    "@mantine/hooks": 5.2.7
+    "@mantine/core": 5.3.0
+    "@mantine/hooks": 5.3.0
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 41b39e12cd63592ca76482e5ecdeb308b47988ab3e81ea0a73f2736799d214109f64ed086e275ffc96bf5aad740a5ac1b0aba573ab4424ff0feb61c9030d0be6
+  checksum: ad49cb835c39938d779d090e9e068a183c828c49dfbef03948d68ceb40ff88d37fbcaf8802da99e77c99a4984bcb9ef51a396ed11c39fc81035fd758eabb3dc1
   languageName: node
   linkType: hard
 
-"@mantine/next@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/next@npm:5.2.7"
+"@mantine/next@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/next@npm:5.3.0"
   dependencies:
-    "@mantine/ssr": 5.2.7
-    "@mantine/styles": 5.2.7
+    "@mantine/ssr": 5.3.0
+    "@mantine/styles": 5.3.0
   peerDependencies:
     next: "*"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 43b201dc8b3663db53cce1c22b477cfc5f9857e1c7c76be42b79ccf86f4eaebaccd4bcdcd2b21d10c2e04be526b6fc6b376944f60278b8cab55e1adc9edb4143
+  checksum: 4c55e7b2d637fa4159fafa56a1c57ba984a3934fe487d1ddea2e60ed3030d1fff56661b0d7f5f6186c9713bbd548d6a60f92210616d40c8fdf8aae876ec07a4f
   languageName: node
   linkType: hard
 
-"@mantine/notifications@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/notifications@npm:5.2.7"
+"@mantine/notifications@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/notifications@npm:5.3.0"
   dependencies:
-    "@mantine/utils": 5.2.7
+    "@mantine/utils": 5.3.0
     react-transition-group: 4.4.2
   peerDependencies:
-    "@mantine/core": 5.2.7
-    "@mantine/hooks": 5.2.7
+    "@mantine/core": 5.3.0
+    "@mantine/hooks": 5.3.0
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 548983b4ce27ed60655efce16dc2733172d02816034afbb04b850a3370d0392a4200ce385fed68ed4967600e34c2207fff920c80472b20902eb29eb4331f462f
+  checksum: 0b8827c8d2b6d188ac9c8cc87df603f2e50a0a1f5016372daf48010d6e6ce12111733078321fc279ccac34b8943b621b01d72fbb393fc0625c899134d5327ba2
   languageName: node
   linkType: hard
 
-"@mantine/prism@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/prism@npm:5.2.7"
+"@mantine/prism@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/prism@npm:5.3.0"
   dependencies:
-    "@mantine/utils": 5.2.7
+    "@mantine/utils": 5.3.0
     prism-react-renderer: ^1.2.1
   peerDependencies:
-    "@mantine/core": 5.2.7
-    "@mantine/hooks": 5.2.7
+    "@mantine/core": 5.3.0
+    "@mantine/hooks": 5.3.0
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 899053fb7ad525c1ab353dee2a56eba71b1c14fd236bc2ec49b89e47cd2db22e74a1e6d74917a34220ef1f383dfae1f8c329fb52e00eda295cd2e378572498ce
+  checksum: f537dc03fa8759d8be5a08757b9309eeaa8a1f3e1f49d86a65a32d5bf399eda1c8072f50ec74cd3d6fc5c373f3cf3a800c94150fdf68b06b2d0a3a6320755321
   languageName: node
   linkType: hard
 
-"@mantine/ssr@npm:5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/ssr@npm:5.2.7"
+"@mantine/ssr@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/ssr@npm:5.3.0"
   dependencies:
-    "@mantine/styles": 5.2.7
+    "@mantine/styles": 5.3.0
     html-react-parser: 1.4.12
   peerDependencies:
     "@emotion/react": ">=11.9.0"
     "@emotion/server": ">=11.4.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: a4c9a79b1702c1b86e9288d092fc87fafb80373b179c21da228b559f27fa046e668d1048c77534136a5a37a679ec832f5194b72a9451822a3e73bd40d78a02b5
+  checksum: 0323dba6ef3c54bc5aa20e6c0d47e9f3bf334338c622b61505308191c25e2085ecf4c6cb70471b2117477dff53fd1656c035e8a42a6777d2fe0afc5f2c55a30c
   languageName: node
   linkType: hard
 
-"@mantine/styles@npm:5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/styles@npm:5.2.7"
+"@mantine/styles@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/styles@npm:5.3.0"
   dependencies:
     clsx: 1.1.1
     csstype: 3.0.9
@@ -856,16 +856,16 @@ __metadata:
     "@emotion/react": ">=11.9.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 72afdda8130b78692843a48a5858013d690d13b734d6b85c989e34a9d2b9b9dca56d78577b2654afa379be762a3eb21723ef977dee306a4f5682d08b62c6b9c7
+  checksum: b96b5b1dac4d402ed8804a7ec089252bfa1542fdddb9966c5eef7fdcc926a3522487b395d4b57a5850d88db7bd9aa25d108379220f5e22b81c9cfec46ddf711d
   languageName: node
   linkType: hard
 
-"@mantine/utils@npm:5.2.7":
-  version: 5.2.7
-  resolution: "@mantine/utils@npm:5.2.7"
+"@mantine/utils@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@mantine/utils@npm:5.3.0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: f86d2141490803d9e51ce7276fc1a8bc976a2642c560f212ac71626fc3bef79671e6eeb4c02dce6e246e68b8d952ea2be2d629d0ed66c6b165266131958c5a72
+  checksum: 29d7a9eb292398cf71654cc3d079fe0b16741878009202ac3dd6afb1d1ef32fd4b35d8d795bc0ad36bcd49a0a46156f59f275357b39c575c64cdaa98d969c90b
   languageName: node
   linkType: hard
 
@@ -885,6 +885,15 @@ __metadata:
   bin:
     node-pre-gyp: bin/node-pre-gyp
   checksum: 1b9c4c87a68d200daa13151d0fe033aa7aa8f7b26f3585255424dd8dfee2ec672c3e9bea4071c624469bc0aebbbcde08f8a300c8a958db52c50abadd5fb56920
+  languageName: node
+  linkType: hard
+
+"@next/bundle-analyzer@npm:^12.3.0":
+  version: 12.3.0
+  resolution: "@next/bundle-analyzer@npm:12.3.0"
+  dependencies:
+    webpack-bundle-analyzer: 4.3.0
+  checksum: 0b0a1f9ee8cd9d68c150ea9de5699ad78eebe444b01b06c2b0ab19467ccc51dcb2120735c447aa80ee930cd20d1ee53fc2f0c3f874ff6d8c111a961ef6d9d60b
   languageName: node
   linkType: hard
 
@@ -1129,6 +1138,13 @@ __metadata:
   version: 1.0.0
   resolution: "@phc/format@npm:1.0.0"
   checksum: 15ee02504fbc16590923d89b1f1c2f5892df27cf2bf19180e5678511413e87b6e5355815a092749cd01698855ee5a0fc5d2393951c727acd650934eed290e26e
+  languageName: node
+  linkType: hard
+
+"@polka/url@npm:^1.0.0-next.20":
+  version: 1.0.0-next.21
+  resolution: "@polka/url@npm:1.0.0-next.21"
+  checksum: c7654046d38984257dd639eab3dc770d1b0340916097b2fac03ce5d23506ada684e05574a69b255c32ea6a144a957c8cd84264159b545fca031c772289d88788
   languageName: node
   linkType: hard
 
@@ -2052,10 +2068,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-walk@npm:^8.1.1":
+"acorn-walk@npm:^8.0.0, acorn-walk@npm:^8.1.1":
   version: 8.2.0
   resolution: "acorn-walk@npm:8.2.0"
   checksum: 1715e76c01dd7b2d4ca472f9c58968516a4899378a63ad5b6c2d668bba8da21a71976c14ec5f5b75f887b6317c4ae0b897ab141c831d741dc76024d8745f1ad1
+  languageName: node
+  linkType: hard
+
+"acorn@npm:^8.0.4, acorn@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "acorn@npm:8.8.0"
+  bin:
+    acorn: bin/acorn
+  checksum: 7270ca82b242eafe5687a11fea6e088c960af712683756abf0791b68855ea9cace3057bd5e998ffcef50c944810c1e0ca1da526d02b32110e13c722aa959afdc
   languageName: node
   linkType: hard
 
@@ -2065,15 +2090,6 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: 2e4c1dbed3da327684863debf31d341bf8882c6893c506653872c00977eee45675feb9129255d6c74c88424d2b20d889ca6de5b39776e5e3cccfc756b3ca1da8
-  languageName: node
-  linkType: hard
-
-"acorn@npm:^8.8.0":
-  version: 8.8.0
-  resolution: "acorn@npm:8.8.0"
-  bin:
-    acorn: bin/acorn
-  checksum: 7270ca82b242eafe5687a11fea6e088c960af712683756abf0791b68855ea9cace3057bd5e998ffcef50c944810c1e0ca1da526d02b32110e13c722aa959afdc
   languageName: node
   linkType: hard
 
@@ -2875,6 +2891,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^6.2.0":
+  version: 6.2.1
+  resolution: "commander@npm:6.2.1"
+  checksum: d7090410c0de6bc5c67d3ca41c41760d6d268f3c799e530aafb73b7437d1826bbf0d2a3edac33f8b57cc9887b4a986dce307fa5557e109be40eadb7c43b21742
+  languageName: node
+  linkType: hard
+
 "commander@npm:^9.4.0":
   version: 9.4.0
   resolution: "commander@npm:9.4.0"
@@ -3469,6 +3492,13 @@ __metadata:
   dependencies:
     readable-stream: ^2.0.2
   checksum: 744961f03c7f54313f90555ac20284a3fb7bf22fdff6538f041a86c22499560eb6eac9d30ab5768054137cb40e6b18b40f621094e0261d7d8c35a37b7a5ad241
+  languageName: node
+  linkType: hard
+
+"duplexer@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "duplexer@npm:0.1.2"
+  checksum: 62ba61a830c56801db28ff6305c7d289b6dc9f859054e8c982abd8ee0b0a14d2e9a8e7d086ffee12e868d43e2bbe8a964be55ddbd8c8957714c87373c7a4f9b0
   languageName: node
   linkType: hard
 
@@ -4893,6 +4923,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gzip-size@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "gzip-size@npm:6.0.0"
+  dependencies:
+    duplexer: ^0.1.2
+  checksum: 2df97f359696ad154fc171dcb55bc883fe6e833bca7a65e457b9358f3cb6312405ed70a8da24a77c1baac0639906cd52358dc0ce2ec1a937eaa631b934c94194
+  languageName: node
+  linkType: hard
+
 "has-bigints@npm:^1.0.1":
   version: 1.0.1
   resolution: "has-bigints@npm:1.0.1"
@@ -5382,16 +5421,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iron-session@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "iron-session@npm:6.2.0"
+"iron-session@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "iron-session@npm:6.2.1"
   dependencies:
     "@peculiar/webcrypto": ^1.4.0
     "@types/cookie": ^0.5.1
     "@types/express": ^4.17.13
     "@types/node": ^17.0.41
     cookie: ^0.5.0
-    iron-webcrypto: ^0.1.0
+    iron-webcrypto: ^0.2.5
   peerDependencies:
     express: ">=4"
     next: ">=10"
@@ -5400,16 +5439,16 @@ __metadata:
       optional: true
     next:
       optional: true
-  checksum: d42712f80e0eda339ab2cf2bee44d075dcf5011fcb3ad77c30d5334cee292f5c23daf7933713637e82b978ed98eda8181c57e7cf2abf8dc41e414400a453fe05
+  checksum: 40958e107f5036c99ca74c9cd6bd04986968165f416295f7ae5b4c4703202e1f585f44fb26721aad311af3bbf1ec1ad102d23e9a07ba53c8cd6c915d4f6ae449
   languageName: node
   linkType: hard
 
-"iron-webcrypto@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "iron-webcrypto@npm:0.1.0"
+"iron-webcrypto@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "iron-webcrypto@npm:0.2.5"
   dependencies:
     buffer: ^6
-  checksum: 5754d4974885050721d8874793c924d2766c9a1482aa0d49e7509f7e084f2b411fdc68948293b060002e114be9acb51eda4c28f7742008ed3612d437dd3cdbb0
+  checksum: 7ece332782ddec52d106fa5b1b152edbc7d9d31cbc8a434d25ca87546bb452df5509ac8fd2b42dc39a920ae55c607e4bb41dd263b4ec6475ef19fdfaa017cf58
   languageName: node
   linkType: hard
 
@@ -6577,6 +6616,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mrmime@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "mrmime@npm:1.0.1"
+  checksum: cc979da44bbbffebaa8eaf7a45117e851f2d4cb46a3ada6ceb78130466a04c15a0de9a9ce1c8b8ba6f6e1b8618866b1352992bf1757d241c0ddca558b9f28a77
+  languageName: node
+  linkType: hard
+
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -7030,6 +7076,15 @@ __metadata:
     is-docker: ^2.1.1
     is-wsl: ^2.2.0
   checksum: e9545bec64cdbf30a0c35c1bdc310344adf8428a117f7d8df3c0af0a0a24c513b304916a6d9b11db0190ff7225c2d578885080b761ed46a3d5f6f1eebb98b63c
+  languageName: node
+  linkType: hard
+
+"opener@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "opener@npm:1.5.2"
+  bin:
+    opener: bin/opener-bin.js
+  checksum: 33b620c0d53d5b883f2abc6687dd1c5fd394d270dbe33a6356f2d71e0a2ec85b100d5bac94694198ccf5c30d592da863b2292c5539009c715a9c80c697b4f6cc
   languageName: node
   linkType: hard
 
@@ -8305,6 +8360,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sirv@npm:^1.0.7":
+  version: 1.0.19
+  resolution: "sirv@npm:1.0.19"
+  dependencies:
+    "@polka/url": ^1.0.0-next.20
+    mrmime: ^1.0.0
+    totalist: ^1.0.0
+  checksum: c943cfc61baf85f05f125451796212ec35d4377af4da90ae8ec1fa23e6d7b0b4d9c74a8fbf65af83c94e669e88a09dc6451ba99154235eead4393c10dda5b07c
+  languageName: node
+  linkType: hard
+
 "sisteransi@npm:^1.0.5":
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
@@ -8983,6 +9049,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"totalist@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "totalist@npm:1.1.0"
+  checksum: dfab80c7104a1d170adc8c18782d6c04b7df08352dec452191208c66395f7ef2af7537ddfa2cf1decbdcfab1a47afbbf0dec6543ea191da98c1c6e1599f86adc
+  languageName: node
+  linkType: hard
+
 "tough-cookie@npm:^4.0.0":
   version: 4.0.0
   resolution: "tough-cookie@npm:4.0.0"
@@ -9415,14 +9488,15 @@ __metadata:
     "@emotion/react": ^11.10.4
     "@emotion/server": ^11.10.0
     "@isaacs/ttlcache": ^1.2.0
-    "@mantine/core": ^5.2.7
-    "@mantine/dropzone": ^5.2.7
-    "@mantine/form": ^5.2.7
-    "@mantine/hooks": ^5.2.7
-    "@mantine/modals": ^5.2.7
-    "@mantine/next": ^5.2.7
-    "@mantine/notifications": ^5.2.7
-    "@mantine/prism": ^5.2.7
+    "@mantine/core": ^5.3.0
+    "@mantine/dropzone": ^5.3.0
+    "@mantine/form": ^5.3.0
+    "@mantine/hooks": ^5.3.0
+    "@mantine/modals": ^5.3.0
+    "@mantine/next": ^5.3.0
+    "@mantine/notifications": ^5.3.0
+    "@mantine/prism": ^5.3.0
+    "@next/bundle-analyzer": ^12.3.0
     "@prisma/client": ^4.3.1
     "@prisma/generator-helper": ^4.3.1
     "@prisma/internals": ^4.3.1
@@ -9443,7 +9517,7 @@ __metadata:
     eslint-config-next: 12.3.0
     fecha: ^4.2.3
     husky: ^8.0.1
-    iron-session: ^6.2.0
+    iron-session: ^6.2.1
     multer: ^1.4.5-lts.1
     next: 12.3.0
     picocolors: ^1.0.0
@@ -9506,6 +9580,25 @@ __metadata:
   version: 7.0.0
   resolution: "webidl-conversions@npm:7.0.0"
   checksum: f05588567a2a76428515333eff87200fae6c83c3948a7482ebb109562971e77ef6dc49749afa58abb993391227c5697b3ecca52018793e0cb4620a48f10bd21b
+  languageName: node
+  linkType: hard
+
+"webpack-bundle-analyzer@npm:4.3.0":
+  version: 4.3.0
+  resolution: "webpack-bundle-analyzer@npm:4.3.0"
+  dependencies:
+    acorn: ^8.0.4
+    acorn-walk: ^8.0.0
+    chalk: ^4.1.0
+    commander: ^6.2.0
+    gzip-size: ^6.0.0
+    lodash: ^4.17.20
+    opener: ^1.5.2
+    sirv: ^1.0.7
+    ws: ^7.3.1
+  bin:
+    webpack-bundle-analyzer: lib/bin/analyzer.js
+  checksum: 00b7bf4ac9fca17062b66b6897145b94e87153d3ec8815f0e0c05a3b8a1ca75320262db01a5fa634f604ee3d41aecde1ee59838d05b6d03cd5be62eb1addbcf8
   languageName: node
   linkType: hard
 
@@ -9616,6 +9709,21 @@ __metadata:
   version: 1.0.2
   resolution: "wrappy@npm:1.0.2"
   checksum: 159da4805f7e84a3d003d8841557196034155008f817172d4e986bd591f74aa82aa7db55929a54222309e01079a65a92a9e6414da5a6aa4b01ee44a511ac3ee5
+  languageName: node
+  linkType: hard
+
+"ws@npm:^7.3.1":
+  version: 7.5.9
+  resolution: "ws@npm:7.5.9"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: c3c100a181b731f40b7f2fddf004aa023f79d64f489706a28bc23ff88e87f6a64b3c6651fbec3a84a53960b75159574d7a7385709847a62ddb7ad6af76f49138
   languageName: node
   linkType: hard
 

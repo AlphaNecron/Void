@@ -11,7 +11,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!fileId || fileId.trim() === '') return;
   const file = await prisma.file.findUnique({
     where: {
-      id: fileId,
+      id: fileId
     },
     select: {
       id: true,
@@ -59,7 +59,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         const path = resolve(cfg.void.upload.outputDirectory, file.user.id, file.id);
         await prisma.file.delete({
           where: {
-            id: file.id,
+            id: file.id
           }
         });
         await rm(path);

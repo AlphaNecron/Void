@@ -10,9 +10,9 @@ export default function Index() {
     <>
       <Head>
         <title>Void</title>
-        <meta property='og:title' content='Void'/>
-        <meta property='og:description' content='Free and open source file hosting service.'/>
-        <meta property='theme-color' content='#B794F4'/>
+        <meta property='og:title' content='Void' />
+        <meta property='og:description' content='Free and open source file hosting service.' />
+        <meta property='theme-color' content='#B794F4' />
       </Head>
       <body style={{width: '100vw', height: '100vh'}}>
         <Center py={128} sx={({colors, fn}) => ({
@@ -32,19 +32,19 @@ export default function Index() {
             <Button.Group style={{alignSelf: 'center'}}>
               {isLogged ? (
                 <>
-                  <Button leftIcon={<FiChevronRight/>} component={NextLink} href='/dash'>
+                  <Button leftIcon={<FiChevronRight />} component={NextLink} href='/dash'>
                   Navigate to the Void
                   </Button>
-                  <Button variant='default' rightIcon={<FiLogOut/>} component={NextLink} href='/auth/logout'>
+                  <Button variant='default' rightIcon={<FiLogOut />} component={NextLink} href='/auth/logout'>
                   Log out
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button leftIcon={<FiLogIn/>} component={NextLink} href='/auth/login'>
+                  <Button leftIcon={<FiLogIn />} component={NextLink} href='/auth/login'>
                   Login
                   </Button>
-                  <Button variant='default' rightIcon={<FiEdit2/>} component={NextLink} href='/auth/register'>
+                  <Button variant='default' rightIcon={<FiEdit2 />} component={NextLink} href='/auth/register'>
                   Register
                   </Button>
                 </>

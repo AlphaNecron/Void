@@ -1,4 +1,4 @@
-import {unlinkSync} from 'fs';
+import {rm} from 'fs/promises';
 import config from 'lib/config';
 import {hasPermission, highest, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
@@ -42,8 +42,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     });
     const uploadDir = resolve(config.void.upload.outputDirectory);
-    unlinkSync(join(uploadDir, 'avatars', target.id));
-    unlinkSync(join(uploadDir, target.id));
+    await rm(join(uploadDir, 'avatars', target.id), {
+      force: true
+    });
+    await rm(join(uploadDir, target.id), {
+      force: true
+    });
     return res.success();
   }
   case 'GET': {

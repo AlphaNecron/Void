@@ -34,10 +34,10 @@ import {FiLogOut, FiUser} from 'react-icons/fi';
 import {
   RiArchiveFill,
   RiDashboard3Fill,
-  RiGlobalFill,
   RiGroupFill,
   RiLink,
   RiMoonClearFill,
+  RiShieldFill,
   RiSunFill,
   RiTeamFill,
   RiTerminalWindowFill
@@ -47,47 +47,44 @@ import ShareX from './dialogs/ShareX';
 
 const routes = [
   {
-    icon: <RiDashboard3Fill/>,
+    icon: <RiDashboard3Fill />,
     label: 'Dashboard',
     route: '/dash',
     color: 'void'
   },
   {
-    icon: <RiArchiveFill/>,
+    icon: <RiArchiveFill />,
     label: 'Files',
     route: '/dash/files',
-    color: 'yellow',
+    color: 'yellow'
   },
   {
-    icon: <RiLink/>,
+    icon: <RiLink />,
     label: 'URLs',
     route: '/dash/urls',
     color: 'green',
     permission: Permission.SHORTEN
   },
   {
+    label: 'Administration',
+    icon: <RiShieldFill />,
+    color: 'red',
     adminRequired: true,
     items: [
       {
-        icon: <RiGroupFill/>,
+        icon: <RiGroupFill />,
         label: 'Users',
         route: '/dash/users',
         color: 'pink'
       },
       {
-        icon: <RiTeamFill/>,
+        icon: <RiTeamFill />,
         label: 'Roles',
         route: '/dash/roles',
         color: 'teal'
       },
       {
-        icon: <RiGlobalFill/>,
-        label: 'Domains',
-        route: '/dash/domains',
-        color: 'grape'
-      },
-      {
-        icon: <RiTerminalWindowFill/>,
+        icon: <RiTerminalWindowFill />,
         label: 'Panel',
         route: '/dash/panel',
         color: 'cyan'
@@ -100,20 +97,21 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
   const [dialogOpen, setDialogOpen] = useSetState({sharex: false});
   return (
     <>
-      <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({sharex: false})}/>
+      <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({sharex: false})} />
       <Navbar {...props}>
         <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
           {routes.map((x, i) =>
             (x.adminRequired && isAdmin(user.role.permissions) && x.items) ? (
-              x.items.map(z =>
-                <NavigationItem onClick={onCollapse} highlight={z.route === route} key={z.route} requiresAdmin
-                  component={NextLink}
-                  href={z.route} color={z.color} label={z.label} icon={z.icon}/>
-              )
+              <NavigationItem color={x.color} label={x.label} icon={x.icon}>
+                {x.items.map(y => (
+                  <NavigationItem component={NextLink} onClick={onCollapse} highlight={y.route === route} key={y.route}
+                    href={y.route} color={y.color} label={y.label} icon={y.icon} />
+                ))}
+              </NavigationItem>
             ) : ((x.permission ? hasPermission(user.role.permissions, x.permission) : true) && !x.items) &&
-              <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
-                color={x.color}
-                label={x.label} icon={x.icon} id={i} key={i}/>
+                <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
+                  color={x.color}
+                  label={x.label} icon={x.icon} id={i} key={i} />
           )}
         </Navbar.Section>
         <Navbar.Section>
@@ -143,7 +141,7 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                     <Indicator withBorder size={14} position='bottom-end' color='green' offset={5}>
                       <UserAvatar
                         user={user}
-                        radius='xl'/>
+                        radius='xl' />
                     </Indicator>
                     <Box>
                       <Text size='md' weight={600}>
@@ -159,17 +157,17 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                 {quota && (
                   <>
                     <Menu.Label>{prettyBytes(quota.used)} / {prettyBytes(quota.total)} used</Menu.Label>
-                    <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs'/>
+                    <Progress value={quota.used / Math.max(quota.total, 1) * 100} size='sm' mb='sm' mx='xs' />
                   </>
                 )}
-                <Menu.Divider/>
-                <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage
+                <Menu.Divider />
+                <Menu.Item icon={<FiUser />} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage
                   account</Menu.Item>
-                <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>
+                <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16} />}>
                   ShareX config
                 </Menu.Item>
-                <Menu.Divider/>
-                <Menu.Item icon={<FiLogOut/>} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item icon={<FiLogOut />} color='red' component={NextLink} href='/auth/logout'>Logout</Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Box>
@@ -191,13 +189,13 @@ function AppHeader({children}) {
             <Tooltip label='Void on GitHub'>
               <ActionIcon variant='filled' radius='md' size='lg' color='dark' component='a' target='_blank'
                 href='https://github.com/AlphaNecron/Void'>
-                <SiGithub/>
+                <SiGithub />
               </ActionIcon>
             </Tooltip>
             <Tooltip label={`Toggle ${value('dark', 'light')} theme`}>
               <ActionIcon variant='light' radius='md' color={value('purple', 'yellow')}
                 onClick={() => toggleColorScheme()} size='lg'>
-                {value(<RiMoonClearFill/>, <RiSunFill/>)}
+                {value(<RiMoonClearFill />, <RiSunFill />)}
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -225,7 +223,7 @@ export default function Layout({children, route}) {
         }}
         hiddenBreakpoint='md' width={{md: 235}} hidden={!opened} p='md'
         route={route} quota={data ? {used: data.used, total: data.total} : null}
-        user={session.user}/>
+        user={session.user} />
       }
       header={<AppHeader>
         {smallWidth ? (
@@ -238,12 +236,12 @@ export default function Layout({children, route}) {
             mr='xl'
           />
         ) : (
-          <Image src='/logo.png' height={32} width={32} alt='Void'/>
+          <Image src='/logo.png' height={32} width={32} alt='Void' />
         )}
       </AppHeader>
       }
     >
       {children}
     </AppShell>
-  ) : <Skeleton/>;
+  ) : <Skeleton />;
 }

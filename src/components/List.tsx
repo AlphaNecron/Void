@@ -21,7 +21,7 @@ export default function List({
       {typeof items === 'function' && (
         <TextInput rightSection={onAdd && (
           <ActionIcon onClick={onAdd}>
-            <FiPlus/>
+            <FiPlus />
           </ActionIcon>
         )} styles={({colors, radius}) => ({
           root: {
@@ -30,9 +30,9 @@ export default function List({
             borderRadius: `${radius.sm}px ${radius.sm}px 0 0`,
             '&:only-child': {
               borderRadius: radius.sm
-            },
+            }
           }
-        })} icon={<FiSearch size={14}/>} variant='unstyled' value={query} onChange={e => set(e.currentTarget.value)}/>
+        })} icon={<FiSearch size={14} />} variant='unstyled' value={query} onChange={e => set(e.currentTarget.value)} />
       )}
       {(typeof items === 'function' ? items(filter) : items).map((item, i) => (
         <Group position='apart' py={6} px='sm' sx={({colors, radius}) => ({

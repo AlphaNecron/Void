@@ -14,10 +14,10 @@ export class Neutron {
   private _client: Client;
   private readonly _clientId: string;
   private readonly _guildId: string;
-  
+
   private _modalHandlers: Record<string, NeutronModal> = {};
   private _commands: Record<string, NeutronCommand> = {};
-  
+
   constructor(token: string, clientId: string, guildId: string) {
     this._client = new Client({intents: [GatewayIntentBits.Guilds]});
     this._client.login(token);
@@ -32,14 +32,15 @@ export class Neutron {
       this.initModalHandlers();
     });
   }
-  
+
   private initPresenceStatus() {
-    prisma.user.count().then(c => this._client.user.setActivity({
-      name: `${c} user${c === 1 ? '' : 's'}.`,
-      type: ActivityType.Watching
-    }));
+    setInterval(() =>
+      prisma.user.count().then(c => this._client.user.setActivity({
+        name: `${c} user${c === 1 ? '' : 's'}.`,
+        type: ActivityType.Watching
+      })), 18e5);
   }
-  
+
   private initModalHandlers() {
     this._modalHandlers = {};
     const basePath = resolve('src', 'neutron', 'modalHandlers');
@@ -50,7 +51,7 @@ export class Neutron {
     }
     logger.info(`Successfully loaded ${files.length} modal handlers.`, 'Neutron');
   }
-  
+
   private initCommands() {
     this._commands = {};
     const basePath = resolve('src', 'neutron', 'commands');
@@ -66,9 +67,9 @@ export class Neutron {
     this._rest.put(
       Routes.applicationGuildCommands(this._clientId, this._guildId),
       {body: payload}
-    ).then(() => logger.info('Successfully pushed command payloads to the server.', 'Neutron'));
+    ).then(() => logger.info('Successfully pushed slash command payloads to the server.', 'Neutron'));
   }
-  
+
   private initEvents() {
     this._client.on('interactionCreate', withNeutron(async context => {
       const user = await context.getUser();

@@ -11,13 +11,13 @@ export default function LogoutPage() {
   return isLogged && user && (
     <Container pt={32}>
       <Stack align='center'>
-        <UserAvatar size={128} user={user}/>
+        <UserAvatar size={128} user={user} />
         <Title order={4}>Signed in as {user.name || user.username || user.id}</Title>
         <Group spacing={4}>
-          <Button color='green' onClick={() => router.back()} leftIcon={<FiChevronLeft/>}>Go back</Button>
+          <Button color='green' onClick={() => router.back()} leftIcon={<FiChevronLeft />}>Go back</Button>
           <Button color='red'
             onClick={() => logOut()}
-            leftIcon={<FiLogOut/>}>Logout</Button>
+            leftIcon={<FiLogOut />}>Logout</Button>
         </Group>
       </Stack>
     </Container>

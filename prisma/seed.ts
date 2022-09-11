@@ -17,7 +17,7 @@ async function main() {
           create: {
             name: 'Owner',
             color: '#E96565',
-            permissions: maxed(),
+            permissions: maxed()
           }
         }
       }

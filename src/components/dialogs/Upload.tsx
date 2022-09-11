@@ -53,7 +53,7 @@ function ImageUploadIcon({status, ...props}) {
 function DropzoneBody({restrictions, theme, status = 'idle'}) {
   return (
     <Group position='center' spacing='xl' style={{minHeight: 150, pointerEvents: 'none'}}>
-      <ImageUploadIcon status={status} style={{color: getIconColor(status, theme)}} size={48}/>
+      <ImageUploadIcon status={status} style={{color: getIconColor(status, theme)}} size={48} />
       <div>
         <Text size='xl' inline>
           Drag files here or click to select files.
@@ -108,7 +108,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const [prefs, setPrefs] = useSetState({exploding: false, url: 'alphanumeric', private: false});
   // handlers
   const errorHandler = (message: string) => {
-    showError('Failed to upload the file(s).', <RiSignalWifiErrorFill/>, message);
+    showError('Failed to upload the file(s).', <RiSignalWifiErrorFill />, message);
     setBusy(false);
   };
   const uploadedHandler = data => {
@@ -121,18 +121,18 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
       onClose();
       openModal({
         title: 'Files uploaded',
-        children: <Dialog_FilesUploaded files={data}/>
+        children: <Dialog_FilesUploaded files={data} />
       });
     } else {
-      showSuccess(<Title order={6}>File uploaded!</Title>, <RiUploadCloud2Fill/>, (
+      showSuccess(<Title order={6}>File uploaded!</Title>, <RiUploadCloud2Fill />, (
         <div>
           <Group grow spacing={4} my='sm'>
             <Button variant='subtle' component='a' href={data[0].url} target='_blank'
-              leftIcon={<FiExternalLink/>}>View</Button>
+              leftIcon={<FiExternalLink />}>View</Button>
             <Button variant='subtle' component='a' href={data[0].thumbUrl} target='_blank' color='blue'
-              leftIcon={<FiFile/>}>Raw</Button>
+              leftIcon={<FiFile />}>Raw</Button>
             <Button variant='subtle' component='a' href={data[0].deletionUrl} target='_blank' color='red'
-              leftIcon={<FiTrash/>}>Delete</Button>
+              leftIcon={<FiTrash />}>Delete</Button>
           </Group>
           <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
         </div>
@@ -176,7 +176,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
         <Dropzone loading={busy} multiple {...(restrictions.bypass ? {} : {maxSize: restrictions.maxSize})}
           onReject={files => showError(
             'Following files are not accepted!',
-            <RiFileWarningFill/>,
+            <RiFileWarningFill />,
             files.map((x, i) => <Text
               style={{maxWidth: 325, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
               inline
@@ -188,13 +188,13 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
             }))
           }>
           <Dropzone.Idle>
-            <DropzoneBody theme={theme} restrictions={restrictions}/>
+            <DropzoneBody theme={theme} restrictions={restrictions} />
           </Dropzone.Idle>
           <Dropzone.Accept>
-            <DropzoneBody theme={theme} restrictions={restrictions} status='accepted'/>
+            <DropzoneBody theme={theme} restrictions={restrictions} status='accepted' />
           </Dropzone.Accept>
           <Dropzone.Reject>
-            <DropzoneBody theme={theme} restrictions={restrictions} status='rejected'/>
+            <DropzoneBody theme={theme} restrictions={restrictions} status='rejected' />
           </Dropzone.Reject>
         </Dropzone>
         <GroupedTransition transitions={{
@@ -209,14 +209,14 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                 verbose: true,
                 secondsDecimalDigits: 0
               })} remaining.</Title>
-              <Progress style={styles.bar} animate striped value={progress.progress}/>
+              <Progress style={styles.bar} animate striped value={progress.progress} />
             </>
           )}
         </GroupedTransition>
         <Group grow position='apart'>
           <Popover>
             <Popover.Target>
-              <Button fullWidth leftIcon={<VscFiles/>}>
+              <Button fullWidth leftIcon={<VscFiles />}>
                 Show files ({files.length})
               </Button>
             </Popover.Target>
@@ -232,7 +232,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                             return x;
                           })())} variant={x.selected ? 'filled' : 'default'}>
                           <div style={{display: 'flex', alignItems: 'center'}}>
-                            <FileIndicator mimetype={x.type} size={14}/>
+                            <FileIndicator mimetype={x.type} size={14} />
                             <Text style={{
                               marginLeft: 8,
                               maxWidth: 150,
@@ -252,7 +252,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                                 maxWidth: '15vw',
                                 maxHeight: 175
                               }
-                            }} mr='sm' src={preview(x)} alt='Preview'/>
+                            }} mr='sm' src={preview(x)} alt='Preview' />
                           )}
                           <Table>
                             <tbody>
@@ -274,13 +274,13 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                   ))}
                 </Stack>
               </ScrollArea>
-              <Divider my='xs' mx='md'/>
+              <Divider my='xs' mx='md' />
               <Group noWrap spacing={0} mx={4}>
                 <Button fullWidth onClick={() => {
                   fHandler.setState([]);
                   previews.forEach(i => URL.revokeObjectURL(i));
                   previews = [];
-                }} size='xs' leftIcon={<VscClearAll/>} disabled={busy || files.length === 0} color='red'
+                }} size='xs' leftIcon={<VscClearAll />} disabled={busy || files.length === 0} color='red'
                 style={{minWidth: 150}}>
                   Clear all
                 </Button>
@@ -289,25 +289,25 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
           </Popover>
           <Popover>
             <Popover.Target>
-              <Button fullWidth leftIcon={<GoSettings/>} variant='filled' color='blue'>
+              <Button fullWidth leftIcon={<GoSettings />} variant='filled' color='blue'>
                 Preferences
               </Button>
             </Popover.Target>
             <Popover.Dropdown>
               <Stack>
                 <SegmentedControl data={['alphanumeric', 'emoji', 'invisible']} value={prefs.url}
-                  onChange={url => setPrefs({url})}/>
+                  onChange={url => setPrefs({url})} />
                 <Checkbox checked={prefs.exploding} onChange={e => setPrefs({exploding: e.target.checked})}
-                  label='Exploding'/>
+                  label='Exploding' />
                 <Checkbox checked={prefs.private} onChange={e => setPrefs({private: e.target.checked})}
-                  label='Private'/>
+                  label='Private' />
               </Stack>
             </Popover.Dropdown>
           </Popover>
           <Button color={busy ? 'red' : 'green'} onClick={busy ? () => {
             onCancel();
           } : uploadFiles} disabled={!busy && selected.length < 1}
-          leftIcon={busy ? <FiX/> : <FiUpload/>}>{busy ? 'Cancel' : 'Upload'}</Button>
+          leftIcon={busy ? <FiX /> : <FiUpload />}>{busy ? 'Cancel' : 'Upload'}</Button>
         </Group>
       </Stack>
     </Modal>

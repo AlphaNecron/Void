@@ -5,7 +5,7 @@ import {FiCheck, FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 export default function Dialog_FilesUploaded({files}: { files: { name: string, url: string, deletionUrl: string }[] }) {
   const LabelledAction = ({label, tooltipColor = '', ...props}) => (
     <Tooltip label={label} color={tooltipColor}>
-      <ActionIcon {...props}/>
+      <ActionIcon {...props} />
     </Tooltip>
   );
   return (
@@ -24,17 +24,17 @@ export default function Dialog_FilesUploaded({files}: { files: { name: string, u
           </Tooltip>
           <Group spacing={4}>
             <LabelledAction color='blue' label='Open in new tab' component='a' href={f.url} target='_blank'>
-              <FiExternalLink/>
+              <FiExternalLink />
             </LabelledAction>
             <LabelledAction color='red' label='Delete' component='a' href={f.deletionUrl} target='_blank'>
-              <FiTrash/>
+              <FiTrash />
             </LabelledAction>
             <CopyButton value={f.url}>
               {({copied, copy}) => (
                 <LabelledAction color='green' tooltipColor={copied && 'green'}
                   label={copied ? 'Copy to clipboard' : 'Copied to your clipboard'}
                   onClick={() => copy()}>
-                  {copied ? <FiCheck/> : <FiClipboard/>}
+                  {copied ? <FiCheck /> : <FiClipboard />}
                 </LabelledAction>
               )}
             </CopyButton>

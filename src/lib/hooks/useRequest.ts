@@ -52,6 +52,6 @@ export default function useRequest(): UseRequest {
         onDone();
       });
     }
-    
+
   };
 }

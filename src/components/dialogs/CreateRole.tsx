@@ -23,19 +23,19 @@ export default function Dialog_CreateRole({opened, onClose, highestPerm, callbac
       permissions: 0
     }
   });
-  
+
   const handleSubmit = v => {
     request({
       endpoint: '/api/admin/roles',
       method: 'POST',
       body: v,
-      onError: e => showError(e, <RiErrorWarningFill/>)
+      onError: e => showError(e, <RiErrorWarningFill />)
     });
     callback();
     onClose();
     form.reset();
   };
-  
+
   const perms = useMemo(() => Object.values(Permission).filter(p => typeof p === 'number' && p < highestPerm).map(p => ({
     label: <strong>{Permission[p]}</strong>, value: p.toString()
   } as unknown as SelectItem)), [highestPerm]);
@@ -43,24 +43,24 @@ export default function Dialog_CreateRole({opened, onClose, highestPerm, callbac
     <Modal opened={opened} onClose={onClose} title='Create a new role'>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
-          <TextInput label='Name' {...form.getInputProps('name')} required/>
-          <ColorInput label='Color' {...form.getInputProps('color')} required/>
+          <TextInput label='Name' {...form.getInputProps('name')} required />
+          <ColorInput label='Color' {...form.getInputProps('color')} required />
           <NumberInput rightSectionWidth={84}
             rightSection={<Badge radius='xs' color='dark' mr='xs'
               fullWidth>{prettyBytes(form.values['storageQuota'])}</Badge>}
             label='Storage quota (maximum total size)' min={1048576}
-            step={1048576} {...form.getInputProps('storageQuota')} required/>
+            step={1048576} {...form.getInputProps('storageQuota')} required />
           <NumberInput rightSectionWidth={84}
             rightSection={<Badge radius='xs' color='dark' mr='xs'
               fullWidth>{prettyBytes(form.values['maxFileSize'])}</Badge>}
             label='Max file size per upload (in bytes)' min={1048576}
-            step={1048576} {...form.getInputProps('maxFileSize')} required/>
+            step={1048576} {...form.getInputProps('maxFileSize')} required />
           <NumberInput label='Max files per upload'
-            min={1} {...form.getInputProps('maxFileCount')} required/>
-          <NumberInput label='Max referral codes' {...form.getInputProps('maxRefCodes')} required/>
+            min={1} {...form.getInputProps('maxFileCount')} required />
+          <NumberInput label='Max referral codes' {...form.getInputProps('maxRefCodes')} required />
           <MultiSelect data={perms} value={getPermissions(form.values['permissions']).map(p => p.toString())}
             onChange={v => form.setFieldValue('permissions', v.map(p => +p).reduce((a, b) => a | b, 0))}
-            label='Permissions'/>
+            label='Permissions' />
           <Button type='submit' loading={busy}>
             Create
           </Button>

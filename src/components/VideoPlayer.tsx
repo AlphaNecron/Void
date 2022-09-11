@@ -60,8 +60,8 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
       onPause={() => setPlaying(false)} onPlay={e => {
         setPlaying(true);
         onDurationChanged(e);
-      }} {...props}/>
-      <LoadingOverlay zIndex={100} visible={busy}/>
+      }} {...props} />
+      <LoadingOverlay zIndex={100} visible={busy} />
       <Transition transition='slide-up' duration={200} exitDuration={200} mounted={show || pin}>
         {styles => (
           <Stack spacing={0} style={styles} py={4} px='xs' m={0}
@@ -78,26 +78,26 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
               onChange={t => {
                 ref.current.currentTime = t;
                 setTime(t);
-              }} mb={4} label={`${s2m(time)} / ${s2m(dura)}`}/>
+              }} mb={4} label={`${s2m(time)} / ${s2m(dura)}`} />
             <Group spacing={4} mx='md' position='apart' align='center'>
               <Group spacing={4}>
-                <Action icon={<FiRewind/>} label='Seek backward' onClick={() => seek(-10)}/>
-                <Action onClick={toggle} icon={playing ? <FiPause/> : <FiPlay/>} label={playing ? 'Pause' : 'Play'}/>
-                <Action icon={<FiFastForward/>} label='Seek forward' onClick={() => seek(10)}/>
+                <Action icon={<FiRewind />} label='Seek backward' onClick={() => seek(-10)} />
+                <Action onClick={toggle} icon={playing ? <FiPause /> : <FiPlay />} label={playing ? 'Pause' : 'Play'} />
+                <Action icon={<FiFastForward />} label='Seek forward' onClick={() => seek(10)} />
               </Group>
               <Group mr='xs' align='center' spacing={4}>
-                <VolumeIndicator level={vol * 100} size={18}/>
+                <VolumeIndicator level={vol * 100} size={18} />
                 <Slider size='xs' value={vol} onChange={v => {
                   ref.current.volume = v;
                   setVol(v);
-                }} label={v => (v * 100).toFixed(0)} min={0} step={0.01} max={1} style={{width: 80}}/>
-                <Action icon={pin ? <TbPinnedOff/> : <TbPin/>} label={pin ? 'Unpin' : 'Pin'}
-                  onClick={() => setPin(p => !p)}/>
+                }} label={v => (v * 100).toFixed(0)} min={0} step={0.01} max={1} style={{width: 80}} />
+                <Action icon={pin ? <TbPinnedOff /> : <TbPin />} label={pin ? 'Unpin' : 'Pin'}
+                  onClick={() => setPin(p => !p)} />
                 <Menu>
                   <Tooltip label='More'>
                     <Menu.Target>
                       <ActionIcon variant='transparent' size='lg'>
-                        <FiMoreHorizontal/>
+                        <FiMoreHorizontal />
                       </ActionIcon>
                     </Menu.Target>
                   </Tooltip>
@@ -107,11 +107,11 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
                       const r = Number(v);
                       ref.current.playbackRate = r;
                       setRate(r);
-                    }} size='xs' data={rates.map(r => ({label: `x${r}`, value: r.toString()}))}/>
-                    <Menu.Item onClick={onInfo} icon={<FiInfo size={14}/>}>Info</Menu.Item>
-                    {canDownload && <Menu.Item icon={<FiDownload size={14}/>} component='a' href={src}
+                    }} size='xs' data={rates.map(r => ({label: `x${r}`, value: r.toString()}))} />
+                    <Menu.Item onClick={onInfo} icon={<FiInfo size={14} />}>Info</Menu.Item>
+                    {canDownload && <Menu.Item icon={<FiDownload size={14} />} component='a' href={src}
                       download={fileName}>Download</Menu.Item>}
-                    <Menu.Item color='red' onClick={onReport} icon={<FiFlag size={14}/>}>Report</Menu.Item>
+                    <Menu.Item color='red' onClick={onReport} icon={<FiFlag size={14} />}>Report</Menu.Item>
                   </Menu.Dropdown>
                 </Menu>
               </Group>

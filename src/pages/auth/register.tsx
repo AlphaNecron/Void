@@ -19,7 +19,7 @@ export default function RegisterPage() {
     referral: yupString().required().min(25, 'Invalid referral code.'),
     email: yupString().email().required(),
     username: yupString().required().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
-    password: yupString().required().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, 'Password must match shown criteria.'),
+    password: yupString().required().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, 'Password must match shown criteria.')
   });
   const form = useForm({
     initialValues: {
@@ -34,7 +34,7 @@ export default function RegisterPage() {
     <Container style={{minWidth: 500, position: 'relative'}}>
       <Tooltip label='Go back'>
         <ActionIcon style={{position: 'absolute', left: 16, top: 16}} component={NextLink} href='/auth/login'>
-          <FiChevronLeft/>
+          <FiChevronLeft />
         </ActionIcon>
       </Tooltip>
       <Text size='xl' align='center' weight={700}>Apply to the
@@ -43,7 +43,7 @@ export default function RegisterPage() {
             span>Void</Text>
         </Tooltip>
       </Text>
-      <Divider mx={196} my='xs'/>
+      <Divider mx={196} my='xs' />
       <form style={{minWidth: 360}} onSubmit={form.onSubmit(values =>
         request({
           endpoint: '/api/auth/register',
@@ -51,30 +51,30 @@ export default function RegisterPage() {
           body: values,
           callback({ref}) {
             showSuccess('Registered successfully, redirecting to the login page.',
-              <RiCheckFill/>, `Referred by ${ref}`);
+              <RiCheckFill />, `Referred by ${ref}`);
             router.push('/auth/login');
           },
           onError: e =>
-            showError('Failed to register', <RiErrorWarningFill/>, e)
+            showError('Failed to register', <RiErrorWarningFill />, e)
         }))}>
         <Stack>
           <TextInput
             required
-            icon={<FiStar/>}
+            icon={<FiStar />}
             autoComplete='off'
             label='Referral code'
             {...form.getInputProps('referral')}
           />
           <TextInput
             required
-            icon={<FiMail/>}
+            icon={<FiMail />}
             type='email'
             label='Email'
             {...form.getInputProps('email')}
           />
           <TextInput
             required
-            icon={<FiUser/>}
+            icon={<FiUser />}
             label='Username'
             {...form.getInputProps('username')}
           />
@@ -82,11 +82,11 @@ export default function RegisterPage() {
             required
             style={{width: '100%'}}
             autoComplete='new-password'
-            icon={<FiLock/>}
+            icon={<FiLock />}
             label='Password'
             {...form.getInputProps('password')}>
           </PasswordBox>
-          <Button mt='md' loading={busy} fullWidth leftIcon={<FiSend/>} type='submit'>Register</Button>
+          <Button mt='md' loading={busy} fullWidth leftIcon={<FiSend />} type='submit'>Register</Button>
         </Stack>
       </form>
     </Container>

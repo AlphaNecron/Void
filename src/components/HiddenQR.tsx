@@ -11,7 +11,7 @@ export default function HiddenQR({value, size = 96}: { value: string, size?: num
     show ? (
       <Tooltip position='right' withArrow label={
         <Center style={{height: '100%'}}>
-          <QRCode bgColor={colorValue('dark', 0, 6, 0.5)} fgColor={colorValue('dark', 9, 0)} value={value} size={192}/>
+          <QRCode bgColor={colorValue('dark', 0, 6, 0.5)} fgColor={colorValue('dark', 9, 0)} value={value} size={192} />
         </Center>
       }>
         <div style={{
@@ -21,7 +21,7 @@ export default function HiddenQR({value, size = 96}: { value: string, size?: num
           overflow: 'hidden'
         }} onClick={() => setShow(false)}>
           <QRCode bgColor={themeValue('white', colors.dark[6])} fgColor={themeValue('black', colors[primaryColor][0])}
-            quietZone={4} size={size} qrStyle='dots' ecLevel='M' value={value}/>
+            quietZone={4} size={size} qrStyle='dots' ecLevel='M' value={value} />
         </div>
       </Tooltip>
     ) : <Paper style={{height: size + 6 * 2, width: size + 6 * 2}} onClick={() => setShow(true)}>

@@ -31,6 +31,17 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
       Paper: {
         defaultProps: {withBorder: true}
       },
+      NavLink: {
+        styles: ({radius, fontSizes}) => ({
+          root: {
+            borderRadius: radius.sm
+          },
+          label: {
+            fontSize: fontSizes.md,
+            fontWeight: 600
+          }
+        })
+      },
       SegmentedControl: {
         styles: {
           label: {
@@ -72,7 +83,7 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
         '#663EB8',
         '#5D35B4',
         '#4828A5'
-      ],
+      ]
     }
   }
 );

@@ -92,7 +92,7 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
         role: user.role.name,
         used: Number(agg._sum.size) || 0,
         remaining: Number(user.role.storageQuota) - Number(agg._sum.size),
-        total: Number(user.role.storageQuota),
+        total: Number(user.role.storageQuota)
       };
     };
     req.getUser = async (privateToken?: string) => {

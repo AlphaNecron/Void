@@ -52,9 +52,9 @@ async function initServer() {
         () => logger.info(`Listening on ${config.void.host}:${config.void.port}.`));
     });
   } catch (e) {
-    if ((e.message && e.message.startsWith('Could not find a production')) || (e.code && e.code === 'ENOENT' && e.path === './.next')) {
+    if ((e.message && e.message.startsWith('Could not find a production')) || (e.code && e.code === 'ENOENT' && e.path === './.next'))
       global.logger.error('There is no production build - run yarn build.');
-    } else throwAndExit(e);
+    else throwAndExit(e);
   }
 }
 

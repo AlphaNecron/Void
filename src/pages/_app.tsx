@@ -27,6 +27,7 @@ export default function Void({Component, pageProps, router}) {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'void-color-scheme',
     defaultValue: 'dark',
+    getInitialValueInEffect: true
   });
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
@@ -39,7 +40,7 @@ export default function Void({Component, pageProps, router}) {
       ticker.stop();
       setProgress(100);
     };
-    
+
     router.events.on('routeChangeStart', onStart);
     router.events.on('routeChangeComplete', onDone);
     router.events.on('routeChangeError', onDone);
@@ -53,7 +54,7 @@ export default function Void({Component, pageProps, router}) {
     <>
       <Head>
         <title>Void - {Component.title}</title>
-        <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width'/>
+        <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider emotionCache={cache} withGlobalStyles withNormalizeCSS theme={createTheme(colorScheme)}>
@@ -61,7 +62,7 @@ export default function Void({Component, pageProps, router}) {
             exitDuration={500}>
             {styles => (
               <Progress size='xs' radius={0} value={progress}
-                style={{position: 'fixed', top: 0, left: 0, right: 0, background: 'transparent', ...styles}}/>
+                style={{position: 'fixed', top: 0, left: 0, right: 0, background: 'transparent', ...styles}} />
             )}
           </Transition>
           <ModalsProvider modals={{

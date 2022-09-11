@@ -8,7 +8,7 @@ import type {Neutron} from 'neutron';
 import type {Logger} from 'winston';
 
 declare global {
-  var
+  declare var
     prisma: PrismaClient,
     config: Config,
     logger: Logger,

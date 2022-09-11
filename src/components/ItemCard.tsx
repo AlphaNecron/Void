@@ -36,7 +36,7 @@ export default function ItemCard({
                 {({copied, copy}) => (
                   <Tooltip color={copied && 'green'} label={copied ? 'Copied to your clipboard' : action.label}>
                     <ActionIcon variant={copied ? 'filled' : 'subtle'} onClick={copy}>
-                      {copied ? <FiCheck/> : action.icon}
+                      {copied ? <FiCheck /> : action.icon}
                     </ActionIcon>
                   </Tooltip>
                 )}

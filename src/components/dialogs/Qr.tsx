@@ -10,7 +10,7 @@ export default function Dialog_Qr({innerProps}: ContextModalProps<{ value: strin
   return (
     <Stack align='center'>
       <ThemedQr removeQrCodeBehindLogo logoImage='/logo.png' quietZone={16} qrStyle='dots' eyeRadius={8}
-        value={innerProps.value} size={288}/>
+        value={innerProps.value} size={288} />
       <Text color='dimmed' weight={600}>Scan this QR code on your device to view the file.</Text>
     </Stack>
   );

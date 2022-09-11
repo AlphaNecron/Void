@@ -39,10 +39,10 @@ export default function Page_Panel() {
     refreshInterval: 5e3,
     fallbackData: []
   });
-  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
+  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x} />);
   const createLegend = (color: string, description: string) => (
     <Group key={description}>
-      <ColorSwatch size={12} radius={0} color={color}/>
+      <ColorSwatch size={12} radius={0} color={color} />
       <Text weight={600} size='xs' color='dimmed'>{description}</Text>
     </Group>
   );
@@ -51,7 +51,7 @@ export default function Page_Panel() {
       {() => (
         <Stack>
           <CardGrid itemSize={300}>
-            <DashboardCard title='System' icon={<MdDesktopWindows/>}>
+            <DashboardCard title='System' icon={<MdDesktopWindows />}>
               {render(
                 ['Manufacturer', data.system.manufacturer],
                 ['BIOS vendor', data.bios.vendor],
@@ -62,7 +62,7 @@ export default function Page_Panel() {
                 ['Timezone', data.time.timezone]
               )}
             </DashboardCard>
-            <DashboardCard title='CPU' icon={<MdMemory/>}>
+            <DashboardCard title='CPU' icon={<MdMemory />}>
               {render(
                 ['Manufacturer', data.cpu.manufacturer],
                 ['Name', data.cpu.brand],
@@ -73,7 +73,7 @@ export default function Page_Panel() {
                 ['Cores/Threads', `${data.cpu.physicalCores}C / ${data.cpu.cores}T`]
               )}
             </DashboardCard>
-            <DashboardCard title='Memory' icon={<FaMemory/>}>
+            <DashboardCard title='Memory' icon={<FaMemory />}>
               <Group position='apart'>
                 <div>
                   {render(
@@ -94,9 +94,9 @@ export default function Page_Panel() {
                       {value: data.memory.active / data.memory.total * 100, color: 'blue'}
                     ]} label={
                       <Center>
-                        <CgSmartphoneRam size={28}/>
+                        <CgSmartphoneRam size={28} />
                       </Center>
-                    }/>
+                    } />
                   </HoverCard.Target>
                   <HoverCard.Dropdown>
                     <Stack spacing={0}>
@@ -106,7 +106,7 @@ export default function Page_Panel() {
                 </HoverCard>
               </Group>
             </DashboardCard>
-            <DashboardCard title='Operating system' icon={<VscTerminalLinux/>}>
+            <DashboardCard title='Operating system' icon={<VscTerminalLinux />}>
               <Group position='apart'>
                 <div>
                   {render(
@@ -122,7 +122,7 @@ export default function Page_Panel() {
               </Group>
             </DashboardCard>
           </CardGrid>
-          <DashboardCard title='Disks' icon={<MdStorage/>}>
+          <DashboardCard title='Disks' icon={<MdStorage />}>
             <ScrollArea scrollbarSize={4}>
               <Table>
                 <thead>
@@ -163,16 +163,16 @@ export default function Page_Panel() {
             </ScrollArea>
           </DashboardCard>
           {logs && (
-            <DashboardCard icon={<IoMdListBox/>} title='Logs' rightItem={
+            <DashboardCard icon={<IoMdListBox />} title='Logs' rightItem={
               <TextInput variant='unstyled' type='search' style={{minWidth: 250}} ml='md' rightSection={
                 <ActionIcon onClick={() => handler.set('')}>
-                  <FiX/>
+                  <FiX />
                 </ActionIcon>
-              } icon={<FiSearch/>} value={query} onChange={({currentTarget: {value}}) => handler.set(value)}
+              } icon={<FiSearch />} value={query} onChange={({currentTarget: {value}}) => handler.set(value)}
               placeholder='Search something...'
-              size='xs'/>
+              size='xs' />
             }>
-              <Console mt='xs' entries={handler.filterList(logs, ['message'])}/>
+              <Console mt='xs' entries={handler.filterList(logs, ['message'])} />
             </DashboardCard>
           )}
         </Stack>

@@ -2,9 +2,11 @@ module.exports = {
   'extends': ['next', 'next/core-web-vitals', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
   plugins: [
-    '@typescript-eslint',
+    '@typescript-eslint'
   ],
   'rules': {
+    'object-curly-spacing': ['warn', 'never'],
+    'array-bracket-spacing': ['warn', 'never'],
     'indent': ['error', 2],
     'linebreak-style': ['error', 'unix'],
     'quotes': ['error', 'single'],

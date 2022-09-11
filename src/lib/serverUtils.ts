@@ -60,8 +60,7 @@ export function isUnicodeSupported() { // from is-unicode-supported
 }
 
 export function injectBigIntSerializer() {
-  // eslint-disable-next-line
-  (BigInt.prototype as any).toJSON = function () {
+  BigInt.prototype['toJSON'] = function () {
     return Number(this);
   };
 }

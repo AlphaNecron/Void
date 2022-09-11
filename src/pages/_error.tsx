@@ -12,8 +12,8 @@ export default function Error({code, error}) {
     <>
       <Head>
         <title>{title}</title>
-        <meta property='og:title' content={title}/>
-        <meta property='theme-color' content='#FC8181'/>
+        <meta property='og:title' content={title} />
+        <meta property='theme-color' content='#FC8181' />
       </Head>
       <Container py={16} px={128} style={{textAlign: 'center'}}>
         <Text weight={700} size={72} mb='sm' variant='gradient'
@@ -27,7 +27,7 @@ export default function Error({code, error}) {
           </>
         ) : error}</Text>
         <Link href='/dash' passHref>
-          <Button leftIcon={<IoIosArrowBack/>}>Go back</Button>
+          <Button leftIcon={<IoIosArrowBack />}>Go back</Button>
         </Link>
       </Container>
     </>

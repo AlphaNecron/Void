@@ -6,10 +6,10 @@ export default function ShareXPreview({name, uploaderConfig, shortenerConfig, ..
   return (
     <Prism.Tabs style={{flex: 1}} {...props} defaultValue='uploader'>
       <Prism.TabsList grow>
-        <Prism.Tab icon={<FiUpload/>} value='uploader'>
+        <Prism.Tab icon={<FiUpload />} value='uploader'>
           {`${name || 'Void'}_Uploader.sxcu`}
         </Prism.Tab>
-        <Prism.Tab icon={<FiScissors/>} value='shortener'>
+        <Prism.Tab icon={<FiScissors />} value='shortener'>
           {`${name || 'Void'}_Shortener.sxcu`}
         </Prism.Tab>
       </Prism.TabsList>

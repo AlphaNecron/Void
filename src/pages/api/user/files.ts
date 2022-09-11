@@ -25,7 +25,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       ...(req.query.page && {skip: (page - 1) * chunk}),
       ...(req.query.chunk && {take: chunk}),
       where: {
-        userId: user.id,
+        userId: user.id
       },
       select: {
         id: true,
@@ -40,7 +40,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         size: true
       },
       orderBy: {
-        uploadedAt: req.query.order === 'ascending' ? 'asc' : 'desc',
+        uploadedAt: req.query.order === 'ascending' ? 'asc' : 'desc'
       }
     });
     return res.json({

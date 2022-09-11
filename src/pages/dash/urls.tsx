@@ -27,20 +27,20 @@ export default function Page_URLs() {
     method: 'DELETE',
     body: {id},
     callback: () =>
-      showSuccess('Successfully deleted the URL.', <RiDeleteBinFill/>),
-    onError: e => showError('Failed to delete the URL.', <RiErrorWarningFill/>, e),
+      showSuccess('Successfully deleted the URL.', <RiDeleteBinFill />),
+    onError: e => showError('Failed to delete the URL.', <RiErrorWarningFill />, e),
     onDone: () => mutate()
   });
   return (
     <>
-      <ShortenDialog opened={opened} onClose={dHandler.close} onShorten={() => mutate()}/>
+      <ShortenDialog opened={opened} onClose={dHandler.close} onShorten={() => mutate()} />
       <Stack>
         <div style={{display: 'flex'}}>
-          <Button leftIcon={<FiScissors/>} onClick={dHandler.open}>
+          <Button leftIcon={<FiScissors />} onClick={dHandler.open}>
             Shorten
           </Button>
-          <TextInput ml='xs' style={{flex: 1}} icon={<FiSearch/>} placeholder='Search something' value={query}
-            onChange={handler.set}/>
+          <TextInput ml='xs' style={{flex: 1}} icon={<FiSearch />} placeholder='Search something' value={query}
+            onChange={handler.set} />
         </div>
         <CardGrid itemSize={375}>
           {data && handler.filterList(data, ['short', 'destination']).map((url, i) =>
@@ -54,33 +54,33 @@ export default function Page_URLs() {
                     value: `${window.location.origin}/${url.short}`
                   }
                 }),
-                icon: <ImQrcode/>
+                icon: <ImQrcode />
               },
               {
                 label: 'Copy to clipboard',
                 color: 'green',
-                icon: <FiClipboard/>,
+                icon: <FiClipboard />,
                 value: `${window.location.origin}/${url.short}`
               }, {
                 label: 'Open in new tab',
                 color: 'blue',
-                icon: <FiExternalLink/>,
+                icon: <FiExternalLink />,
                 action: () => window?.open(`/${url.short}`, '_blank')
               }, {
                 label: 'Delete',
                 color: 'red',
-                icon: <FiTrash/>,
+                icon: <FiTrash />,
                 action: () => handleDelete(url.id)
               }
             ]}>
               <div style={{display: 'flex', margin: 16}}>
-                <HiddenQR value={`${window.location.origin}/${url.short}`}/>
+                <HiddenQR value={`${window.location.origin}/${url.short}`} />
                 <div style={{flex: 1, marginLeft: 16}}>
                   <Text size='sm' weight={700}>
                     ID: {url.id}
-                    <br/>
+                    <br />
                     Created at: {new Date(url.createdAt).toLocaleString()}
-                    <br/>
+                    <br />
                     Destination: <Spoil url size='sm' style={{
                       maxWidth: 110,
                       overflow: 'hidden',
@@ -89,9 +89,9 @@ export default function Page_URLs() {
                     }}>
                       {url.destination}
                     </Spoil>
-                    <br/>
+                    <br />
                     Clicks: {url.clicks}
-                    <br/>
+                    <br />
                     Has password: {url.password ? 'Yes' : 'No'}
                   </Text>
                 </div>

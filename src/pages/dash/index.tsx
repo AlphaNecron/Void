@@ -18,19 +18,19 @@ export default function Page_Dashboard() {
       {() => (
         <>
           <CardGrid itemSize={180} maxItems={6}>
-            <StatCard title='Total size' icon={<FiHardDrive size={14}/>}
+            <StatCard title='Total size' icon={<FiHardDrive size={14} />}
               value={prettyBytes(data.stats.upload.totalSize || 0)}
-              alt={`${prettyBytes(data.stats.upload.averageSize || 0)} on average.`}/>
-            <StatCard title='Files' icon={<FiFile size={14}/>} value={data.stats.upload.totalFiles}
-              alt={`You own ${data.stats.user.files} files.`}/>
-            <StatCard title='Users' value={data.stats.users.count} icon={<FiUser size={14}/>}/>
-            <StatCard title='URLs' icon={<FiLink2 size={14}/>} value={data.stats.urls}
-              alt={`You have ${data.stats.user.urls} URLs.`}/>
-            <StatCard title='Domains' icon={<FiGlobe/>} value={data.stats.domainCount}/>
-            <StatCard title='Roles' icon={<FiUsers size={14}/>} value={data.stats.roleCount}/>
+              alt={`${prettyBytes(data.stats.upload.averageSize || 0)} on average.`} />
+            <StatCard title='Files' icon={<FiFile size={14} />} value={data.stats.upload.totalFiles}
+              alt={`You own ${data.stats.user.files} files.`} />
+            <StatCard title='Users' value={data.stats.users.count} icon={<FiUser size={14} />} />
+            <StatCard title='URLs' icon={<FiLink2 size={14} />} value={data.stats.urls}
+              alt={`You have ${data.stats.user.urls} URLs.`} />
+            <StatCard title='Domains' icon={<FiGlobe />} value={data.stats.domainCount} />
+            <StatCard title='Roles' icon={<FiUsers size={14} />} value={data.stats.roleCount} />
           </CardGrid>
           {data.stats.users.top && (
-            <DashboardCard icon={<FiStar size={14}/>} mt='md' title='Top 10 users' size={0}>
+            <DashboardCard icon={<FiStar size={14} />} mt='md' title='Top 10 users' size={0}>
               <ScrollArea scrollbarSize={4}>
                 <Table striped highlightOnHover>
                   <thead>

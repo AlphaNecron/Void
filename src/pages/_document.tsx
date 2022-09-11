@@ -3,7 +3,7 @@ import Document, {Head, Html, Main, NextScript} from 'next/document';
 
 export default class _Document extends Document {
   static getInitialProps = createGetInitialProps();
-  
+
   render() {
     return (
       <Html>
@@ -14,8 +14,8 @@ export default class _Document extends Document {
           />
         </Head>
         <body>
-          <Main/>
-          <NextScript/>
+          <Main />
+          <NextScript />
         </body>
       </Html>
     );

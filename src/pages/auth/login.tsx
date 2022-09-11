@@ -46,7 +46,7 @@ export default function LoginPage() {
             <Group>
               <Tooltip label='Go back'>
                 <ActionIcon component={NextLink} href='/'>
-                  <FiChevronLeft/>
+                  <FiChevronLeft />
                 </ActionIcon>
               </Tooltip>
               <Text size='xl' weight={700}>Enter the
@@ -58,7 +58,7 @@ export default function LoginPage() {
             </Group>
             <Tooltip label={`Use ${isDark ? 'light' : 'dark'} theme`}>
               <ActionIcon color={isDark ? 'orange' : 'void'} onClick={() => toggleColorScheme()}>
-                {isDark ? <FiSun/> : <FiMoon/>}
+                {isDark ? <FiSun /> : <FiMoon />}
               </ActionIcon>
             </Tooltip>
           </Group>
@@ -68,36 +68,36 @@ export default function LoginPage() {
               method: 'POST',
               body: values,
               callback() {
-                showSuccess('Logged in successfully, redirecting to the Dashboard.', <RiCheckFill/>);
+                showSuccess('Logged in successfully, redirecting to the Dashboard.', <RiCheckFill />);
                 revalidate(() => router.push('/dash'));
               },
               onError: e =>
-                showError(e, <RiErrorWarningFill/>)
+                showError(e, <RiErrorWarningFill />)
             }))}>
             <TextInput
               required
-              icon={<FiUser/>}
+              icon={<FiUser />}
               label='Username'
               {...form.getInputProps('username')}
             />
             <PasswordInput
               my='xs'
               required
-              icon={<FiLock/>}
+              icon={<FiLock />}
               label='Password'
               {...form.getInputProps('password')}>
             </PasswordInput>
-            <Button mt='lg' fullWidth loading={busy} style={{flex: 1}} leftIcon={<FiLogIn/>}
+            <Button mt='lg' fullWidth loading={busy} style={{flex: 1}} leftIcon={<FiLogIn />}
               type='submit'>Login</Button>
-            <Divider my='xs' mx={128}/>
+            <Divider my='xs' mx={128} />
             <Group grow>
-              <Button color='violet' leftIcon={<FiEdit/>} component={NextLink} href='/auth/register'>Register
+              <Button color='violet' leftIcon={<FiEdit />} component={NextLink} href='/auth/register'>Register
                 now</Button>
               <Button fullWidth style={{backgroundColor: '#7289DA'}} onClick={() =>
                 request({
                   endpoint: '/api/discord/auth',
                   callback: ({url}) => router.push(url)
-                })} leftIcon={<SiDiscord/>}>Login with Discord</Button>
+                })} leftIcon={<SiDiscord />}>Login with Discord</Button>
             </Group>
           </form>
         </Container>

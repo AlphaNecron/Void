@@ -81,7 +81,7 @@ export default function Page_Account() {
       endpoint: '/api/user/token',
       method: 'PATCH',
       callback() {
-        showSuccess('Successfully regenerated your private token.', <RiKey2Fill/>);
+        showSuccess('Successfully regenerated your private token.', <RiKey2Fill />);
         mutateToken();
       }
     });
@@ -109,13 +109,13 @@ export default function Page_Account() {
       method: 'PATCH',
       body: values,
       callback() {
-        showSuccess('Successfully updated your user.', <FaUserCheck/>);
+        showSuccess('Successfully updated your user.', <FaUserCheck />);
         revalidate();
       },
-      onError: e => showError('Failed to update your user.', <RiErrorWarningFill/>, e)
+      onError: e => showError('Failed to update your user.', <RiErrorWarningFill />, e)
     });
   const [opened, dHandler] = useDisclosure(false);
-  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
+  const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x} />);
   const deleteAvatar = () => request({
     endpoint: '/api/user/avatar',
     method: 'DELETE',
@@ -125,13 +125,13 @@ export default function Page_Account() {
     <Fallback loaded={isLogged}>
       {() => (
         <>
-          <UpdateAvatarDialog opened={opened} onClose={dHandler.close} onDone={reload}/>
+          <UpdateAvatarDialog opened={opened} onClose={dHandler.close} onDone={reload} />
           <Stack>
             <form id='account_form' onSubmit={form.onSubmit(updateUser)}>
-              <DashboardCard icon={<FaUserCircle/>} title='Basic information' mb='md'>
+              <DashboardCard icon={<FaUserCircle />} title='Basic information' mb='md'>
                 <div style={{display: 'flex', alignItems: 'center', marginTop: 8}}>
                   <Stack align='center' mr='sm'>
-                    <UserAvatar size={128} mx='sm' user={user}/>
+                    <UserAvatar size={128} mx='sm' user={user} />
                     <Group spacing={0}>
                       <Button size='xs' variant='subtle' color='red' onClick={deleteAvatar}>
                         Delete
@@ -152,26 +152,26 @@ export default function Page_Account() {
                   }}>
                     <TextInput style={{flexGrow: 1}} label='Display name'
                       description='Can be your real name or whatever you like'
-                      placeholder='Display name' {...form.getInputProps('name')}/>
+                      placeholder='Display name' {...form.getInputProps('name')} />
                     <TextInput style={{flexGrow: 1}} label='Username'
                       description='The unique username used to login to your account'
-                      placeholder='Username' {...form.getInputProps('username')} required/>
+                      placeholder='Username' {...form.getInputProps('username')} required />
                     <PasswordBox
                       style={{flexBasis: '100%'}}
                       label='Password'
                       autoComplete='new-password'
                       placeholder='New password'
                       description='Strong password should include letters in lower and uppercase, at least 1 number, at least 1 special symbol'
-                      {...form.getInputProps('password')}/>
+                      {...form.getInputProps('password')} />
                   </div>
                 </div>
               </DashboardCard>
 
-              <DashboardCard icon={<RiBracesFill/>} rightItem={
+              <DashboardCard icon={<RiBracesFill />} rightItem={
                 <Popover position='right' transition='skew-down'>
                   <Popover.Target>
                     <ActionIcon variant='subtle' color='blue'>
-                      <FiInfo/>
+                      <FiInfo />
                     </ActionIcon>
                   </Popover.Target>
                   <Popover.Dropdown>
@@ -200,20 +200,20 @@ export default function Page_Account() {
                     rowGap: 8,
                     flexDirection: 'column'
                   }}>
-                    <Checkbox label='Enable embed' {...form.getInputProps('embed.enabled', {type: 'checkbox'})}/>
+                    <Checkbox label='Enable embed' {...form.getInputProps('embed.enabled', {type: 'checkbox'})} />
                     <TextInput maxLength={32} label='Site name'
-                      placeholder='Embed site name' {...form.getInputProps('embed.siteName')}/>
+                      placeholder='Embed site name' {...form.getInputProps('embed.siteName')} />
                     <TextInput maxLength={32} label='Site name URL'
-                      placeholder='Embed site name URL' {...form.getInputProps('embed.siteNameUrl')}/>
+                      placeholder='Embed site name URL' {...form.getInputProps('embed.siteNameUrl')} />
                     <TextInput maxLength={32} label='Title'
-                      placeholder='Embed title' {...form.getInputProps('embed.title')}/>
+                      placeholder='Embed title' {...form.getInputProps('embed.title')} />
                     <ColorInput label='Color'
-                      placeholder='Embed color' {...form.getInputProps('embed.color')}/>
+                      placeholder='Embed color' {...form.getInputProps('embed.color')} />
                     <TextInput label='Description' maxLength={64}
-                      placeholder='Embed description' {...form.getInputProps('embed.description')}/>
+                      placeholder='Embed description' {...form.getInputProps('embed.description')} />
                     <TextInput maxLength={32} label='Author'
-                      placeholder='Author' {...form.getInputProps('embed.author')}/>
-                    <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('embed.authorUrl')}/>
+                      placeholder='Author' {...form.getInputProps('embed.author')} />
+                    <TextInput label='Author URL' placeholder='Author URL' {...form.getInputProps('embed.authorUrl')} />
                   </div>
                   <Transition transition='slide-left' mounted={form.values.enabled}>
                     {styles => (
@@ -245,7 +245,7 @@ export default function Page_Account() {
                           color='white'>{form.values.description || 'Description'}</Highlight>
                         <Image style={{maxHeight: 360, maxWidth: 560}} m='xl' fit='contain' width='100%'
                           src='/banner.png'
-                          alt='Preview image'/>
+                          alt='Preview image' />
                       </Container>
                     )}
                   </Transition>
@@ -254,37 +254,37 @@ export default function Page_Account() {
             </form>
 
             {dataToken && (
-              <DashboardCard icon={<RiKey2Fill/>} title='Private token'>
+              <DashboardCard icon={<RiKey2Fill />} title='Private token'>
                 <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'}
                   description='Remember to keep it safe or people can upload on behalf of you'
                   placeholder='Click Regenerate to generate one.' rightSectionWidth={96} rightSection={
                     <>
                       <Tooltip label={reveal ? 'Hide' : 'Show'}>
                         <ActionIcon onClick={() => setReveal(!reveal)}>
-                          {reveal ? <IoEyeOffOutline/> : <IoEyeOutline/>}
+                          {reveal ? <IoEyeOffOutline /> : <IoEyeOutline />}
                         </ActionIcon>
                       </Tooltip>
                       <Tooltip label='Copy'>
                         <ActionIcon onClick={() => {
                           copy(dataToken.privateToken);
                           showWarning('Copied the private token to your clipboard.',
-                            <RiClipboardFill/>, 'Remember to keep it secret as other people can use the token to upload or shorten without your permission.');
+                            <RiClipboardFill />, 'Remember to keep it secret as other people can use the token to upload or shorten without your permission.');
                         }}>
-                          <IoCopyOutline/>
+                          <IoCopyOutline />
                         </ActionIcon>
                       </Tooltip>
                       <Tooltip label='Regenerate'>
                         <ActionIcon onClick={regenToken}>
-                          <IoRefreshOutline/>
+                          <IoRefreshOutline />
                         </ActionIcon>
                       </Tooltip>
                     </>
-                  } readOnly icon={<RiKeyLine/>} autoComplete='off'/>
+                  } readOnly icon={<RiKeyLine />} autoComplete='off' />
               </DashboardCard>
             )}
 
             {refData && (
-              <DashboardCard icon={<RiStarFill/>} title='Referral'>
+              <DashboardCard icon={<RiStarFill />} title='Referral'>
                 {refData.length > 0 ? (
                   <ScrollArea scrollbarSize={4}>
                     <Table striped highlightOnHover>
@@ -316,10 +316,10 @@ export default function Page_Account() {
               </DashboardCard>
             )}
 
-            <DashboardCard icon={<SiDiscord/>} title='Discord account'>
+            <DashboardCard icon={<SiDiscord />} title='Discord account'>
               {discordInfo ? (
                 <div style={{margin: 16, display: 'flex'}}>
-                  <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100}/>
+                  <Avatar mr={32} size={96} src={`${discordInfo.avatar}?size=96`} radius={100} />
                   <div style={{flex: 1}}>
                     {render(
                       ['Status', discordInfo ? 'Linked' : 'Unlinked'],
@@ -334,7 +334,7 @@ export default function Page_Account() {
                           mutate(null, {
                             rollbackOnError: false
                           })
-                      })} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
+                      })} size='xs' leftIcon={<TbUnlink />} color='red' mt='xs'>
                       Unlink
                     </ConfirmButton>
                   </div>
@@ -346,7 +346,7 @@ export default function Page_Account() {
                     request({
                       endpoint: '/api/discord/auth',
                       callback: r => router.push(r.url)
-                    })} leftIcon={<SiDiscord/>}>Link</Button>
+                    })} leftIcon={<SiDiscord />}>Link</Button>
                 </Stack>
               )}
             </DashboardCard>
@@ -354,10 +354,10 @@ export default function Page_Account() {
 
           <Affix position={{bottom: 32, right: 32}} zIndex={0}>
             <Button.Group>
-              <Button type='reset' form='account_form' leftIcon={<FiX/>} variant='default'>
+              <Button type='reset' form='account_form' leftIcon={<FiX />} variant='default'>
                 Reset
               </Button>
-              <Button type='submit' form='account_form' variant='default' leftIcon={<FiSave/>}>
+              <Button type='submit' form='account_form' variant='default' leftIcon={<FiSave />}>
                 Save
               </Button>
             </Button.Group>

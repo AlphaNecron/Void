@@ -80,7 +80,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false
   }
 };
 

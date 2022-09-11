@@ -38,7 +38,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         password: true
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'asc'
       }
     });
     return res.json(urls.map(url => ({...url, password: url.password?.length > 0})));

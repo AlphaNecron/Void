@@ -1,11 +1,12 @@
 import {IMAGE_MIME_TYPE} from '@mantine/dropzone';
-import {existsSync, readFileSync, unlinkSync} from 'fs';
+import {existsSync, readFileSync} from 'fs';
 import cfg from 'lib/config';
 import {isAdmin} from 'lib/permission';
 import {withMulter} from 'middleware/withMulter';
 import {VoidRequest, VoidResponse} from 'middleware/withVoid';
 import {resolve} from 'path';
 import sharp from 'sharp';
+import {rm} from 'fs/promises';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -37,9 +38,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     return res.end(readFileSync(path));
   }
   case 'DELETE': {
-    if (!existsSync(path))
-      return res.notFound('Avatar not found.');
-    unlinkSync(resolve(cfg.void.upload.outputDirectory, 'avatars', user.id));
+    await rm(resolve(cfg.void.upload.outputDirectory, 'avatars', user.id));
     return res.success();
   }
   default:
@@ -49,7 +48,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false
   }
 };
 

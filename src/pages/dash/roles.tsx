@@ -33,7 +33,8 @@ import {FiPlus, FiSave, FiTrash} from 'react-icons/fi';
 import {RiAlertFill, RiCheckFill, RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
 
 function Color({color}) {
-  return <div style={{background: validateHex(color) ? color : 'white', width: 16, height: 16, borderRadius: '100%'}}/>;
+  return <div
+    style={{background: validateHex(color) ? color : 'white', width: 16, height: 16, borderRadius: '100%'}} />;
 }
 
 type Role = {
@@ -75,8 +76,8 @@ export default function Page_Roles() {
           <span style={{color: validateHex(role.color) && role.color, fontWeight: 700}}> {role.name}</span>
           .
         </>
-      ), <RiDeleteBinFill/>),
-      onError: e => showError(e, <RiErrorWarningFill/>),
+      ), <RiDeleteBinFill />),
+      onError: e => showError(e, <RiErrorWarningFill />),
       onDone: () => mutate()
     });
   };
@@ -95,8 +96,8 @@ export default function Page_Roles() {
           <span style={{color: validateHex(role.color) && role.color, fontWeight: 700}}> {role.name}</span>
           .
         </>
-      ), <RiCheckFill/>),
-      onError: e => showError(e, <RiErrorWarningFill/>),
+      ), <RiCheckFill />),
+      onError: e => showError(e, <RiErrorWarningFill />),
       onDone: () => mutate()
     });
   };
@@ -105,7 +106,7 @@ export default function Page_Roles() {
       {() => (
         <>
           <Dialog_CreateRole callback={mutate} highestPerm={userUltimatePermission} opened={opened}
-            onClose={handler.close}/>
+            onClose={handler.close} />
           <Tabs styles={({spacing}) => ({
             tab: {
               [!isSmall && 'width']: 150,
@@ -120,7 +121,7 @@ export default function Page_Roles() {
           })} orientation={isSmall ? 'horizontal' : 'vertical'} style={{height: '100%'}}
           defaultValue={data.roles[0].id}>
             <div style={{display: 'flex', gap: 8, flexDirection: isSmall ? 'row' : 'column'}}>
-              <Button fullWidth={!isSmall} leftIcon={<FiPlus/>} variant='default' onClick={handler.open}>New
+              <Button fullWidth={!isSmall} leftIcon={<FiPlus />} variant='default' onClick={handler.open}>New
                 role</Button>
               <ScrollArea scrollbarSize={2} offsetScrollbars style={{flex: 1}} styles={isSmall ? {} : ({
                 viewport: {
@@ -132,7 +133,7 @@ export default function Page_Roles() {
                 <Tabs.List grow>
                   {data.roles.map(({id, name, color}) => (
                     <Tabs.Tab key={id} value={id}
-                      icon={<Color color={color}/>}>
+                      icon={<Color color={color} />}>
                       {name}
                     </Tabs.Tab>
                   ))}
@@ -150,37 +151,37 @@ export default function Page_Roles() {
                   <form onSubmit={form.onSubmit(({roles}) => handleSubmit(roles[i]))}>
                     <Stack>
                       {isCurrent && (
-                        <Alert title='Disclaimer' variant='outline' color='yellow' icon={<RiAlertFill/>}>
+                        <Alert title='Disclaimer' variant='outline' color='yellow' icon={<RiAlertFill />}>
                           This is your current role, so you are not allowed to modify it.
                         </Alert>
                       )}
                       {isHigher && (
-                        <Alert title='Disclaimer' color='red' variant='outline' icon={<RiAlertFill/>}>
+                        <Alert title='Disclaimer' color='red' variant='outline' icon={<RiAlertFill />}>
                           This role is higher than yours so you are not allowed to modify it.
                         </Alert>
                       )}
-                      <TextInput disabled={!canEdit} label='Name' {...getListProp('name')} required/>
-                      <ColorInput disabled={!canEdit} label='Color' {...getListProp('color')} required/>
+                      <TextInput disabled={!canEdit} label='Name' {...getListProp('name')} required />
+                      <ColorInput disabled={!canEdit} label='Color' {...getListProp('color')} required />
                       <NumberInput disabled={!canEdit} rightSectionWidth={84}
                         rightSection={<Badge radius='xs' color='dark' mr='xs'
                           fullWidth>{prettyBytes(role.storageQuota)}</Badge>}
                         label='Storage quota (maximum total size)' min={1048576}
-                        step={1048576} {...getListProp('storageQuota')} required/>
+                        step={1048576} {...getListProp('storageQuota')} required />
                       <NumberInput disabled={!canEdit} rightSectionWidth={84}
                         rightSection={<Badge radius='xs' color='dark' mr='xs'
                           fullWidth>{prettyBytes(role.maxFileSize)}</Badge>}
                         label='Max file size per upload (in bytes)' min={1048576}
-                        step={1048576} {...getListProp('maxFileSize')} required/>
+                        step={1048576} {...getListProp('maxFileSize')} required />
                       <NumberInput disabled={!canEdit} label='Max files per upload'
-                        min={1} {...getListProp('maxFileCount')} required/>
+                        min={1} {...getListProp('maxFileCount')} required />
                       <NumberInput disabled={!canEdit} label='Max referral codes' {...getListProp('maxRefCodes')}
-                        required/>
+                        required />
                       <div>
                         <Text size='xs' mb={4}>Permissions</Text>
                         {canEdit ? (
                           <TransferList breakpoint='xs' showTransferAll={false}
                             value={[role.permissions.map(toItem), data.availablePerms.filter(perm => !role.permissions.includes(+perm)).map(toItem)]}
-                            onChange={values => setListProp('permissions', (values as { value: string; }[][])[0].map(({value}) => +value))}/>
+                            onChange={values => setListProp('permissions', (values as { value: string; }[][])[0].map(({value}) => +value))} />
                         ) : (
                           <List items={role.permissions}>
                             {perm => (
@@ -208,14 +209,14 @@ export default function Page_Roles() {
                                 <span style={{color: validateHex(role.color) && role.color}}>{role.name}</span>
                               </>
                             ),
-                            children: <Dialog_AddToRole id={role.id} callback={mutate}/>
+                            children: <Dialog_AddToRole id={role.id} callback={mutate} />
                           }))}>
                           {user => (
                             <Group>
                               <UserAvatar user={{
                                 ...user,
                                 role
-                              }} size={20}/>
+                              }} size={20} />
                               <Text weight={700} style={{
                                 maxWidth: '90%',
                                 overflow: 'hidden',
@@ -231,12 +232,12 @@ export default function Page_Roles() {
                     </Stack>
                     {canEdit && (
                       <Button.Group style={{position: 'fixed', bottom: 32, right: 32}}>
-                        <ConfirmButton loading={busy} leftIcon={<FiTrash/>} variant='filled' color='red'
+                        <ConfirmButton loading={busy} leftIcon={<FiTrash />} variant='filled' color='red'
                           onClick={() => handleDelete(role)}>
                           Delete
                         </ConfirmButton>
                         <Button type='submit' loading={busy}
-                          leftIcon={<FiSave/>}
+                          leftIcon={<FiSave />}
                           variant='default'>
                           Save
                         </Button>

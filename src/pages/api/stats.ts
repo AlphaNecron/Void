@@ -61,7 +61,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       upload: {
         totalSize: Number(agg._sum.size),
         totalFiles: agg._count,
-        averageSize: Number(agg._avg.size),
+        averageSize: Number(agg._avg.size)
       },
       users: {
         count: userCount,

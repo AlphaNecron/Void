@@ -10,7 +10,7 @@ export default function Spoil({url, children, ...props}) {
   return (
     <Group spacing={4} style={{display: 'inline-flex'}}>
       {reveal ? inner : '*'.repeat(Math.min(16, l))}
-      <ActionIcon size='xs' onClick={() => setReveal(p => !p)}>{reveal ? <FiEyeOff/> : <FiEye/>}</ActionIcon>
+      <ActionIcon size='xs' onClick={() => setReveal(p => !p)}>{reveal ? <FiEyeOff /> : <FiEye />}</ActionIcon>
     </Group>
   );
 }

@@ -41,7 +41,7 @@ export default function UpdateAvatar({onClose, onDone, ...props}: ModalProps & {
         <Dropzone maxSize={2 * 1048576} radius={100} p={0} m='xl' multiple={false} accept={IMAGE_MIME_TYPE}
           onDrop={([f]) => setFile(f)}>
           <Dropzone.Idle>
-            <Avatar size={192} radius={100} src={previewUrl}/>
+            <Avatar size={192} radius={100} src={previewUrl} />
           </Dropzone.Idle>
           <Dropzone.Reject>
             {wrap('This file is not allowed.')}
@@ -52,14 +52,14 @@ export default function UpdateAvatar({onClose, onDone, ...props}: ModalProps & {
         </Dropzone>
       </Center>
       <Group spacing={4} position='right'>
-        <Button color='dark' variant='default' leftIcon={<FiX/>} onClick={() => {
+        <Button color='dark' variant='default' leftIcon={<FiX />} onClick={() => {
           if (busy)
             abort();
           onClose();
         }}>
           Cancel
         </Button>
-        <Button leftIcon={<FiUploadCloud/>} loading={busy} onClick={uploadAvatar} disabled={!file}>
+        <Button leftIcon={<FiUploadCloud />} loading={busy} onClick={uploadAvatar} disabled={!file}>
           Upload avatar
         </Button>
       </Group>

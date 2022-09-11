@@ -45,7 +45,7 @@ export default function Dialog_ShareX({open, onClose, ...props}) {
       URL: shareXOptions.url,
       ...(shareXOptions.askPassword && {Password: '$prompt:Password$'})
     },
-    URL: '$json:url$',
+    URL: '$json:url$'
   };
   return (
     <Modal opened={open} size='2xl' title='Generate ShareX config' onClose={onClose} styles={{
@@ -60,22 +60,22 @@ export default function Dialog_ShareX({open, onClose, ...props}) {
       <div style={{display: 'flex', marginBottom: 48, gap: 16, flexWrap: 'wrap'}}>
         <Stack spacing={4} style={{flex: '1 1 200px'}}>
           <TextInput label='Config name' value={shareXOptions.name}
-            onChange={e => setShareXOptions({name: e.target.value})}/>
+            onChange={e => setShareXOptions({name: e.target.value})} />
           <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={shareXOptions.url}
-            onChange={url => setShareXOptions({url})}/>
+            onChange={url => setShareXOptions({url})} />
           <Checkbox label='Ask password when shortening?' mt='xs' checked={shareXOptions.askPassword}
-            onChange={e => setShareXOptions({askPassword: e.target.checked})}/>
+            onChange={e => setShareXOptions({askPassword: e.target.checked})} />
         </Stack>
         <Transition transition='slide-up' mounted={showPreview}>
           {styles => <Preview sx={styles} name={shareXOptions.name.length > 0 ? shareXOptions.name : null}
-            uploaderConfig={uploaderConfig} shortenerConfig={shortenerConfig}/>}
+            uploaderConfig={uploaderConfig} shortenerConfig={shortenerConfig} />}
         </Transition>
       </div>
       <Group mt='md' style={{position: 'absolute', right: 24, bottom: 16}}>
-        <Button leftIcon={<FiDownload/>} download='Void_Uploader.sxcu'
+        <Button leftIcon={<FiDownload />} download='Void_Uploader.sxcu'
           href={URL.createObjectURL(new Blob([JSON.stringify(uploaderConfig, null, '\t')], {type: 'application/json'}))}
           component='a'>Uploader</Button>
-        <Button leftIcon={<FiDownload/>} color='blue' download='Void_Shortener.sxcu'
+        <Button leftIcon={<FiDownload />} color='blue' download='Void_Shortener.sxcu'
           href={URL.createObjectURL(new Blob([JSON.stringify(shortenerConfig, null, '\t')], {type: 'application/json'}))}
           component='a'>Shortener</Button>
       </Group>
