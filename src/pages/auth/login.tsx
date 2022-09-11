@@ -12,19 +12,19 @@ import {
 } from '@mantine/core';
 import {useForm} from '@mantine/form';
 import {NextLink} from '@mantine/next';
-import {showNotification} from '@mantine/notifications';
 import Container from 'components/Container';
+import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {request} from 'lib/utils';
+import {showError, showSuccess} from 'lib/notification';
 import router from 'next/router';
 import {useEffect, useState} from 'react';
-import {FiEdit, FiLock, FiLogIn, FiMoon, FiSun, FiUser} from 'react-icons/fi';
+import {FiChevronLeft, FiEdit, FiLock, FiLogIn, FiMoon, FiSun, FiUser} from 'react-icons/fi';
 import {RiCheckFill, RiErrorWarningFill} from 'react-icons/ri';
 import {SiDiscord} from 'react-icons/si';
 
 export default function LoginPage() {
   const [mount, setMount] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const {request, busy} = useRequest();
   const {revalidate} = useSession(false, null, () => router.push('/dash'));
   useEffect(() => {
     setMount(true);
@@ -43,12 +43,19 @@ export default function LoginPage() {
       {styles => (
         <Container style={styles}>
           <Group position='apart' mb='xl'>
-            <Text size='xl' weight={700}>Enter the
-              <Tooltip label={process.env.voidVersion}>
-                <Text size='xl' ml={4} variant='gradient' gradient={{from: '#D1C4E9', to: '#5E35B1', deg: 150}}
-                  weight={700} component='span'>Void</Text>
+            <Group>
+              <Tooltip label='Go back'>
+                <ActionIcon component={NextLink} href='/'>
+                  <FiChevronLeft/>
+                </ActionIcon>
               </Tooltip>
-            </Text>
+              <Text size='xl' weight={700}>Enter the
+                <Tooltip label={process.env.voidVersion}>
+                  <Text size='xl' ml={4} variant='gradient' gradient={{from: '#D1C4E9', to: '#5E35B1', deg: 150}}
+                    weight={700} span>Void</Text>
+                </Tooltip>
+              </Text>
+            </Group>
             <Tooltip label={`Use ${isDark ? 'light' : 'dark'} theme`}>
               <ActionIcon color={isDark ? 'orange' : 'void'} onClick={() => toggleColorScheme()}>
                 {isDark ? <FiSun/> : <FiMoon/>}
@@ -57,27 +64,15 @@ export default function LoginPage() {
           </Group>
           <form style={{minWidth: 360}} onSubmit={form.onSubmit(values =>
             request({
-              onStart: () => setBusy(true),
               endpoint: '/api/auth/login',
               method: 'POST',
               body: values,
               callback() {
-                showNotification({
-                  title: 'Logged in successfully, redirecting to the Dashboard.',
-                  message: '',
-                  icon: <RiCheckFill/>,
-                  color: 'green'
-                });
+                showSuccess('Logged in successfully, redirecting to the Dashboard.', <RiCheckFill/>);
                 revalidate(() => router.push('/dash'));
               },
               onError: e =>
-                showNotification({
-                  title: 'Failed to sign in.',
-                  color: 'red',
-                  icon: <RiErrorWarningFill/>,
-                  message: e
-                }),
-              onDone: () => setBusy(false)
+                showError(e, <RiErrorWarningFill/>)
             }))}>
             <TextInput
               required
@@ -92,13 +87,16 @@ export default function LoginPage() {
               label='Password'
               {...form.getInputProps('password')}>
             </PasswordInput>
-            <Button mt='lg' fullWidth loading={busy} style={{flex: 1}} leftIcon={<FiLogIn/>} type='submit'>Login</Button>
+            <Button mt='lg' fullWidth loading={busy} style={{flex: 1}} leftIcon={<FiLogIn/>}
+              type='submit'>Login</Button>
             <Divider my='xs' mx={128}/>
             <Group grow>
-              <Button color='violet' leftIcon={<FiEdit/>} component={NextLink} href='/auth/register'>Register now</Button>
-              <Button loading={busy} fullWidth style={{backgroundColor: '#7289DA'}} onClick={() =>
-                fetch('/api/discord/auth').then(r => r.json()).then(r => {
-                  router.push(r.url);
+              <Button color='violet' leftIcon={<FiEdit/>} component={NextLink} href='/auth/register'>Register
+                now</Button>
+              <Button fullWidth style={{backgroundColor: '#7289DA'}} onClick={() =>
+                request({
+                  endpoint: '/api/discord/auth',
+                  callback: ({url}) => router.push(url)
                 })} leftIcon={<SiDiscord/>}>Login with Discord</Button>
             </Group>
           </form>

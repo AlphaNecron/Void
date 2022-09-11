@@ -18,7 +18,7 @@ model User {
   embed         EmbedOptions?
   privateToken  String?        @unique
   roleName      String         @default("User")
-  role          Role?          @relation(fields: [roleName], references: [name], onDelete: Cascade)
+  role          Role           @relation(fields: [roleName], references: [name], onDelete: Cascade)
   domain        String?
   files         File[]
   urls          Url[]
@@ -56,7 +56,7 @@ model Url {
   short       String   @unique
   createdAt   DateTime @default(now())
   password    String?
-  views       Int      @default(0)
+  clicks      Int      @default(0)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
@@ -70,9 +70,9 @@ model Domain {
 }
 
 model Role {
-  name         String  @id
+  id           String  @id @default(cuid())
+  name         String  @unique
   color        String? @default("#B794F4")
-  rolePriority Int     @unique @default(100)
   permissions  Int     @default(0)
   maxFileSize  BigInt  @default(104857600)
   maxFileCount Int     @default(5)

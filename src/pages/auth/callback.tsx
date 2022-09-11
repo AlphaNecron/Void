@@ -20,7 +20,7 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
       <Stack align='center'>
         <Text size='xl' weight={700}>
           Successfully linked your account to
-          <Text ml={4} size='xl' weight={700} color='void' component='span'>
+          <Text ml={4} size='xl' weight={700} color='void' span>
             {current}
           </Text>
         </Text>
@@ -28,7 +28,7 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
         <Tooltip label={`ID: ${id}`}>
           <Text size='lg' weight={700}>
             {username}
-            <Text component='span' color='dimmed' size='lg' weight={700}>
+            <Text span color='dimmed' size='lg' weight={700}>
               #{tag}
             </Text>
           </Text>
@@ -41,7 +41,7 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
 
 CallbackPage.title = 'Discord integration';
 
-export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {
+export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async ({req, query}) => {
   const {code, state} = query;
   const rUser = req.session.user;
   if (!(code && state)) return {

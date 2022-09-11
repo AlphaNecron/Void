@@ -1,4 +1,3 @@
-import logger from 'lib/logger';
 import prisma from 'lib/prisma';
 import {generateToken} from 'lib/utils';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
@@ -15,11 +14,9 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         privateToken: generateToken()
       }
     });
-    logger.info(`User ${user.username} (${user.id}) reset their token`);
     return res.success();
-  }
-  else if (req.method === 'GET')
-    return res.json({ privateToken: user.privateToken });
+  } else if (req.method === 'GET')
+    return res.json({privateToken: user.privateToken});
   return res.notAllowed();
 }
 

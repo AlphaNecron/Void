@@ -45,64 +45,65 @@ import {
 import {SiGithub} from 'react-icons/si';
 import ShareX from './dialogs/ShareX';
 
+const routes = [
+  {
+    icon: <RiDashboard3Fill/>,
+    label: 'Dashboard',
+    route: '/dash',
+    color: 'void'
+  },
+  {
+    icon: <RiArchiveFill/>,
+    label: 'Files',
+    route: '/dash/files',
+    color: 'yellow',
+  },
+  {
+    icon: <RiLink/>,
+    label: 'URLs',
+    route: '/dash/urls',
+    color: 'green',
+    permission: Permission.SHORTEN
+  },
+  {
+    adminRequired: true,
+    items: [
+      {
+        icon: <RiGroupFill/>,
+        label: 'Users',
+        route: '/dash/users',
+        color: 'pink'
+      },
+      {
+        icon: <RiTeamFill/>,
+        label: 'Roles',
+        route: '/dash/roles',
+        color: 'teal'
+      },
+      {
+        icon: <RiGlobalFill/>,
+        label: 'Domains',
+        route: '/dash/domains',
+        color: 'grape'
+      },
+      {
+        icon: <RiTerminalWindowFill/>,
+        label: 'Panel',
+        route: '/dash/panel',
+        color: 'cyan'
+      }
+    ]
+  }
+];
+
 function NavigationBar({user, onCollapse, route, quota, ...props}) {
   const [dialogOpen, setDialogOpen] = useSetState({sharex: false});
-  const pages = [
-    {
-      icon: <RiDashboard3Fill/>,
-      label: 'Dashboard',
-      route: '/dash',
-      color: 'void'
-    },
-    {
-      icon: <RiArchiveFill/>,
-      label: 'Files',
-      route: '/dash/files',
-      color: 'yellow',
-    },
-    {
-      icon: <RiLink/>,
-      label: 'URLs',
-      route: '/dash/urls',
-      color: 'green',
-      permission: Permission.SHORTEN
-    },
-    {
-      adminRequired: true,
-      items: [
-        {
-          icon: <RiGroupFill/>,
-          label: 'Users',
-          route: '/dash/users',
-          color: 'pink'
-        },
-        {
-          icon: <RiTeamFill/>,
-          label: 'Roles',
-          route: '/dash/roles',
-          color: 'teal'
-        },
-        {
-          icon: <RiGlobalFill/>,
-          label: 'Domains',
-          route: '/dash/domains',
-          color: 'grape'
-        },
-        {
-          icon: <RiTerminalWindowFill/>,
-          label: 'Panel',
-          route: '/dash/panel',
-          color: 'cyan'
-        }
-      ]
-    }
-  ];
   return (
     <>
       <ShareX open={dialogOpen.sharex} onClose={() => setDialogOpen({sharex: false})}/>
       <Navbar {...props}>
         <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
-          {pages.map((x, i) =>
+          {routes.map((x, i) =>
             (x.adminRequired && isAdmin(user.role.permissions) && x.items) ? (
               x.items.map(z =>
                 <NavigationItem onClick={onCollapse} highlight={z.route === route} key={z.route} requiresAdmin
@@ -146,14 +147,15 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                     </Indicator>
                     <Box>
                       <Text size='md' weight={600}>
-                        {user.name || user.username || <p style={{ color: 'green'}}>Unknown</p>}
+                        {user.name || user.username || <p style={{color: 'green'}}>Unknown</p>}
                       </Text>
-                      <Text weight={600} sx={validateHex(user.role.color) && { color: user.role.color }} size='sm'>{user.role.name}</Text>
+                      <Text weight={600} sx={validateHex(user.role.color) && {color: user.role.color}}
+                        size='sm'>{user.role.name}</Text>
                     </Box>
                   </Group>
                 </UnstyledButton>
               </Menu.Target>
-              <Menu.Dropdown style={{ minWidth: 175 }}>
+              <Menu.Dropdown style={{minWidth: 175}}>
                 {quota && (
                   <>
                     <Menu.Label>{prettyBytes(quota.used)} / {prettyBytes(quota.total)} used</Menu.Label>
@@ -161,7 +163,8 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
                   </>
                 )}
                 <Menu.Divider/>
-                <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage account</Menu.Item>
+                <Menu.Item icon={<FiUser/>} component={NextLink} href='/dash/account' onClick={onCollapse}>Manage
+                  account</Menu.Item>
                 <Menu.Item onClick={() => setDialogOpen({sharex: true})} icon={<ShareXIcon size={16}/>}>
                   ShareX config
                 </Menu.Item>
@@ -186,7 +189,8 @@ function AppHeader({children}) {
           {children}
           <Group spacing={8}>
             <Tooltip label='Void on GitHub'>
-              <ActionIcon variant='filled' radius='md' size='lg' color='dark' component='a' target='_blank' href='https://github.com/AlphaNecron/Void'>
+              <ActionIcon variant='filled' radius='md' size='lg' color='dark' component='a' target='_blank'
+                href='https://github.com/AlphaNecron/Void'>
                 <SiGithub/>
               </ActionIcon>
             </Tooltip>
@@ -215,10 +219,13 @@ export default function Layout({children, route}) {
       padding='md'
       fixed
       navbar={
-        <NavigationBar onCollapse={() => smallWidth && setTimeout(() => setOpened(false), 150)}
-          hiddenBreakpoint='md' width={{md: 235}} hidden={!opened} p='md'
-          route={route} quota={data ? {used: data.used, total: data.total} : null}
-          user={session.user}/>
+        <NavigationBar onCollapse={() => {
+          if (smallWidth)
+            setTimeout(() => setOpened(false), 50);
+        }}
+        hiddenBreakpoint='md' width={{md: 235}} hidden={!opened} p='md'
+        route={route} quota={data ? {used: data.used, total: data.total} : null}
+        user={session.user}/>
       }
       header={<AppHeader>
         {smallWidth ? (

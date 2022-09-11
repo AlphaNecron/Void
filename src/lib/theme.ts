@@ -22,6 +22,9 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
           }
         }
       },
+      HoverCard: {
+        defaultProps: {withinPortal: true}
+      },
       Card: {
         defaultProps: {withBorder: true}
       },
@@ -36,7 +39,7 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
         }
       },
       Modal: {
-        defaultProps: { overlayBlur: 4 },
+        defaultProps: {overlayBlur: 4},
         styles: theme => ({
           title: {
             fontWeight: 700,
@@ -45,11 +48,9 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
         })
       },
       Tooltip: {
-        styles: theme => ({
-          root: {
-            border: `1px solid ${theme.colors.dark[theme.colorScheme === 'dark' ? 4 : 0]}`
-          }
-        })
+        defaultProps: {
+          withinPortal: true
+        }
       }
     },
     fontSizes: {

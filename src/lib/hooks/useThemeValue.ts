@@ -1,7 +1,7 @@
 import {MantineColor, useMantineTheme} from '@mantine/core';
 
 export default function useThemeValue() {
-  const { colorScheme, colors, fn: { lighten: lightenColor } } = useMantineTheme();
+  const {colorScheme, colors, fn: {lighten: lightenColor}} = useMantineTheme();
   const isDark = colorScheme === 'dark';
   return {
     isDark,

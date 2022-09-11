@@ -1,18 +1,30 @@
-import {CommandInteraction, ModalSubmitInteraction} from 'discord.js';
-
-export type CachedUser = {
-  id?: string;
-  isAdmin?: boolean;
-}
+import type {
+  ChatInputCommandInteraction,
+  Interaction,
+  InteractionReplyOptions,
+  InteractionResponse,
+  ModalSubmitInteraction
+} from 'discord.js';
 
 export type NeutronCommand = {
   name: string;
   description: string;
   requiresAdmin?: boolean;
-  execute: (interaction: CommandInteraction, user: CachedUser) => Promise<void>;
+  execute: (context: Context<ChatInputCommandInteraction>, user: User) => Promise<void>;
 }
 
 export type NeutronModal = {
   id: string;
-  handle: (interaction: ModalSubmitInteraction, user: CachedUser) => Promise<void>;
+  handle: (context: Context<ModalSubmitInteraction>, user: User) => Promise<void>;
 }
+
+export type User = {
+  id: string;
+  canUseBot: boolean;
+  isAdmin: boolean;
+}
+
+export type Context<T extends Interaction = Interaction> = {
+  whisper: (message: string | InteractionReplyOptions) => Promise<InteractionResponse>;
+  getUser: () => Promise<User>;
+} & T;

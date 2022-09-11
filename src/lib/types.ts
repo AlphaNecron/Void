@@ -1,5 +1,4 @@
 import {Role} from '@prisma/client';
-import {HttpMethod} from 'undici/types/dispatcher';
 
 // void related
 
@@ -49,7 +48,6 @@ export type Neutron = {
   token: string;
   clientId: string;
   guildId: string;
-  logChannel: string;
 }
 
 export type Config = {
@@ -65,15 +63,3 @@ export type SessionUser = {
   name?: string;
   role: Role;
 }
-
-export type FetchParameters = {
-  onStart?: () => void;
-  endpoint: string;
-  method?: HttpMethod;
-  onError?: (err) => void;
-  onDone?: () => void;
-  body?;
-  headers?: Record<string, string>;
-  callback?: (response) => void;
-}
-

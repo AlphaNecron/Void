@@ -1,17 +1,16 @@
-import {MessageEmbed} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import type {NeutronCommand} from 'neutron/types';
 import {uptime} from 'os';
-
 import {neutronVersion, version} from 'packageInfo';
 import pretty from 'pretty-ms';
 
 export default {
   name: 'system',
   description: 'View system info',
-  async execute(interaction) {
+  execute: async function (context) {
     const vUptime = pretty(process.uptime() * 1e3, {secondsDecimalDigits: 0});
     const up = pretty(uptime() * 1e3, {secondsDecimalDigits: 0});
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setColor('#7289DA')
       .addFields(
         {
@@ -28,11 +27,12 @@ export default {
         },
         {
           name: 'Void uptime',
-          value: vUptime},
+          value: vUptime
+        },
         {
           name: 'System uptime',
           value: up
         });
-    await interaction.reply({embeds: [embed]});
+    await context.whisper({embeds: [embed]});
   }
 } as NeutronCommand;

@@ -23,7 +23,7 @@ export default function useSession(required = false, onUnauthenticated?: () => v
       onUnauthenticated();
     else if (data && onAuthenticated)
       onAuthenticated(data);
-  }, [data, error, required, onAuthenticated, onUnauthenticated]);
+  }, [data, error]);
   return {
     isReady: (data || error) !== undefined,
     isLogged: data !== undefined,

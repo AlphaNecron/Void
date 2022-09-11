@@ -15,7 +15,6 @@ import {
   Tooltip
 } from '@mantine/core';
 import {useDisclosure, useInputState} from '@mantine/hooks';
-import {showNotification} from '@mantine/notifications';
 import {Prism} from '@mantine/prism';
 import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
@@ -24,9 +23,11 @@ import VideoPlayer from 'components/VideoPlayer';
 import {format} from 'fecha';
 import {withIronSessionSsr} from 'iron-session/next';
 import {highlightLanguages} from 'lib/constants';
+import useRequest from 'lib/hooks/useRequest';
 import {isPreviewable, isType} from 'lib/mime';
+import {showError, showSuccess} from 'lib/notification';
 import prisma from 'lib/prisma';
-import {prettyBytes, request} from 'lib/utils';
+import {prettyBytes} from 'lib/utils';
 import {ironOptions} from 'middleware/withVoid';
 import {GetServerSideProps} from 'next';
 import Head from 'next/head';
@@ -74,12 +75,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
       })
     }).then(r => r.json()).then(j => {
       if (j.success)
-        showNotification({
-          title: 'Reported the file.',
-          icon: <RiFlag2Fill/>,
-          message: '',
-          color: 'green'
-        });
+        showSuccess('Reported the file.', <RiFlag2Fill/>);
     });
     setReportReason('');
     dHandler.close();
@@ -246,6 +242,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
 export function Url({id}) {
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
+  const {request} = useRequest();
   const validate = () =>
     request({
       endpoint: '/api/validate',
@@ -254,12 +251,11 @@ export function Url({id}) {
         id,
         password
       },
-      callback(r) {
-        if (r.error)
-          return showNotification({title: r.error, message: '', color: 'red', icon: <RiErrorWarningFill/>});
-        showNotification({title: 'Redirecting...', message: '', color: 'green', icon: <RiNavigationFill/>});
-        router.push(r.destination);
-      }
+      callback({destination}) {
+        showSuccess('Redirecting...', <RiNavigationFill/>);
+        router.push(destination);
+      },
+      onError: e => showError(e, <RiErrorWarningFill/>)
     });
   return (
     <>
@@ -305,23 +301,24 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
     });
     if (!url)
       return {notFound: true};
-    if (!url.password)
+    if (!url.password) {
+      await prisma.url.update({
+        where: {
+          id: url.id
+        },
+        data: {
+          clicks: {
+            increment: 1
+          }
+        }
+      });
       return {
         redirect: {
           destination: url.destination
         },
         props: {}
       };
-    await prisma.url.update({
-      where: {
-        id: url.id
-      },
-      data: {
-        views: {
-          increment: 1
-        }
-      }
-    });
+    }
     return {
       props: {
         type: 'url',

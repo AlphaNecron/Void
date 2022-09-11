@@ -1,13 +1,10 @@
-import {ActionIcon, Group, Text, Tooltip} from '@mantine/core';
-import {ContextModalProps} from '@mantine/modals';
-import {showNotification} from '@mantine/notifications';
+import {ActionIcon, CopyButton, Group, Text, Tooltip} from '@mantine/core';
 import List from 'components/List';
-import {FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
-import {RiClipboardFill} from 'react-icons/ri';
+import {FiCheck, FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
 
-export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: ContextModalProps<{ files: { name: string, url: string, deletionUrl: string }[], onCopy: (text: string) => void }>) {
-  const LabelledAction = ({label, ...props}) => (
-    <Tooltip label={label}>
+export default function Dialog_FilesUploaded({files}: { files: { name: string, url: string, deletionUrl: string }[] }) {
+  const LabelledAction = ({label, tooltipColor = '', ...props}) => (
+    <Tooltip label={label} color={tooltipColor}>
       <ActionIcon {...props}/>
     </Tooltip>
   );
@@ -20,7 +17,8 @@ export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: Cont
               maxWidth: 250,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'}}>
+              whiteSpace: 'nowrap'
+            }}>
               {f.name}
             </Text>
           </Tooltip>
@@ -31,12 +29,15 @@ export default function Dialog_FilesUploaded({innerProps: {files, onCopy}}: Cont
             <LabelledAction color='red' label='Delete' component='a' href={f.deletionUrl} target='_blank'>
               <FiTrash/>
             </LabelledAction>
-            <LabelledAction color='green' label='Copy to clipboard' onClick={() => {
-              onCopy(f.url);
-              showNotification({ title: 'Copied the URL to your clipboard.', message: '', color: 'green', icon: <RiClipboardFill/>});
-            }}>
-              <FiClipboard/>
-            </LabelledAction>
+            <CopyButton value={f.url}>
+              {({copied, copy}) => (
+                <LabelledAction color='green' tooltipColor={copied && 'green'}
+                  label={copied ? 'Copy to clipboard' : 'Copied to your clipboard'}
+                  onClick={() => copy()}>
+                  {copied ? <FiCheck/> : <FiClipboard/>}
+                </LabelledAction>
+              )}
+            </CopyButton>
           </Group>
         </>
       )}

@@ -1,6 +1,6 @@
 import {ActionIcon, Button, Tooltip} from '@mantine/core';
 
-export default function ResponsiveButton({ icon, label, condition, ...props}){
+export default function ResponsiveButton({icon, label, condition, ...props}) {
   return (
     condition ?
       <Button {...props} leftIcon={icon}>{label}</Button>

@@ -1,4 +1,3 @@
-import logger from 'lib/logger';
 import {hasPermission, Permission} from 'lib/permission';
 import prisma from 'lib/prisma';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
@@ -24,7 +23,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         id: url.id
       }
     });
-    logger.info(`User ${user.id} deleted a url ${url.id}`);
     return res.success();
   } else {
     const urls = await prisma.url.findMany({
@@ -36,14 +34,14 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         createdAt: true,
         short: true,
         destination: true,
-        views: true,
+        clicks: true,
         password: true
       },
       orderBy: {
         createdAt: 'asc',
       }
     });
-    return res.json(urls.map(url => ({ ...url, password: url.password?.length > 0 })));
+    return res.json(urls.map(url => ({...url, password: url.password?.length > 0})));
   }
 }
 

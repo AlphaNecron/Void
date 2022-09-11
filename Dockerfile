@@ -1,4 +1,4 @@
-FROM node:16-alpine3.14 AS builder
+FROM node:gallium-alpine AS builder
 WORKDIR /build
 
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -14,7 +14,7 @@ ENV DATABASE_URL=postgres://postgres:postgres@postgres/postgres
 
 RUN yarn build
 
-FROM node:16-alpine3.14 AS runner
+FROM node:gallium-alpine AS runner
 WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules

@@ -22,7 +22,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   const roleCount = await prisma.role.count();
   const urlAgg = await prisma.url.aggregate({
     _sum: {
-      views: true
+      clicks: true
     },
     _count: true
   });
@@ -56,7 +56,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       urls: urlAgg._count,
       views: {
         files: agg._sum.views || 0,
-        urls: urlAgg._sum.views || 0
+        urls: urlAgg._sum.clicks || 0
       },
       upload: {
         totalSize: Number(agg._sum.size),
@@ -70,7 +70,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           displayName: user.name,
           files: user._count.files,
           urls: user._count.urls
-        })).sort((a,b) => (b.files + b.urls) - (a.files + a.urls))
+        })).sort((a, b) => (b.files + b.urls) - (a.files + a.urls))
       },
       user: {
         role: user.role.name,

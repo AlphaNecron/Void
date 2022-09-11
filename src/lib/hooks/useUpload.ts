@@ -9,8 +9,8 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
 }) => void, onError: (message: string) => void, onUploaded: (response: any) => void): { upload: (data: FormData) => void, onCancel: () => void } {
   let elapsed = 0;
   const ticker = useInterval(() => elapsed++, 1e3);
-  const { renew, abort, onAbort } = useAbort();
-  const handlers = (req: XMLHttpRequest) => {
+  const {renew, abort, onAbort} = useAbort();
+  const handle = (req: XMLHttpRequest) => {
     const eventHandlers = {
       'loadstart': () => {
         elapsed = 0;
@@ -35,17 +35,13 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
       'abort': () => onError('User aborted the upload.'),
       'timeout': () => onError('Request timed out.')
     };
-    return {
-      register: () => {
-        req.onload = () => {
-          if (req.status >= 400)
-            onError(req.response.error);
-          else onUploaded(req.response);
-          renew();
-        };
-        Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler);
-      }
+    req.onload = () => {
+      if (req.status >= 400)
+        onError(req.response.error);
+      else onUploaded(req.response);
+      renew();
     };
+    Object.entries(eventHandlers).forEach(([event, handler]) => req.upload[`on${event}`] = handler);
   };
   return {
     async upload(data) {
@@ -57,7 +53,7 @@ export default function useUpload(endpoint: string, headers: Record<string, stri
           req.setRequestHeader(key, value);
         onAbort(() =>
           req.abort());
-        handlers(req).register();
+        handle(req);
         req.send(data);
       }
     },

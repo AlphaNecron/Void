@@ -1,7 +1,7 @@
 import {PrismaClient} from '@prisma/client';
 import {hash} from 'argon2';
 import logger from 'lib/logger';
-import {Permission} from 'lib/permission';
+import {maxed} from 'lib/permission';
 import {throwAndExit} from 'lib/serverUtils';
 
 const prisma = new PrismaClient();
@@ -16,9 +16,8 @@ async function main() {
         role: {
           create: {
             name: 'Owner',
-            rolePriority: 0,
             color: '#E96565',
-            permissions: Permission.OWNER,
+            permissions: maxed(),
           }
         }
       }

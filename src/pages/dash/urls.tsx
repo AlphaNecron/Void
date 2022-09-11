@@ -1,16 +1,18 @@
 import {Button, Stack, Text, TextInput} from '@mantine/core';
 import {useDisclosure} from '@mantine/hooks';
-import {showNotification} from '@mantine/notifications';
+import {openContextModal} from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
 import ItemCard from 'components/ItemCard';
 import Spoil from 'components/Spoil';
 import ShortenDialog from 'dialogs/Shorten';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
+import useRequest from 'lib/hooks/useRequest';
+import {showError, showSuccess} from 'lib/notification';
 import {Permission} from 'lib/permission';
-import {request} from 'lib/utils';
 import dynamic from 'next/dynamic';
 import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
+import {ImQrcode} from 'react-icons/im';
 import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
 
 const HiddenQR = dynamic(() => import('components/HiddenQR'));
@@ -19,23 +21,14 @@ export default function Page_URLs() {
   const {data, mutate} = useFetch('/api/user/urls');
   const {query, handler} = useQuery();
   const [opened, dHandler] = useDisclosure(false);
+  const {request} = useRequest();
   const handleDelete = (id: string) => request({
     endpoint: '/api/user/urls',
     method: 'DELETE',
     body: {id},
     callback: () =>
-      showNotification({
-        title: 'Successfully deleted the URL.',
-        icon: <RiDeleteBinFill/>,
-        message: '',
-        color: 'green'
-      }),
-    onError: e => showNotification({
-      title: 'Failed to delete the URL.',
-      message: e,
-      color: 'red',
-      icon: <RiErrorWarningFill/>
-    }),
+      showSuccess('Successfully deleted the URL.', <RiDeleteBinFill/>),
+    onError: e => showError('Failed to delete the URL.', <RiErrorWarningFill/>, e),
     onDone: () => mutate()
   });
   return (
@@ -47,11 +40,22 @@ export default function Page_URLs() {
             Shorten
           </Button>
           <TextInput ml='xs' style={{flex: 1}} icon={<FiSearch/>} placeholder='Search something' value={query}
-            onChange={e => handler.set(e.target.value)}/>
+            onChange={handler.set}/>
         </div>
         <CardGrid itemSize={375}>
           {data && handler.filterList(data, ['short', 'destination']).map((url, i) =>
             <ItemCard key={i} actions={[
+              {
+                label: 'Show QR code',
+                color: 'yellow',
+                action: () => openContextModal({
+                  modal: 'qr',
+                  innerProps: {
+                    value: `${window.location.origin}/${url.short}`
+                  }
+                }),
+                icon: <ImQrcode/>
+              },
               {
                 label: 'Copy to clipboard',
                 color: 'green',
@@ -86,7 +90,7 @@ export default function Page_URLs() {
                       {url.destination}
                     </Spoil>
                     <br/>
-                    Views: {url.views}
+                    Clicks: {url.clicks}
                     <br/>
                     Has password: {url.password ? 'Yes' : 'No'}
                   </Text>

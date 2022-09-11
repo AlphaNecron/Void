@@ -1,5 +1,5 @@
-import {EmbedOptions, Role} from '@prisma/client';
-import {IronSessionOptions} from 'iron-session';
+import type {EmbedOptions, Role} from '@prisma/client';
+import type {IronSessionOptions} from 'iron-session';
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {rateLimitCheck} from 'lib/cache';
 import config from 'lib/config';
@@ -49,7 +49,7 @@ export type VoidRequest = NextApiRequest & {
   check: () => Promise<boolean>;
 }
 
-export type VoidResponse = NextApiResponse & {
+export interface VoidResponse extends NextApiResponse {
   error: (message: string, code?: number) => void;
   forbid: (message: string) => void;
   notFound: (message: string) => void;
@@ -58,6 +58,7 @@ export type VoidResponse = NextApiResponse & {
   noPermission: (permission: Permission) => void;
   rateLimited: () => void;
   success: (data?) => void;
+  cache: (ttl?: number) => void;
 }
 
 export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) => unknown) {
@@ -76,6 +77,8 @@ export function withVoid(handler: (req: NextApiRequest, res: NextApiResponse) =>
       nextReset: res.getHeader('x-ratelimit-reset')
     });
     res.success = (data?) => res.json({success: true, ...data});
+    res.cache = ttl =>
+      res.setHeader('Cache-Control', ttl <= 0 ? 'no-cache, no-store, max-age=0, must-revalidate' : `public, max-age=${ttl || 31536000}, immutable`);
     req.getUserQuota = async (user: VoidUser) => {
       const agg = await prisma.file.aggregate({
         where: {

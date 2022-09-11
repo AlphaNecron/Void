@@ -4,7 +4,7 @@ import {mkdirSync} from 'fs';
 import {createServer} from 'http';
 import logger from 'lib/logger';
 import {injectBigIntSerializer, prismaCheck, readConfig, throwAndExit} from 'lib/serverUtils';
-import validate from 'lib/validate';
+import {validateConfig} from 'lib/validate';
 import {initNeutron} from 'neutron';
 import next from 'next';
 import {name, version} from 'packageInfo';
@@ -15,7 +15,7 @@ const dev = process.env.NODE_ENV === 'development';
 async function initServer() {
   try {
     injectBigIntSerializer();
-    const config = await validate(readConfig());
+    const config = await validateConfig(readConfig());
     global.config = config;
     process.env.DATABASE_URL = config.void.databaseUrl;
     await prismaCheck();
@@ -39,7 +39,7 @@ async function initServer() {
     });
     const handler = app.getRequestHandler();
     if (config.neutron.enabled && config.neutron.token && config.neutron.clientId && config.neutron.guildId)
-      initNeutron(config.neutron.token, config.neutron.clientId, config.neutron.guildId, config.neutron.logChannel);
+      initNeutron(config.neutron.token, config.neutron.clientId, config.neutron.guildId);
     app.prepare().then(() => {
       const srv = createServer(handler);
       if (process.env.VERBOSE === 'true' && dev)

@@ -50,7 +50,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           }
         });
         return res.json(r);
-      } catch (e) {}
+      } catch (e) {
+      }
     }
     delete discord.expiresAt;
     delete discord.refreshToken;
@@ -61,7 +62,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (!expired) {
       try {
         await oauth.revokeToken(discord.accessToken);
-      } catch {}
+      } catch {
+      }
     }
     await prisma.discord.delete({
       where: {
@@ -73,7 +75,6 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   default:
     return res.notAllowed();
   }
- 
 }
 
 export default withVoid(handler);

@@ -1,23 +1,29 @@
-import {ColorScheme, ColorSchemeProvider, createEmotionCache, MantineProvider} from '@mantine/core';
-import {useLocalStorage} from '@mantine/hooks';
+import {
+  ColorScheme,
+  ColorSchemeProvider,
+  createEmotionCache,
+  MantineProvider,
+  Progress,
+  Transition
+} from '@mantine/core';
+import {useInterval, useLocalStorage} from '@mantine/hooks';
 import {ModalsProvider} from '@mantine/modals';
 import {NotificationsProvider} from '@mantine/notifications';
-import {NavigationProgress, resetNavigationProgress, startNavigationProgress} from '@mantine/nprogress';
-import Dialog_FilesDeleted from 'dialogs/FilesDeleted';
-import Dialog_FilesUploaded from 'dialogs/FilesUploaded';
 import Dialog_Qr from 'dialogs/Qr';
 import useSession from 'lib/hooks/useSession';
 import {hasPermission, isAdmin} from 'lib/permission';
 import {createTheme} from 'lib/theme';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 const cache = createEmotionCache({key: 'void'});
 
 const Layout = dynamic(() => import('components/Layout'));
 
 export default function Void({Component, pageProps, router}) {
+  const [progress, setProgress] = useState(0);
+  const ticker = useInterval(() => setProgress(c => c <= 75 ? c + 1 : c), 250);
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'void-color-scheme',
     defaultValue: 'dark',
@@ -25,9 +31,15 @@ export default function Void({Component, pageProps, router}) {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
   useEffect(() => {
-    const onStart = (url: string) => url !== router.asPath && startNavigationProgress();
-    const onDone = () => resetNavigationProgress();
-
+    const onStart = () => {
+      setProgress(0);
+      ticker.start();
+    };
+    const onDone = () => {
+      ticker.stop();
+      setProgress(100);
+    };
+    
     router.events.on('routeChangeStart', onStart);
     router.events.on('routeChangeComplete', onDone);
     router.events.on('routeChangeError', onDone);
@@ -36,7 +48,7 @@ export default function Void({Component, pageProps, router}) {
       router.events.off('routeChangeComplete', onDone);
       router.events.off('routeChangeError', onDone);
     };
-  }, [router.asPath]);
+  }, []);
   return (
     <>
       <Head>
@@ -45,11 +57,15 @@ export default function Void({Component, pageProps, router}) {
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider emotionCache={cache} withGlobalStyles withNormalizeCSS theme={createTheme(colorScheme)}>
-          <NavigationProgress/>
+          <Transition transition='slide-down' mounted={progress > 0 && progress < 100} duration={200}
+            exitDuration={500}>
+            {styles => (
+              <Progress size='xs' radius={0} value={progress}
+                style={{position: 'fixed', top: 0, left: 0, right: 0, background: 'transparent', ...styles}}/>
+            )}
+          </Transition>
           <ModalsProvider modals={{
-            qr: Dialog_Qr,
-            deleted: Dialog_FilesDeleted,
-            uploaded: Dialog_FilesUploaded
+            qr: Dialog_Qr
           }}
           modalProps={{overlayBlur: 4, withCloseButton: true}}>
             <NotificationsProvider>

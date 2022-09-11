@@ -6,10 +6,11 @@ const ThemedQr = dynamic(() => import('components/ThemedQr'), {
   ssr: false
 });
 
-export default function Dialog_Qr({ innerProps }: ContextModalProps<{ value: string }>) {
+export default function Dialog_Qr({innerProps}: ContextModalProps<{ value: string }>) {
   return (
     <Stack align='center'>
-      <ThemedQr removeQrCodeBehindLogo logoImage='/logo.png' quietZone={16} qrStyle='dots' eyeRadius={8} value={innerProps.value} size={288}/>
+      <ThemedQr removeQrCodeBehindLogo logoImage='/logo.png' quietZone={16} qrStyle='dots' eyeRadius={8}
+        value={innerProps.value} size={288}/>
       <Text color='dimmed' weight={600}>Scan this QR code on your device to view the file.</Text>
     </Stack>
   );

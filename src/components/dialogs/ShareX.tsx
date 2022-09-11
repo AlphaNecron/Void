@@ -7,8 +7,8 @@ import {FiDownload} from 'react-icons/fi';
 const Preview = dynamic(() => import('components/ShareXPreview'));
 
 export default function Dialog_ShareX({open, onClose, ...props}) {
-  const { data: token } = useFetch('/api/user/token');
-  const [ shareXOptions, setShareXOptions ] = useSetState({ name: 'Void', url: 'alphanumeric', askPassword: false });
+  const {data: token} = useFetch('/api/user/token');
+  const [shareXOptions, setShareXOptions] = useSetState({name: 'Void', url: 'alphanumeric', askPassword: false});
   const base = typeof window !== 'undefined' && window.location.origin;
   const {breakpoints} = useMantineTheme();
   const showPreview = useMediaQuery(`(min-width: ${breakpoints.sm}px)`);
@@ -43,7 +43,7 @@ export default function Dialog_ShareX({open, onClose, ...props}) {
     Arguments: {
       Destination: '$input$',
       URL: shareXOptions.url,
-      ...(shareXOptions.askPassword && { Password: '$prompt:Password$' })
+      ...(shareXOptions.askPassword && {Password: '$prompt:Password$'})
     },
     URL: '$json:url$',
   };
@@ -57,19 +57,27 @@ export default function Dialog_ShareX({open, onClose, ...props}) {
         fontSize: 17
       }
     }} {...props}>
-      <div style={{ display: 'flex', marginBottom: 48, gap: 16, flexWrap: 'wrap' }}>
-        <Stack spacing={4} style={{ flex: '1 1 200px' }}>
-          <TextInput label='Config name' value={shareXOptions.name} onChange={e => setShareXOptions({ name: e.target.value })}/>
-          <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={shareXOptions.url} onChange={url => setShareXOptions({ url })}/>
-          <Checkbox label='Ask password when shortening?' mt='xs' checked={shareXOptions.askPassword} onChange={e => setShareXOptions({ askPassword: e.target.checked })}/>
+      <div style={{display: 'flex', marginBottom: 48, gap: 16, flexWrap: 'wrap'}}>
+        <Stack spacing={4} style={{flex: '1 1 200px'}}>
+          <TextInput label='Config name' value={shareXOptions.name}
+            onChange={e => setShareXOptions({name: e.target.value})}/>
+          <Select label='URL' data={['alphanumeric', 'emoji', 'invisible']} value={shareXOptions.url}
+            onChange={url => setShareXOptions({url})}/>
+          <Checkbox label='Ask password when shortening?' mt='xs' checked={shareXOptions.askPassword}
+            onChange={e => setShareXOptions({askPassword: e.target.checked})}/>
         </Stack>
         <Transition transition='slide-up' mounted={showPreview}>
-          {styles => <Preview sx={styles} name={shareXOptions.name.length > 0 ? shareXOptions.name : null} uploaderConfig={uploaderConfig} shortenerConfig={shortenerConfig}/>}
+          {styles => <Preview sx={styles} name={shareXOptions.name.length > 0 ? shareXOptions.name : null}
+            uploaderConfig={uploaderConfig} shortenerConfig={shortenerConfig}/>}
         </Transition>
       </div>
-      <Group mt='md' style={{ position: 'absolute', right: 24, bottom: 16 }}>
-        <Button leftIcon={<FiDownload/>} download='Void_Uploader.sxcu' href={URL.createObjectURL(new Blob([JSON.stringify(uploaderConfig,null,'\t')],{type:'application/json'}))} component='a'>Uploader</Button>
-        <Button leftIcon={<FiDownload/>} color='blue' download='Void_Shortener.sxcu' href={URL.createObjectURL(new Blob([JSON.stringify(shortenerConfig,null,'\t')],{type:'application/json'}))} component='a'>Shortener</Button>
+      <Group mt='md' style={{position: 'absolute', right: 24, bottom: 16}}>
+        <Button leftIcon={<FiDownload/>} download='Void_Uploader.sxcu'
+          href={URL.createObjectURL(new Blob([JSON.stringify(uploaderConfig, null, '\t')], {type: 'application/json'}))}
+          component='a'>Uploader</Button>
+        <Button leftIcon={<FiDownload/>} color='blue' download='Void_Shortener.sxcu'
+          href={URL.createObjectURL(new Blob([JSON.stringify(shortenerConfig, null, '\t')], {type: 'application/json'}))}
+          component='a'>Shortener</Button>
       </Group>
     </Modal>
   );

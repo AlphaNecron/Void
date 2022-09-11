@@ -27,7 +27,11 @@ export const errors = {
   '505': 'HTTP Version Not Supported'
 };
 
-export const noop = () => {};
+export const noop = () => {
+};
+
+export const anoop = async () => {
+};
 
 export const charsets = {
   alphanumeric: 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890',
@@ -91,7 +95,6 @@ export const highlightLanguages = { // https://gist.github.com/ppisarczyk/43962d
   'WebAssembly': ['wasm', '.wat'],
   'YAML': ['yaml', '.yml', '.reek', '.rviz', '.sublime-syntax', '.syntax', '.yaml', '.yaml-tmlanguage']
 };
-
 
 export const mimetypes = {
   '.aac': 'audio/aac',

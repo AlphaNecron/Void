@@ -11,7 +11,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     const user = await req.getUser();
     if (!user) return res.unauthorized;
     const tokens = req.body;
-    if (!(Array.isArray(tokens) && tokens.every(t => typeof t === 'string')) || tokens.length === 0) return res.forbid('Invalid tokens');
+    if (!Array.isArray(tokens) || tokens.length === 0) return res.forbid('Invalid tokens');
     if (!tokens) return res.forbid('No deletion tokens.');
     const failed: string[] = [], deleted: { id: string, fileName: string }[] = [];
     try {
@@ -26,14 +26,13 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         });
         if (file) {
           await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
-          deleted.push({ id: file.id, fileName: file.fileName });
+          deleted.push({id: file.id, fileName: file.fileName});
         } else failed.push(token);
       }
+    } catch (e) {
+      logger.debug(e);
     }
-    catch (e) {
-      logger.error(e);
-    }
-    return res.json(failed.length > 0 ? ({ success: false, failed, deleted }) : ({ success: true, deleted }));
+    return res.json(failed.length > 0 ? ({success: false, failed, deleted}) : ({success: true, deleted}));
   } else {
     if (!req.query.token) return res.forbid('No deletion token provided');
     try {
@@ -46,8 +45,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         }
       });
       await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
-      logger.info(`Deleted ${file.fileName} (${file.id}).`);
-      return res.success({ fileName: file.fileName });
+      return res.success({fileName: file.fileName});
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError)
         return res.notFound('File with specified token does not exist.');

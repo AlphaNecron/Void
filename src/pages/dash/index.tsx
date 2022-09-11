@@ -7,21 +7,25 @@ import useFetch from 'lib/hooks/useFetch';
 import {prettyBytes} from 'lib/utils';
 import {FiFile, FiGlobe, FiHardDrive, FiLink2, FiStar, FiUser, FiUsers} from 'react-icons/fi';
 
-function Atd({ children, ...props }) {
+function Atd({children, ...props}) {
   return <td {...props}>{children || <Text weight={700} color='dimmed' size='xs'>Unset</Text>}</td>;
 }
 
 export default function Page_Dashboard() {
-  const { data } = useFetch('/api/stats');
+  const {data} = useFetch('/api/stats');
   return (
     <Fallback loaded={data}>
       {() => (
         <>
-          <CardGrid itemSize={180}>
-            <StatCard title='Total size' icon={<FiHardDrive size={14}/>} value={prettyBytes(data.stats.upload.totalSize || 0)} alt={`${prettyBytes(data.stats.upload.averageSize || 0)} on average.`}/>
-            <StatCard title='Files' icon={<FiFile size={14}/>} value={data.stats.upload.totalFiles} alt={`You own ${data.stats.user.files} files.`}/>
+          <CardGrid itemSize={180} maxItems={6}>
+            <StatCard title='Total size' icon={<FiHardDrive size={14}/>}
+              value={prettyBytes(data.stats.upload.totalSize || 0)}
+              alt={`${prettyBytes(data.stats.upload.averageSize || 0)} on average.`}/>
+            <StatCard title='Files' icon={<FiFile size={14}/>} value={data.stats.upload.totalFiles}
+              alt={`You own ${data.stats.user.files} files.`}/>
             <StatCard title='Users' value={data.stats.users.count} icon={<FiUser size={14}/>}/>
-            <StatCard title='URLs' icon={<FiLink2 size={14}/>} value={data.stats.urls} alt={`You have ${data.stats.user.urls} URLs.`}/>
+            <StatCard title='URLs' icon={<FiLink2 size={14}/>} value={data.stats.urls}
+              alt={`You have ${data.stats.user.urls} URLs.`}/>
             <StatCard title='Domains' icon={<FiGlobe/>} value={data.stats.domainCount}/>
             <StatCard title='Roles' icon={<FiUsers size={14}/>} value={data.stats.roleCount}/>
           </CardGrid>

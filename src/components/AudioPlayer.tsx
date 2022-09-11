@@ -11,10 +11,15 @@ export default function AudioPlayer({src, title, ...props}) {
   const [dura, setDura] = useState(0);
   const [time, setTime] = useState(0);
   const [vol, setVol] = useState(0.5);
-  const seek = (range: number) => { ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range; };
-  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, { colonNotation: true, secondsDecimalDigits: 0 });
-  const onStateChanged = ({target}) => { setPlaying(!target.paused); setDura(target.duration); };
-  const Action = ({ icon, label, ...props }) => (
+  const seek = (range: number) => {
+    ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range;
+  };
+  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, {colonNotation: true, secondsDecimalDigits: 0});
+  const onStateChanged = ({target}) => {
+    setPlaying(!target.paused);
+    setDura(target.duration);
+  };
+  const Action = ({icon, label, ...props}) => (
     <Tooltip label={label}>
       <ActionIcon variant='subtle' size='lg' {...props}>
         {icon}
@@ -55,12 +60,15 @@ export default function AudioPlayer({src, title, ...props}) {
             ref.current.play();
         }} label={`${s2m(time)} / ${s2m(dura)}`}/>
         <VolumeIndicator level={vol * 100}/>
-        <Slider size='sm' style={{ width: 64 }} color='yellow' ml={4} value={vol} label={Math.round(vol * 100)}
+        <Slider size='sm' style={{width: 64}} color='yellow' ml={4} value={vol} label={Math.round(vol * 100)}
           onChange={v => ref.current.volume = v}
           min={0} max={1} step={0.01}/>
-        <audio style={{ display: 'none' }} ref={ref} src={src} onVolumeChange={({currentTarget: { volume }}) => setVol(volume)}
+        <audio style={{display: 'none'}} ref={ref} src={src}
+          onVolumeChange={({currentTarget: {volume}}) => setVol(volume)}
           onPause={onStateChanged} onPlay={onStateChanged}
-          onTimeUpdate={({ currentTarget: { currentTime }}) => { setTime(currentTime); }} onCanPlayThrough={({currentTarget: { duration }}) =>
+          onTimeUpdate={({currentTarget: {currentTime}}) => {
+            setTime(currentTime);
+          }} onCanPlayThrough={({currentTarget: {duration}}) =>
             setDura(duration)
           } onEnded={() => setPlaying(false)}/>
       </div>

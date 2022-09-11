@@ -1,5 +1,5 @@
-import {Autocomplete, Badge, Button, Stack, Text, Title} from '@mantine/core';
-import {useModals} from '@mantine/modals';
+import {Autocomplete, Badge, Stack, Text, Title} from '@mantine/core';
+import {openConfirmModal} from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
 import Fallback from 'components/Fallback';
 import ItemCard from 'components/ItemCard';
@@ -7,45 +7,32 @@ import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
+import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {request, validateHex} from 'lib/utils';
-import {useState} from 'react';
-import {FiEdit, FiPlus, FiSearch, FiTrash, FiX} from 'react-icons/fi';
+import {validateHex} from 'lib/utils';
+import {FiSearch, FiTrash, FiX} from 'react-icons/fi';
 
 export default function Page_Users() {
-  const {data, mutate} = useFetch('/api/admin/users');
+  const {data} = useFetch('/api/admin/users');
   const {query, handler} = useQuery();
-  const {openConfirmModal} = useModals();
   const session = useSession();
-  const [busy, setBusy] = useState(false);
-  const compRole = (a, b) => a.rolePriority > b.rolePriority && a.permissions < b.permissions;
+  const {busy, request} = useRequest();
+  const compRole = (a, b) => a.permissions < b.permissions;
   const deleteUser = (id: string) => request({
-    onStart: () => setBusy(true),
     endpoint: '/api/admin/users',
     method: 'DELETE',
-    body: {id},
-    onDone: () => setBusy(false)
+    body: {id}
   });
   return (
     <Fallback loaded={data}>
       {() => (
         <Stack>
-          <div style={{display: 'flex'}}>
-            <Button mr='xs' variant='filled' onClick={() => mutate()} leftIcon={<FiPlus/>}>Create</Button>
-            <Autocomplete style={{flex: 1}} value={query} onChange={handler.set}
-              data={Array.from(new Set([...data.filter(x => x.name !== null).map(x => x.name), ...data.filter(x => x.username !== null).map(x => x.username), ...data.map(x => x.id), ...data.filter(x => x.email !== null).map(x => x.email)]))}
-              icon={<FiSearch/>}/>
-          </div>
+          <Autocomplete style={{flex: 1}} value={query} onChange={handler.set}
+            data={Array.from(new Set([...data.filter(x => x.name !== null).map(x => x.name), ...data.filter(x => x.username !== null).map(x => x.username), ...data.map(x => x.id), ...data.filter(x => x.email !== null).map(x => x.email)]))}
+            icon={<FiSearch/>}/>
           <CardGrid itemSize={350}>
             {handler.filterList(data, ['name', 'username', 'email', 'id']).map((user, i) => (
               <ItemCard key={i} actions={[
-                {
-                  label: 'Edit',
-                  icon: <FiEdit/>,
-                  color: 'teal',
-                  disabled: session.user?.id === user.id || compRole(session.user?.role, user.role),
-                  action: () => console.log('edit')
-                },
                 {
                   label: 'Delete',
                   icon: <FiTrash/>,
@@ -76,7 +63,7 @@ export default function Page_Users() {
                     <UserAvatar size={80} user={user}/>
                     <Badge
                       sx={({fn}) => validateHex(user.role.color) ? {background: fn.rgba(user.role.color, 0.5)} : {}}>
-                      <Text sx={({ colorScheme }) => ({ fontSize: 11, color: colorScheme === 'dark' ? 'white' : '#484848' })}>
+                      <Text size={11} sx={({colorScheme}) => ({color: colorScheme === 'dark' ? 'white' : '#484848'})}>
                         {user.role.name}
                       </Text>
                     </Badge>

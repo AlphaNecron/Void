@@ -43,13 +43,14 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       if (req.headers.url && ['emoji', 'invisible'].includes(req.headers.url.toString()))
         slug = generate(req.headers.url.toString() as 'invisible' | 'emoji', cfg.void.url.length);
       const ext = f.originalname.split('.').pop();
+      const mimetype = f.mimetype === 'application/octet-stream' ? getMimetype(ext) || f.mimetype : f.mimetype;
       const file = await prisma.file.create({
         data: {
           slug,
           fileName: f.originalname,
-          // resolves uploading from third party clients
-          mimetype: f.mimetype === 'application/octet-stream' ? getMimetype(ext) || f.mimetype : f.mimetype,
-          isExploding: (req.headers.exploding || 'false') === 'true',
+          // resolves uploads from third party clients
+          mimetype,
+          isExploding: (req.headers.exploding || 'false') === 'true' && isType('image', mimetype),
           isPrivate: (req.headers.private || 'false') === 'true',
           size: f.size,
           userId: user.id
@@ -59,8 +60,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       mkdirSync(path, {recursive: true});
       await writeFile(join(path, file.id), f.buffer);
       if (isType('image', file.mimetype))
-        await sharp(f.buffer).resize(500, 250, {
-          fit: 'outside'
+        await sharp(f.buffer).resize(475, 125, {
+          fit: 'cover'
         }).toFormat('webp').toFile(join(path, `${file.id}.preview`));
       responses.push({
         name: file.fileName,

@@ -4,7 +4,7 @@ import prisma from 'lib/prisma';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
-  const { id, password } = req.body;
+  const {id, password} = req.body;
   if (!(id && password)) res.error('Invalid request.');
   const url = await prisma.url.findUnique({
     where: {
@@ -23,7 +23,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       id: url.id
     },
     data: {
-      views: {
+      clicks: {
         increment: 1
       }
     }

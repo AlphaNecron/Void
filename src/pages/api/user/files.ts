@@ -10,14 +10,20 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         userId: user.id
       }
     });
-    if (total === 0) return res.json({ page: 0, totalPages: 0, totalFiles: 0, filesPerPage: +req.query.chunk, files: [] });
+    if (total === 0) return res.json({
+      page: 0,
+      totalPages: 0,
+      totalFiles: 0,
+      filesPerPage: +req.query.chunk,
+      files: []
+    });
     const chunk = Number(req.query.chunk || total);
     if (chunk < 1) return res.error('Invalid chunk.');
     const maxPage = Math.ceil(total / chunk);
     const page = Math.min(Math.max(1, +req.query.page || 1), maxPage);
     const files = await prisma.file.findMany({
-      ...(req.query.page && { skip: (page-1)*chunk }),
-      ...(req.query.chunk && { take: chunk }),
+      ...(req.query.page && {skip: (page - 1) * chunk}),
+      ...(req.query.chunk && {take: chunk}),
       where: {
         userId: user.id,
       },

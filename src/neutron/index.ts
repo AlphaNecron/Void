@@ -1,11 +1,11 @@
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {REST} from '@discordjs/rest';
-import {Routes} from 'discord-api-types/v10';
-import {Client, Intents, MessageEmbed, TextChannel} from 'discord.js';
+import {ActivityType, GatewayIntentBits, Routes} from 'discord-api-types/v10';
+import {Client} from 'discord.js';
 import {readdirSync} from 'fs';
 import logger from 'lib/logger';
-import {isAdmin} from 'lib/permission';
-import {CachedUser, NeutronCommand, NeutronModal} from 'neutron/types';
+import {NeutronCommand, NeutronModal} from 'neutron/types';
+import withNeutron from 'neutron/withNeutron';
 import {neutronVersion} from 'packageInfo';
 import {resolve} from 'path';
 
@@ -17,20 +17,15 @@ export class Neutron {
   
   private _modalHandlers: Record<string, NeutronModal> = {};
   private _commands: Record<string, NeutronCommand> = {};
-  private _userCache: Record<string, CachedUser> = {};
   
-  private _logChannel: TextChannel;
-  
-  constructor(token: string, clientId: string, guildId: string, logChannel: string) {
-    this._client = new Client({intents: [Intents.FLAGS.GUILDS]});
+  constructor(token: string, clientId: string, guildId: string) {
+    this._client = new Client({intents: [GatewayIntentBits.Guilds]});
     this._client.login(token);
     this._clientId = clientId;
     this._guildId = guildId;
     this._rest = new REST({version: '10'}).setToken(token);
     this._client.once('ready', () => {
       logger.info(`Initialized neutron@${neutronVersion}.`, 'Neutron');
-      if (logChannel?.length > 0)
-        this._logChannel = this._client.guilds.cache.get(guildId).channels.cache.get(logChannel) as TextChannel;
       this.initPresenceStatus();
       this.initEvents();
       this.initCommands();
@@ -38,16 +33,11 @@ export class Neutron {
     });
   }
   
-  public log(event: string, message: string, alt: string) {
-    if (!this._logChannel) return;
-    const embed = new MessageEmbed().setTitle(event).setFields({ name: message, value: alt });
-    this._logChannel.send({ embeds: [embed] });
-  }
-  
-  public resetCache = () => this._userCache = {};
-  
   private initPresenceStatus() {
-    this._client.user.setActivity({ name: 'some users', type: 'WATCHING' });
+    prisma.user.count().then(c => this._client.user.setActivity({
+      name: `${c} user${c === 1 ? '' : 's'}.`,
+      type: ActivityType.Watching
+    }));
   }
   
   private initModalHandlers() {
@@ -80,54 +70,26 @@ export class Neutron {
   }
   
   private initEvents() {
-    this._client.on('interactionCreate', async interaction => {
-      const id = interaction.member.user.id;
-      let user = this._userCache[id];
-      if (!user) {
-        const query = await global.prisma.discord.findUnique({
-          where: {
-            id
-          },
-          select: {
-            user: {
-              select: {
-                id: true,
-                role: {
-                  select: {
-                    permissions: true
-                  }
-                }
-              }
-            }
-          }
-        });
-        this._userCache[id] = query ? {
-          id: query.user.id,
-          isAdmin: isAdmin(query.user.role.permissions)
-        } : {
-          id: null
-        };
-        user = this._userCache[id];
-      }
-      if (interaction.isCommand()) {
-        const {commandName} = interaction;
+    this._client.on('interactionCreate', withNeutron(async context => {
+      const user = await context.getUser();
+      if (context.isChatInputCommand()) {
+        const {commandName} = context;
         const cmd = this._commands[commandName];
-        if (!cmd) return interaction.reply({content: 'This command does not exist!', ephemeral: true});
-        return !user.id || cmd.requiresAdmin && !user.isAdmin ? await interaction.reply({
-          content: 'You do not have permissions to execute this command!',
-          ephemeral: true
-        }) : await cmd.execute(interaction, user);
-      } else if (interaction.isModalSubmit()) {
-        const { customId } = interaction;
+        if (!cmd) await context.whisper('This command does not exist!');
+        else if (!user?.canUseBot || cmd.requiresAdmin && !user.isAdmin)
+          await context.whisper('You do not have permissions to execute this command!');
+        else await cmd.execute(context, user);
+      } else if (context.isModalSubmit()) {
+        const {customId} = context;
         const handler = this._modalHandlers[customId];
-        if (!handler) return;
-        await handler.handle(interaction, user);
+        if (handler)
+          await handler.handle(context, user);
       }
-    });
+    }));
   }
 }
 
-export function initNeutron(token: string, clientId: string, guildId: string, logChannel: string) {
+export function initNeutron(token: string, clientId: string, guildId: string) {
   if (!(token && clientId && guildId)) return;
-  global.neutron = new Neutron(token, clientId, guildId, logChannel);
+  global.neutron = new Neutron(token, clientId, guildId);
 }

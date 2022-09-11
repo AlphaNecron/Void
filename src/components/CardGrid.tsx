@@ -1,14 +1,17 @@
 import {SimpleGrid} from '@mantine/core';
+import {useMemo} from 'react';
 
-export default function CardGrid({ children, itemSize }) {
+export default function CardGrid({children, itemSize, maxItems = 4}) {
+  const breakpoints = useMemo(() => {
+    const bp = [
+      {minWidth: 2 * itemSize, cols: 2}
+    ];
+    for (let i = 3; i <= maxItems; i++)
+      bp.push({minWidth: (i + 1) * itemSize, cols: i});
+    return bp;
+  }, [maxItems, itemSize]);
   return (
-    <SimpleGrid cols={1} breakpoints={[
-      { minWidth: 7*itemSize, cols: 6 },
-      { minWidth: 6*itemSize, cols: 5 },
-      { minWidth: 5*itemSize, cols: 4 },
-      { minWidth: 4*itemSize, cols: 3 },
-      { minWidth: 2.1*itemSize, cols: 2 }
-    ]}>
+    <SimpleGrid cols={1} breakpoints={breakpoints}>
       {children}
     </SimpleGrid>
   );

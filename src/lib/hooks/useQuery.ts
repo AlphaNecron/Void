@@ -1,9 +1,8 @@
-import {useDebouncedValue} from '@mantine/hooks';
-import {useState} from 'react';
+import {useDebouncedValue, useInputState} from '@mantine/hooks';
 
-export default function useQuery(delay = 300) {
-  const [query, setQuery] = useState('');
-  const [debounced] = useDebouncedValue(query, delay, { leading: true });
+export default function useQuery(delay = 500) {
+  const [query, setQuery] = useInputState('');
+  const [debounced] = useDebouncedValue(query, delay, {leading: true});
   const matcher = (text: string) => (text || '').toLowerCase().includes((debounced || '').toLowerCase());
   return {
     query,

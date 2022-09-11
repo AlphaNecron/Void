@@ -11,6 +11,7 @@ import {
   Transition
 } from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
+import useBusy from 'lib/hooks/useBusy';
 import prettyMilliseconds from 'pretty-ms';
 import {useRef, useState} from 'react';
 import {FiDownload, FiFastForward, FiFlag, FiInfo, FiMoreHorizontal, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
@@ -21,7 +22,7 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
   const [playing, setPlaying] = useState(false);
   const [dura, setDura] = useState(0);
   const [time, setTime] = useState(0);
-  const [busy, setBusy] = useState(false);
+  const {busy, set} = useBusy();
   const [vol, setVol] = useState(0.5);
   const [show, setShow] = useState(false);
   const ticker = useRef<NodeJS.Timeout>();
@@ -33,7 +34,7 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
       setDura(duration);
   };
   const toggle = () => ref.current[playing ? 'pause' : 'play']();
-  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, { colonNotation: true, secondsDecimalDigits: 0 });
+  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, {colonNotation: true, secondsDecimalDigits: 0});
   const seek = (range: number) => {
     ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range;
   };
@@ -45,16 +46,17 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
     </Tooltip>
   );
   return (
-    <div style={{ margin: -16 }}>
+    <div style={{margin: -16}}>
       <video onRateChange={({currentTarget: {playbackRate}}) => setRate(playbackRate)} onMouseMove={() => {
         setShow(true);
         if (ticker.current)
           window.clearTimeout(ticker.current);
         ticker.current = setTimeout(() => setShow(false), 3e3);
       }} onLoadedData={onDurationChanged} onVolumeChange={({currentTarget: {volume}}) => setVol(volume)}
-      onTimeUpdate={({currentTarget: {currentTime}}) => setTime(currentTime)} onWaiting={() => setBusy(true)}
-      onPlaying={() => setBusy(false)} onDurationChange={onDurationChanged}
-      style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0}} onClick={toggle} src={src} ref={ref} {...props}
+      onTimeUpdate={({currentTarget: {currentTime}}) => setTime(currentTime)} onWaiting={() => set(true)}
+      onPlaying={() => set(false)} onDurationChange={onDurationChanged}
+      style={{position: 'absolute', left: 0, right: 0, bottom: 0, top: 0}} onClick={toggle} src={src}
+      ref={ref} {...props}
       onPause={() => setPlaying(false)} onPlay={e => {
         setPlaying(true);
         onDurationChanged(e);
@@ -89,7 +91,8 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
                   ref.current.volume = v;
                   setVol(v);
                 }} label={v => (v * 100).toFixed(0)} min={0} step={0.01} max={1} style={{width: 80}}/>
-                <Action icon={pin ? <TbPinnedOff/> : <TbPin/>} label={pin ? 'Unpin' : 'Pin'} onClick={() => setPin(p => !p)}/>
+                <Action icon={pin ? <TbPinnedOff/> : <TbPin/>} label={pin ? 'Unpin' : 'Pin'}
+                  onClick={() => setPin(p => !p)}/>
                 <Menu>
                   <Tooltip label='More'>
                     <Menu.Target>

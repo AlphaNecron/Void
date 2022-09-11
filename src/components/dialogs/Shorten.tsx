@@ -1,16 +1,16 @@
 import {Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard} from '@mantine/hooks';
-import {showNotification} from '@mantine/notifications';
+import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
+import {showError, showSuccess} from 'lib/notification';
 import {hasPermission, Permission} from 'lib/permission';
-import {request} from 'lib/utils';
 import {useEffect, useState} from 'react';
 import {FiScissors} from 'react-icons/fi';
 import {RiClipboardFill, RiErrorWarningFill} from 'react-icons/ri';
 import {object as yupObject, string as yupString} from 'yup';
 
-export default function Dialog_Shorten({ onClose, opened, onShorten, ...props }) {
+export default function Dialog_Shorten({onClose, opened, onShorten, ...props}) {
   const schema = yupObject({
     Destination: yupString().required().url(),
     URL: yupString().oneOf(['alphanumeric', 'emoji', 'invisible'], 'Invalid URL type.').default('alphanumeric'),
@@ -27,6 +27,7 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
     }
   });
   const [canUseVanity, setCanUseVanity] = useState(false);
+  const {request} = useRequest();
   const session = useSession(true);
   const clip = useClipboard();
   useEffect(() =>
@@ -40,21 +41,11 @@ export default function Dialog_Shorten({ onClose, opened, onShorten, ...props })
         if (u.url) {
           clip.copy(u.url);
           onShorten();
-          return showNotification({
-            title: 'Copied the URL to your clipboard.',
-            icon: <RiClipboardFill/>,
-            color: 'green',
-            message: <Anchor target='_blank' href={u.url}>{u.url}</Anchor>
-          });
+          return showSuccess('Copied the URL to your clipboard.', <RiClipboardFill/>, <Anchor target='_blank'
+            href={u.url}>{u.url}</Anchor>);
         }
       },
-      onError: e =>
-        showNotification({
-          title: 'Failed to shorten the URL.',
-          icon: <RiErrorWarningFill/>,
-          color: 'red',
-          message: e
-        })
+      onError: e => showError('Failed to shorten the URL.', <RiErrorWarningFill/>, e)
     });
   return (
     <Modal size={600} opened={opened} onClose={onClose} {...props} title='Shorten URLs'>

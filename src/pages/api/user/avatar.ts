@@ -7,12 +7,10 @@ import {VoidRequest, VoidResponse} from 'middleware/withVoid';
 import {resolve} from 'path';
 import sharp from 'sharp';
 
-// TODO: optimize image before writing, convert it to webp.
-
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
-  const { id } = req.query;
+  const {id} = req.query;
   if (id && isAdmin(user.role.permissions) && req.method === 'GET') {
     const path = resolve(cfg.void.upload.outputDirectory, 'avatars', id.toString());
     if (existsSync(path)) {
@@ -22,7 +20,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   }
   const path = resolve(cfg.void.upload.outputDirectory, 'avatars', user.id);
   switch (req.method) {
-  case 'POST': {
+  case 'PATCH': {
     if (!req.file)
       return res.error('No avatar uploaded.');
     if (req.file.size >= 2 * 1048576)

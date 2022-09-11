@@ -1,3 +1,4 @@
+import type {CSSObject, MantineTheme} from '@mantine/core';
 import {
   ActionIcon,
   Affix,
@@ -6,11 +7,9 @@ import {
   Checkbox,
   ColorInput,
   Container,
-  CSSObject,
   Group,
   Highlight,
   Image,
-  MantineTheme,
   Popover,
   ScrollArea,
   Stack,
@@ -22,7 +21,6 @@ import {
 } from '@mantine/core';
 import {useForm, yupResolver} from '@mantine/form';
 import {useClipboard, useDisclosure} from '@mantine/hooks';
-import {showNotification} from '@mantine/notifications';
 import ConfirmButton from 'components/ConfirmButton';
 import DashboardCard from 'components/DashboardCard';
 import UpdateAvatarDialog from 'components/dialogs/UpdateAvatar';
@@ -32,8 +30,10 @@ import TextPair from 'components/TextPair';
 import UserAvatar from 'components/UserAvatar';
 import {format} from 'fecha';
 import useFetch from 'lib/hooks/useFetch';
+import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {request} from 'lib/utils';
+import {showError, showSuccess, showWarning} from 'lib/notification';
+import {userSchema} from 'lib/validate';
 import router, {useRouter} from 'next/router';
 import pretty from 'pretty-ms';
 import {useState} from 'react';
@@ -43,36 +43,15 @@ import {IoCopyOutline, IoEyeOffOutline, IoEyeOutline, IoRefreshOutline} from 're
 import {RiBracesFill, RiClipboardFill, RiErrorWarningFill, RiKey2Fill, RiKeyLine, RiStarFill} from 'react-icons/ri';
 import {SiDiscord} from 'react-icons/si';
 import {TbUnlink} from 'react-icons/tb';
-import {bool as yupBool, object as yupObject, string as yupString} from 'yup';
 
 export default function Page_Account() {
   const [reveal, setReveal] = useState(false);
   const {isLogged, user, revalidate} = useSession();
-  const clipboard = useClipboard({timeout: 500});
   const {reload} = useRouter();
-  const schema = yupObject({
-    name: yupString().nullable().min(2, {message: 'Display name should be longer than 2 characters.'}).max(12, 'Display name should not longer than 12 characters.'),
-    username: yupString().nullable().matches(/^(\S+)([A-Za-z_]\w*)$/ug, 'Username must be alphanumeric.').min(3, {message: 'Username should be longer than 3 characters.'}),
-    password: yupString().nullable().matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{6,}$/g, {
-      excludeEmptyString: true,
-      message: 'Password must match shown criteria.'
-    }),
-    embed: yupObject({
-      enabled: yupBool().required(),
-      color: yupString().nullable().matches(/^#([\da-f]{3}|[\da-f]{6})$/i, {
-        message: 'Invalid color.',
-        excludeEmptyString: false
-      }),
-      siteName: yupString().nullable(),
-      siteNameUrl: yupString().url('Site name URL must be a valid URL.').nullable(),
-      title: yupString().nullable(),
-      description: yupString().nullable(),
-      author: yupString().nullable(),
-      authorUrl: yupString().url('Author URL must be a valid URL.').nullable()
-    })
-  });
+  const {busy, request} = useRequest();
+  const {copy} = useClipboard();
   const form = useForm({
-    validate: yupResolver(schema),
+    validate: yupResolver(userSchema),
     initialValues: isLogged && {
       ...user, embed: user.embed || {
         enabled: false,
@@ -102,12 +81,7 @@ export default function Page_Account() {
       endpoint: '/api/user/token',
       method: 'PATCH',
       callback() {
-        showNotification({
-          title: 'Successfully regenerated your private token.',
-          message: '',
-          color: 'green',
-          icon: <RiKey2Fill/>
-        });
+        showSuccess('Successfully regenerated your private token.', <RiKey2Fill/>);
         mutateToken();
       }
     });
@@ -135,28 +109,17 @@ export default function Page_Account() {
       method: 'PATCH',
       body: values,
       callback() {
-        showNotification({
-          title: 'Successfully updated your user.',
-          icon: <FaUserCheck/>,
-          message: '',
-          color: 'green'
-        });
+        showSuccess('Successfully updated your user.', <FaUserCheck/>);
         revalidate();
       },
-      onError: e => showNotification({
-        title: 'Failed to update your user.',
-        message: e,
-        color: 'red',
-        icon: <RiErrorWarningFill/>
-      })
+      onError: e => showError('Failed to update your user.', <RiErrorWarningFill/>, e)
     });
   const [opened, dHandler] = useDisclosure(false);
-  const [busy, setBusy] = useState(false);
   const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
   const deleteAvatar = () => request({
     endpoint: '/api/user/avatar',
     method: 'DELETE',
-    onDone: () => router.reload()
+    onDone: reload
   });
   return (
     <Fallback loaded={isLogged}>
@@ -203,7 +166,7 @@ export default function Page_Account() {
                   </div>
                 </div>
               </DashboardCard>
-              
+
               <DashboardCard icon={<RiBracesFill/>} rightItem={
                 <Popover position='right' transition='skew-down'>
                   <Popover.Target>
@@ -289,7 +252,7 @@ export default function Page_Account() {
                 </div>
               </DashboardCard>
             </form>
-            
+
             {dataToken && (
               <DashboardCard icon={<RiKey2Fill/>} title='Private token'>
                 <TextInput color='red' mt='md' value={dataToken.privateToken} type={reveal ? 'text' : 'password'}
@@ -303,12 +266,9 @@ export default function Page_Account() {
                       </Tooltip>
                       <Tooltip label='Copy'>
                         <ActionIcon onClick={() => {
-                          clipboard.copy(dataToken.privateToken);
-                          showNotification({
-                            title: 'Copied the private token to your clipboard.',
-                            message: 'Remember to keep it secret as other people can use the token to upload or shorten without your permission.',
-                            color: 'yellow', icon: <RiClipboardFill/>
-                          });
+                          copy(dataToken.privateToken);
+                          showWarning('Copied the private token to your clipboard.',
+                            <RiClipboardFill/>, 'Remember to keep it secret as other people can use the token to upload or shorten without your permission.');
                         }}>
                           <IoCopyOutline/>
                         </ActionIcon>
@@ -322,7 +282,7 @@ export default function Page_Account() {
                   } readOnly icon={<RiKeyLine/>} autoComplete='off'/>
               </DashboardCard>
             )}
-            
+
             {refData && (
               <DashboardCard icon={<RiStarFill/>} title='Referral'>
                 {refData.length > 0 ? (
@@ -355,7 +315,7 @@ export default function Page_Account() {
                 )}
               </DashboardCard>
             )}
-            
+
             <DashboardCard icon={<SiDiscord/>} title='Discord account'>
               {discordInfo ? (
                 <div style={{margin: 16, display: 'flex'}}>
@@ -368,15 +328,12 @@ export default function Page_Account() {
                     )}
                     <ConfirmButton loading={busy} onClick={() =>
                       request({
-                        onStart: () => setBusy(true),
                         endpoint: '/api/discord',
                         method: 'DELETE',
-                        onDone() {
+                        onDone: () =>
                           mutate(null, {
                             rollbackOnError: false
-                          });
-                          setBusy(false);
-                        }
+                          })
                       })} size='xs' leftIcon={<TbUnlink/>} color='red' mt='xs'>
                       Unlink
                     </ConfirmButton>
@@ -387,16 +344,14 @@ export default function Page_Account() {
                   <Text weight={700}>This account has not yet been linked, click the button below to link.</Text>
                   <Button loading={busy} style={{backgroundColor: '#7289DA'}} onClick={() =>
                     request({
-                      onStart: () => setBusy(true),
                       endpoint: '/api/discord/auth',
-                      callback: r => router.push(r.url),
-                      onDone: () => setBusy(false)
+                      callback: r => router.push(r.url)
                     })} leftIcon={<SiDiscord/>}>Link</Button>
                 </Stack>
               )}
             </DashboardCard>
           </Stack>
-          
+
           <Affix position={{bottom: 32, right: 32}} zIndex={0}>
             <Button.Group>
               <Button type='reset' form='account_form' leftIcon={<FiX/>} variant='default'>

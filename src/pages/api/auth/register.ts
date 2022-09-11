@@ -2,7 +2,7 @@ import {hash} from 'argon2';
 import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
-  const { referral, username, email, password } = req.body;
+  const {referral, username, email, password} = req.body;
   if (!(referral && username && password))
     return res.forbid('Invalid credentials.');
   const ref = await prisma.referralCode.findUnique({

@@ -6,7 +6,7 @@ export default function StatCard({title, value, alt = '', ...props}) {
     <DashboardCard title={title} {...props}>
       <Stack spacing={0} mb='-xs'>
         <Title order={2}>{value}</Title>
-        <Text weight={700} size='xs' style={{ display: 'inline-flex'}} color='void'>{alt}</Text>
+        <Text weight={700} size='xs' style={{display: 'inline-flex'}} color='void'>{alt}</Text>
       </Stack>
     </DashboardCard>
   );

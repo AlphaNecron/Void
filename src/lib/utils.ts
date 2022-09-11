@@ -1,6 +1,6 @@
 import {MANTINE_COLORS} from '@mantine/core';
-import {noop, units} from 'lib/constants';
-import {FetchParameters} from 'lib/types';
+import {units} from 'lib/constants';
+import {colorRegex} from 'lib/validate';
 import generate from './urlGenerator';
 
 export function generateToken(): string {
@@ -12,22 +12,12 @@ export function addToDate(date: Date, seconds: number): Date {
   return date;
 }
 
-export function request({ onStart, endpoint, method, callback = noop, headers, onDone = noop, body, onError = noop }: FetchParameters): Promise<void> {
-  if (onStart)
-    onStart();
-  return fetch(endpoint, {
-    method: method || 'GET',
-    headers: {'Content-Type': 'application/json',...headers},
-    body: JSON.stringify(body)
-  }).then(r => r.json()).then(r => {
-    if (r.error)
-      throw new Error(r.error);
-    return r;
-  }).then(callback).catch(e => onError(e.message || e.name)).finally(onDone);
+export function isEmpty(obj): boolean {
+  return Object.keys(obj).length === 0;
 }
 
 export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
-  if (color.substring(0, 1) !== '#') return false;
+  /*if (color.substring(0, 1) !== '#') return false;
   color = color.substring(1);
   switch (color.length) {
   case 3:
@@ -38,7 +28,8 @@ export function validateHex(color: string): boolean { // https://gist.github.com
     return /^[\dA-F]{8}$/i.test(color);
   default:
     return false;
-  }
+  }*/
+  return colorRegex.test(color);
 }
 
 export function validateColor(color: string, extraColors: string[] = [], fallback = 'void'): string {

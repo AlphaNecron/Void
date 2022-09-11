@@ -30,14 +30,13 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       if (!user) return res.unauthorized();
       if (user.id !== file.user.id)
         return res.forbid('You are not allowed to view this file.');
-    }
-    else if (file.isExploding) {
+    } else if (file.isExploding) {
+      res.cache(0);
       if (file.views === 0) {
         const user = await req.getUser(req.headers.authorization);
         if (user?.id !== file.user.id) return res.error('Exploding image.');
       }
-    } else
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
     if (isType('image', file.mimetype) && req.query.preview === 'true') {
       let data;
       try {
@@ -47,7 +46,8 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           res.setHeader('Content-Disposition', `filename="${file.fileName}"`);
           return res.end(data);
         }
-      } catch {}
+      } catch {
+      }
     }
     res.setHeader('Content-Type', file.mimetype);
     let data;
@@ -69,8 +69,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         res.setHeader('Content-Range', 'bytes');
       }
       return res.end(data);
-    }
-    catch {
+    } catch {
       if (!data) return res.notFound('File cannot be read.');
     }
   } else {

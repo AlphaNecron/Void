@@ -19,13 +19,15 @@ import {
 } from '@mantine/core';
 import {Dropzone} from '@mantine/dropzone';
 import {useClipboard, useListState, useSetState} from '@mantine/hooks';
-import {useModals} from '@mantine/modals';
-import {showNotification} from '@mantine/notifications';
+import {openModal} from '@mantine/modals';
 import FileIndicator from 'components/FileIndicator';
+import Dialog_FilesUploaded from 'dialogs/FilesUploaded';
 import {format} from 'fecha';
+import useRequest from 'lib/hooks/useRequest';
 import useUpload from 'lib/hooks/useUpload';
 import {isType} from 'lib/mime';
-import {prettyBytes, request} from 'lib/utils';
+import {showError, showSuccess} from 'lib/notification';
+import {prettyBytes} from 'lib/utils';
 import prettyMilliseconds from 'pretty-ms';
 import {useEffect, useState} from 'react';
 import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
@@ -44,7 +46,8 @@ function getIconColor(status, theme) {
 }
 
 function ImageUploadIcon({status, ...props}) {
-  return status === 'accepted' ? <FiUpload {...props} /> : status === 'rejected' ? <FiX {...props} /> : <FiFile {...props} />;
+  return status === 'accepted' ? <FiUpload {...props} /> : status === 'rejected' ? <FiX {...props} /> :
+    <FiFile {...props} />;
 }
 
 function DropzoneBody({restrictions, theme, status = 'idle'}) {
@@ -79,8 +82,8 @@ type VoidFile = {
 export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   const [files, fHandler] = useListState<VoidFile>([]);
   const selected = files.filter(f => f.selected);
+  const {request} = useRequest();
   const [progress, setProgress] = useState({progress: 0, speed: 0, estimated: 0});
-  const {openContextModal} = useModals();
   const [restrictions, setRestrictions] = useState({
     bypass: false,
     blacklistedExtensions: [],
@@ -101,16 +104,11 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   };
   const [busy, setBusy] = useState(false);
   const theme = useMantineTheme();
-  const clipboard = useClipboard();
+  const clip = useClipboard();
   const [prefs, setPrefs] = useSetState({exploding: false, url: 'alphanumeric', private: false});
   // handlers
   const errorHandler = (message: string) => {
-    showNotification({
-      title: 'Failed to upload the file(s).',
-      message,
-      color: 'red',
-      icon: <RiSignalWifiErrorFill/>
-    });
+    showError('Failed to upload the file(s).', <RiSignalWifiErrorFill/>, message);
     setBusy(false);
   };
   const uploadedHandler = data => {
@@ -121,33 +119,25 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     fHandler.setState(remaining);
     if (data.length > 1) {
       onClose();
-      openContextModal('uploaded', {
+      openModal({
         title: 'Files uploaded',
-        innerProps: {
-          files: data,
-          onCopy: clipboard.copy
-        }
+        children: <Dialog_FilesUploaded files={data}/>
       });
     } else {
-      showNotification({
-        title: <Title order={6}>File uploaded!</Title>,
-        message: (
-          <div>
-            <Group grow spacing={4} my='sm'>
-              <Button variant='subtle' component='a' href={data[0].url} target='_blank'
-                leftIcon={<FiExternalLink/>}>View</Button>
-              <Button variant='subtle' component='a' href={data[0].thumbUrl} target='_blank' color='blue'
-                leftIcon={<FiFile/>}>Raw</Button>
-              <Button variant='subtle' component='a' href={data[0].deletionUrl} target='_blank' color='red'
-                leftIcon={<FiTrash/>}>Delete</Button>
-            </Group>
-            <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
-          </div>
-        ),
-        color: 'green',
-        icon: <RiUploadCloud2Fill/>
-      });
-      clipboard.copy(data[0].url);
+      showSuccess(<Title order={6}>File uploaded!</Title>, <RiUploadCloud2Fill/>, (
+        <div>
+          <Group grow spacing={4} my='sm'>
+            <Button variant='subtle' component='a' href={data[0].url} target='_blank'
+              leftIcon={<FiExternalLink/>}>View</Button>
+            <Button variant='subtle' component='a' href={data[0].thumbUrl} target='_blank' color='blue'
+              leftIcon={<FiFile/>}>Raw</Button>
+            <Button variant='subtle' component='a' href={data[0].deletionUrl} target='_blank' color='red'
+              leftIcon={<FiTrash/>}>Delete</Button>
+          </Group>
+          <Text color='dimmed' weight={700} size='xs'>The URL has been copied to your clipboard.</Text>
+        </div>
+      ));
+      clip.copy(data[0].url);
     }
     setBusy(false);
     onClose();
@@ -184,16 +174,14 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     <Modal size={600} opened={opened} onClose={onClose} {...props} title='Upload files'>
       <Stack>
         <Dropzone loading={busy} multiple {...(restrictions.bypass ? {} : {maxSize: restrictions.maxSize})}
-          onReject={files => showNotification({
-            title: 'Following files are not accepted!',
-            message: files.map((x, i) => <Text
+          onReject={files => showError(
+            'Following files are not accepted!',
+            <RiFileWarningFill/>,
+            files.map((x, i) => <Text
               style={{maxWidth: 325, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
               inline
               key={i}>{x.file.name}</Text>
-            ),
-            color: 'red',
-            icon: <RiFileWarningFill/>
-          })} onDrop={f =>
+            ))} onDrop={f =>
             fHandler.append(...f.filter(file => restrictions.bypass || !restrictions.blacklistedExtensions?.includes(file.name.split('.').pop())).map((f: VoidFile, i) => {
               f.selected = i <= restrictions.maxFileCount || restrictions.bypass;
               return f;
@@ -238,10 +226,11 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                   {files.map((x, i) => (
                     <HoverCard key={i} withinPortal position='right'>
                       <HoverCard.Target>
-                        <Button style={{ maxWidth: 200, position: 'relative' }} size='xs' onClick={() => fHandler.setItem(i, (() => {
-                          x.selected = !x.selected;
-                          return x;
-                        })())} variant={x.selected ? 'filled' : 'default'}>
+                        <Button style={{maxWidth: 200, position: 'relative'}} size='xs'
+                          onClick={() => fHandler.setItem(i, (() => {
+                            x.selected = !x.selected;
+                            return x;
+                          })())} variant={x.selected ? 'filled' : 'default'}>
                           <div style={{display: 'flex', alignItems: 'center'}}>
                             <FileIndicator mimetype={x.type} size={14}/>
                             <Text style={{
@@ -257,7 +246,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                       <HoverCard.Dropdown>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                           {(isType('image', x.type)) && (
-                            <Image styles={{
+                            <Image imageProps={{loading: 'lazy'}} styles={{
                               image: {
                                 objectFit: 'contain',
                                 maxWidth: '15vw',
@@ -291,7 +280,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
                   fHandler.setState([]);
                   previews.forEach(i => URL.revokeObjectURL(i));
                   previews = [];
-                }} size='xs' leftIcon={<VscClearAll/>} disabled={busy || files.length === 0} color='red' style={{ minWidth: 150 }}>
+                }} size='xs' leftIcon={<VscClearAll/>} disabled={busy || files.length === 0} color='red'
+                style={{minWidth: 150}}>
                   Clear all
                 </Button>
               </Group>

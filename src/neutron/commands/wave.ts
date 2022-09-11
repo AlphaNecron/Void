@@ -4,7 +4,7 @@ import type {NeutronCommand} from 'neutron/types';
 export default {
   name: 'wave',
   description: 'Create an invite wave',
-  async execute(interaction) {
+  async execute(context) {
     const users = await prisma.user.findMany({
       where: {
         role: {
@@ -35,7 +35,7 @@ export default {
     const current = new Date();
     const date = addToDate(current, 2592000);
     const eligible = users.filter(user => user.referralCodes.filter(ref => ref.expiresAt.getTime() > current.getTime()).length < user.role.maxRefCodes);
-    for (const { id } of eligible) {
+    for (const {id} of eligible) {
       await prisma.user.update({
         where: {
           id
@@ -49,6 +49,6 @@ export default {
         }
       });
     }
-    await interaction.reply(`Successfully granted one invite code to ${eligible.length} users!`);
+    await context.reply(`Successfully granted one invite code to ${eligible.length} users!`);
   }
 } as NeutronCommand;

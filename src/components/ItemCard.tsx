@@ -51,6 +51,5 @@ export default function ItemCard({
         </Group>
       </Group>
     </Card>
-  )
-  ;
+  );
 }

@@ -3,13 +3,13 @@ import {
   Center,
   ColorSwatch,
   Group,
+  HoverCard,
   RingProgress,
   ScrollArea,
   Stack,
   Table,
   Text,
   TextInput,
-  Tooltip,
   useMantineTheme
 } from '@mantine/core';
 import CardGrid from 'components/CardGrid';
@@ -42,15 +42,15 @@ export default function Page_Panel() {
   const render = (...pairs: string[][]) => pairs.map(([x, y]) => <TextPair label={x} value={y} key={x}/>);
   const createLegend = (color: string, description: string) => (
     <Group key={description}>
-      <ColorSwatch size={16} radius={0} color={color}/>
-      <Text>{description}</Text>
+      <ColorSwatch size={12} radius={0} color={color}/>
+      <Text weight={600} size='xs' color='dimmed'>{description}</Text>
     </Group>
   );
   return (
     <Fallback loaded={data}>
       {() => (
         <Stack>
-          <CardGrid itemSize={350}>
+          <CardGrid itemSize={300}>
             <DashboardCard title='System' icon={<MdDesktopWindows/>}>
               {render(
                 ['Manufacturer', data.system.manufacturer],
@@ -58,7 +58,7 @@ export default function Page_Panel() {
                 ['BIOS version', data.bios.version],
                 ['BIOS release date', data.bios.releaseDate],
                 ['Current time', new Date(data.time.current).toLocaleString()],
-                ['Uptime', prettyMilliseconds(data.time.uptime * 1e3, { verbose: true, secondsDecimalDigits: 0 })],
+                ['Uptime', prettyMilliseconds(data.time.uptime * 1e3, {verbose: true, secondsDecimalDigits: 0})],
                 ['Timezone', data.time.timezone]
               )}
             </DashboardCard>
@@ -86,21 +86,24 @@ export default function Page_Panel() {
                     ['Total', prettyBytes(data.memory.total)]
                   )}
                 </div>
-                <Tooltip label={
-                  <Stack spacing={0}>
-                    {[['yellow', 'Buffers'], ['grape', 'Cached'], ['blue', 'Active']].map(x => createLegend(colors[x[0]][6], x[1]))}
-                  </Stack>
-                }>
-                  <RingProgress thickness={4} size={96} roundCaps sections={[
-                    {value: data.memory.buffers / data.memory.total * 100, color: 'yellow'},
-                    {value: data.memory.cached / data.memory.total * 100, color: 'grape'},
-                    {value: data.memory.active / data.memory.total * 100, color: 'blue'}
-                  ]} label={
-                    <Center>
-                      <CgSmartphoneRam size={28}/>
-                    </Center>
-                  }/>
-                </Tooltip>
+                <HoverCard position='left' withArrow>
+                  <HoverCard.Target>
+                    <RingProgress thickness={4} size={96} roundCaps sections={[
+                      {value: data.memory.buffers / data.memory.total * 100, color: 'yellow'},
+                      {value: data.memory.cached / data.memory.total * 100, color: 'grape'},
+                      {value: data.memory.active / data.memory.total * 100, color: 'blue'}
+                    ]} label={
+                      <Center>
+                        <CgSmartphoneRam size={28}/>
+                      </Center>
+                    }/>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Stack spacing={0}>
+                      {[['yellow', 'Buffers'], ['grape', 'Cached'], ['blue', 'Active']].map(x => createLegend(colors[x[0]][6], x[1]))}
+                    </Stack>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </Group>
             </DashboardCard>
             <DashboardCard title='Operating system' icon={<VscTerminalLinux/>}>
@@ -161,14 +164,15 @@ export default function Page_Panel() {
           </DashboardCard>
           {logs && (
             <DashboardCard icon={<IoMdListBox/>} title='Logs' rightItem={
-              <TextInput variant='unstyled' type='search' style={{ minWidth: 250 }} ml='md' rightSection={
+              <TextInput variant='unstyled' type='search' style={{minWidth: 250}} ml='md' rightSection={
                 <ActionIcon onClick={() => handler.set('')}>
                   <FiX/>
                 </ActionIcon>
-              } icon={<FiSearch/>} value={query} onChange={({ currentTarget: { value }}) => handler.set(value) } placeholder='Search something...'
+              } icon={<FiSearch/>} value={query} onChange={({currentTarget: {value}}) => handler.set(value)}
+              placeholder='Search something...'
               size='xs'/>
             }>
-              <Console mt='xs' lines={handler.filterList(logs, ['message'])}/>
+              <Console mt='xs' entries={handler.filterList(logs, ['message'])}/>
             </DashboardCard>
           )}
         </Stack>

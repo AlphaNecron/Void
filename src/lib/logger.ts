@@ -17,23 +17,22 @@ class Logger {
   
   constructor(defaultPrefix = 'Void') {
     this._logCache = new TTLCache({
-      max: 25,
-      ttl: 60 * 60 * 1e3,
+      max: 50,
+      ttl: 1 << 24,
       noUpdateTTL: true
     });
     this._defaultPrefix = defaultPrefix;
     this._useFallback = !isUnicodeSupported();
-    mkdirSync('logs', { recursive: true });
-    this._logWriter = createWriteStream(resolve('logs', `void_${format(new Date(), 'YYYY_MM_dd_HH_mm_ss')}.log`), { flags: 'wx' });
+    mkdirSync('logs', {recursive: true});
+    this._logWriter = createWriteStream(resolve('logs', `void_${format(new Date(), 'YYYY_MM_dd_HH_mm_ss')}.log`), {flags: 'wx'});
+    process.once('exit', () => this._logWriter.close());
     this._verbose = process.env.NODE_ENV === 'development' || process.env.VERBOSE === 'true';
   }
   
   public query(count = 25): LogEntry[] {
-    let i = 0;
     const entries: LogEntry[] = [];
-    for (const entry of this._logCache.values()) {
+    for (const [i, entry] of this._logCache.entries()) {
       entries.push(entry);
-      i++;
       if (i >= count) break;
     }
     return entries;
@@ -67,6 +66,7 @@ class Logger {
   info = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'info', msg);
   debug = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'debug', msg);
   warn = (msg: string, prefix = this._defaultPrefix) => this.log(prefix, 'warn', msg);
+  
   error(err: string | Error, prefix = this._defaultPrefix) {
     if (err instanceof String)
       return this.log(prefix, 'error', err as string);
