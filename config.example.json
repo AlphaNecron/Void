@@ -15,18 +15,18 @@
       "clientId": "YOUR_DISCORD_CLIENT_ID",
       "clientSecret": "YOUR_DISCORD_CLIENT_SECRET"
     },
-    "file": {
+    "upload": {
       "outputDirectory": "./uploads",
       "blacklistedExtensions": [
         ".zip",
         ".exe"
       ]
     },
-    "neutron": {
-      "enabled": false,
-      "token": "YOUR_DISCORD_BOT_TOKEN",
-      "clientId": "YOUR_DISCORD_BOT_APPLICATION_ID",
-      "guildId": "YOUR_GUILD_ID"
-    }
+  },
+  "neutron": {
+    "enabled": false,
+    "token": "YOUR_DISCORD_BOT_TOKEN",
+    "clientId": "YOUR_DISCORD_BOT_APPLICATION_ID",
+    "guildId": "YOUR_GUILD_ID"
   }
 }
