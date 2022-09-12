@@ -1,7 +1,7 @@
 {
   "name": "void",
-  "version": "1.0.0-prealpha",
-  "neutronVersion": "0.1.0-alpha",
+  "version": "1.0.0-preview01",
+  "neutronVersion": "0.1.0-preview01",
   "private": true,
   "engines": {
     "node": "^16"

@@ -50,6 +50,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           fileName: f.originalname,
           // resolves uploads from third party clients
           mimetype,
+          // exploding is not supported for non-image files
           isExploding: (req.headers.exploding || 'false') === 'true' && isType('image', mimetype),
           isPrivate: (req.headers.private || 'false') === 'true',
           size: f.size,
@@ -59,7 +60,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       const path = resolve(cfg.void.upload.outputDirectory, user.id);
       mkdirSync(path, {recursive: true});
       await writeFile(join(path, file.id), f.buffer);
-      if (isType('image', file.mimetype))
+      if (isType('image', file.mimetype) && ['png', 'jpg', 'jpeg', 'tiff'].includes(ext))
         await sharp(f.buffer).resize(475, 125, {
           fit: 'cover'
         }).toFormat('webp').toFile(join(path, `${file.id}.preview`));
