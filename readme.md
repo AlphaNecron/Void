@@ -111,13 +111,23 @@
         ".exe"
       ]
       // Prevent users from uploading files with certain extensions. (**)
+    },
+    "neutron": {
+      "enabled": false,
+      // Whether to enable the Discord bot
+      "token": "YOUR_DISCORD_BOT_TOKEN",
+      // Your Discord bot token
+      "clientId": "YOUR_DISCORD_APP_CLIENT_ID",
+      // Your Discord bot client id
+      "guildId": "YOUR_GUILD_ID",
+      // The guild Neutron should be working on
     }
   }
 }
   ```
 
 (*): If it is empty, a random key will be generated, otherwise, it must be at least 32 characters.  
-(**) Users with `ADMINISTRATION` permission will not be affected by this.
+(**) Users with `ADMINISTRATION` permission or higher will not be affected by this.
 
 ### Features
 

@@ -1,5 +1,10 @@
 import {Role} from '@prisma/client';
 
+export type Config = {
+  void: Void;
+  neutron: Neutron;
+}
+
 // void related
 
 export type Void = {
@@ -48,11 +53,6 @@ export type Neutron = {
   token: string;
   clientId: string;
   guildId: string;
-}
-
-export type Config = {
-  void: Void;
-  neutron: Neutron;
 }
 
 // client

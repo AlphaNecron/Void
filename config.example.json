@@ -12,8 +12,8 @@
       "length": 6
     },
     "discordProvider": {
-      "clientId": "YOUR DISCORD CLIENT ID",
-      "clientSecret": "YOUR DISCORD CLIENT SECRET"
+      "clientId": "YOUR_DISCORD_CLIENT_ID",
+      "clientSecret": "YOUR_DISCORD_CLIENT_SECRET"
     },
     "file": {
       "outputDirectory": "./uploads",
@@ -21,6 +21,12 @@
         ".zip",
         ".exe"
       ]
+    },
+    "neutron": {
+      "enabled": false,
+      "token": "YOUR_DISCORD_BOT_TOKEN",
+      "clientId": "YOUR_DISCORD_BOT_APPLICATION_ID",
+      "guildId": "YOUR_GUILD_ID"
     }
   }
 }
