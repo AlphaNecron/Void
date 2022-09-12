@@ -37,7 +37,7 @@
   cd Void
   cp config.example.json config.json
   nano config.json # edit the config file
-  docker pull alphanecron/void:v0
+  docker pull alphanecron/void:v1
   docker run -p 3000:3000 -v $PWD/config.json:/void/config.json -d alphanecron/void:v1
   ```
 
@@ -51,7 +51,7 @@
   docker-compose up --build -d
   ```
 
-### Reverse proxy (nginx)
+### Reverse proxy (with `nginx`)
 
   ```nginx
   server {
@@ -135,19 +135,19 @@
 - Fast with eye-catching UI
 - Easy to install
 - Embed customization
-- Custom file viewer
+- Custom file viewer for texts, videos, images and audio files
 - Multiple URL charsets (`alphanumeric`, `emoji` and `invisible`)
-- Comes with Docker image
+- Comes with prebuilt Docker images
 - Discord integration (Login with Discord)
 - Open registration with referral codes
 - Web upload with progress
-- Dedicated Discord bot, mobile application as well as desktop application.  
+- Dedicated Discord bot, mobile application as well as desktop application (WIP).  
   and more...
 
 ### Techstack
 
 - [NextJS](https://nextjs.org) (Framework)
-- [ReactJS](https://reactjs.org) (User interface)
+- [ReactJS](https://reactjs.org) (Front-end)
 - [NodeJS](https://nodejs.org) (Back-end)
 - [Mantine](https://mantine.dev) (UI library)
 - [Iron Session](https://www.npmjs.com/package/iron-session) (Authentication)
