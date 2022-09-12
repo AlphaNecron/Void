@@ -29,7 +29,7 @@ export default function Dialog_CreateRole({opened, onClose, highestPerm, callbac
       endpoint: '/api/admin/roles',
       method: 'POST',
       body: v,
-      onDone() {
+      callback() {
         callback();
         onClose();
         form.reset();
