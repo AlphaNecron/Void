@@ -24,17 +24,18 @@ export default function Dialog_CreateRole({opened, onClose, highestPerm, callbac
     }
   });
 
-  const handleSubmit = v => {
+  const handleSubmit = v =>
     request({
       endpoint: '/api/admin/roles',
       method: 'POST',
       body: v,
+      onDone() {
+        callback();
+        onClose();
+        form.reset();
+      },
       onError: e => showError(e, <RiErrorWarningFill />)
     });
-    callback();
-    onClose();
-    form.reset();
-  };
 
   const perms = useMemo(() => Object.values(Permission).filter(p => typeof p === 'number' && p < highestPerm).map(p => ({
     label: <strong>{Permission[p]}</strong>, value: p.toString()

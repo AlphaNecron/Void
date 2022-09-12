@@ -21,13 +21,14 @@
 ### Installation / Deployment
 
   ```sh
-  git clone https://github.com/AlphaNecron/Void.git
+  git clone https://github.com/AlphaNecron/Void.git --branch=v1
   cd Void
   yarn install # or npm install
   cp config.example.json config.json
   nano config.json # edit the config file
-  yarn prod # to build and start production server
-  yarn dev # to start development server
+  yarn prod # to build and start the production server
+  # or
+  yarn dev # to start the development server
   ```
 
 ### Docker
