@@ -106,7 +106,7 @@
     },
     "upload": {
       "outputDirectory": "./uploads",
-      // The directory to save upload files.
+      // The directory to save uploaded files.
       "blacklistedExtensions": [
         ".zip",
         ".exe"
