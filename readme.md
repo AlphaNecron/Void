@@ -104,7 +104,7 @@
       "clientSecret": "YOUR DISCORD CLIENT SECRET"
       // Discord client secret, you can grab one in the Application dashboard as well.
     },
-    "file": {
+    "upload": {
       "outputDirectory": "./uploads",
       // The directory to save upload files.
       "blacklistedExtensions": [
@@ -113,16 +113,16 @@
       ]
       // Prevent users from uploading files with certain extensions. (**)
     },
-    "neutron": {
-      "enabled": false,
-      // Whether to enable the Discord bot
-      "token": "YOUR_DISCORD_BOT_TOKEN",
-      // Your Discord bot token
-      "clientId": "YOUR_DISCORD_APP_CLIENT_ID",
-      // Your Discord bot client id
-      "guildId": "YOUR_GUILD_ID",
-      // The guild Neutron should be working on
-    }
+  },
+  "neutron": {
+    "enabled": false,
+    // Whether to enable the Discord bot
+    "token": "YOUR_DISCORD_BOT_TOKEN",
+    // Your Discord bot token
+    "clientId": "YOUR_DISCORD_APP_CLIENT_ID",
+    // Your Discord bot client id
+    "guildId": "YOUR_GUILD_ID",
+    // The guild Neutron should be working on
   }
 }
   ```
