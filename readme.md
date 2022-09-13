@@ -75,7 +75,7 @@
 
 ### Config schema
 
-  ```json5
+```json5
 {
   "void": {
     "useHttps": false,
@@ -112,7 +112,7 @@
         ".exe"
       ]
       // Prevent users from uploading files with certain extensions. (**)
-    },
+    }
   },
   "neutron": {
     "enabled": false,
@@ -125,7 +125,7 @@
     // The guild Neutron should be working on
   }
 }
-  ```
+```
 
 (*): If it is empty, a random key will be generated, otherwise, it must be at least 32 characters.  
 (**) Users with `ADMINISTRATION` permission or higher will not be affected by this.
