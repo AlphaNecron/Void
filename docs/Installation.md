@@ -4,6 +4,10 @@
 
 # Installation
 
+**Default credentials**
+  - Username: `admin`
+  - Password: `voiduser`
+
 With Void there are 3 ways to install and deploy:
 1. [Manual](#manual)
 2. [Docker](#Docker)
