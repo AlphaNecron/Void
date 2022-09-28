@@ -55,3 +55,12 @@
   max_size = 104857600 # Max upload size (users only), in bytes
   blacklisted = ['exe'] # Blacklisted file extensions (users only)
   ```
+
+## Bot permissions
+  **These permissions are required for the bot to work properly (27712):**
+  
+    - Add reactions
+    - Read messages
+    - Send messages 
+    - Manage messages
+    - Embed links
