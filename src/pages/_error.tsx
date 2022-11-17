@@ -1,9 +1,9 @@
-import {Button, Text} from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import Container from 'components/Container';
-import {errors} from 'lib/constants';
+import { errors } from 'lib/constants';
 import Head from 'next/head';
 import Link from 'next/link';
-import {IoIosArrowBack} from 'react-icons/io';
+import { IoIosArrowBack } from 'react-icons/io';
 
 export default function Error({code, error}) {
   const title = `${code} ${error}`;
@@ -15,7 +15,7 @@ export default function Error({code, error}) {
         <meta property='og:title' content={title} />
         <meta property='theme-color' content='#FC8181' />
       </Head>
-      <Container py={16} px={128} style={{textAlign: 'center'}}>
+      <Container py={64} px={128} style={{textAlign: 'center'}}>
         <Text weight={700} size={72} mb='sm' variant='gradient'
           gradient={{from: '#D1C4E9', to: '#5E35B1', deg: 30}}>{code}</Text>
         <Text mb='xl' size={20} weight={600}>{is404 ? (

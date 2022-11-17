@@ -1,7 +1,7 @@
 import {MANTINE_COLORS} from '@mantine/core';
-import {units} from 'lib/constants';
+import {timeUnits, units} from 'lib/constants';
 import {colorRegex} from 'lib/validate';
-import generate from './urlGenerator';
+import generate from 'lib/urlGenerator';
 
 export function generateToken(): string {
   return `${generate('alphanumeric', 16)}.${Buffer.from(Date.now().toString()).toString('base64').replace(/=+$/, '')}`;
@@ -12,23 +12,26 @@ export function addToDate(date: Date, seconds: number): Date {
   return date;
 }
 
+export function prettySec(sec: number, options: {
+  pad?: boolean;
+  verbose?: boolean;
+  withColon?: boolean;
+}): string {
+  const hours = Math.floor(sec / 3600),
+    rem = (sec - (hours * 3600)),
+    minutes = Math.floor(rem / 60),
+    seconds = Math.floor(rem - (minutes * 60));
+  return [hours, minutes, seconds]
+    .map(v => options.pad ? v.toString().padStart(2, '0') : v.toString())
+    .map((v, i) => options.withColon ? v : `${v} ${timeUnits[i][options.verbose ? 1 : 0]}${v === (options.pad ? '01' : '1') && options.verbose ? '' : 's'}`)
+    .join(options.withColon ? ':' : ' ');
+}
+
 export function isEmpty(obj): boolean {
   return Object.keys(obj).length === 0;
 }
 
-export function validateHex(color: string): boolean { // https://gist.github.com/rijkvanzanten/560dd06c4e2143aebd552abaeeee3e9b
-  /*if (color.substring(0, 1) !== '#') return false;
-  color = color.substring(1);
-  switch (color.length) {
-  case 3:
-    return /^[\dA-F]{3}$/i.test(color);
-  case 6:
-    return /^[\dA-F]{6}$/i.test(color);
-  case 8:
-    return /^[\dA-F]{8}$/i.test(color);
-  default:
-    return false;
-  }*/
+export function validateHex(color: string): boolean {
   return colorRegex.test(color);
 }
 

@@ -1,9 +1,9 @@
-import {Button, Group, Stack, Title} from '@mantine/core';
+import { Button, Group, Stack, Title } from '@mantine/core';
 import Container from 'components/Container';
 import UserAvatar from 'components/UserAvatar';
 import useSession from 'lib/hooks/useSession';
 import router from 'next/router';
-import {FiChevronLeft, FiLogOut} from 'react-icons/fi';
+import { FiChevronLeft, FiLogOut } from 'react-icons/fi';
 
 export default function LogoutPage() {
   const {isLogged, user, revalidate} = useSession(true, () => router.push('/auth/login'));

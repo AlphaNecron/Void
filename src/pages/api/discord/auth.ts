@@ -1,10 +1,10 @@
-import oauth from 'lib/oauth';
 import generate from 'lib/urlGenerator';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import internal from 'void/internal';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
-  if (oauth) {
-    const url = oauth.generateAuthUrl({
+  if (internal.oauth) {
+    const url = internal.oauth.generateAuthUrl({
       scope: ['identify'],
       state: generate('alphanumeric', 16)
     });

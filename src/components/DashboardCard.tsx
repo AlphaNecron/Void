@@ -1,4 +1,4 @@
-import {Card, Group, Text} from '@mantine/core';
+import { Card, Group, Text } from '@mantine/core';
 
 export default function DashboardCard({title, children, rightItem = null, icon = null, ...props}) {
   return (

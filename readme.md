@@ -10,7 +10,9 @@
 ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/v1?colorA=000000&colorB=4527A0&logo=github&style=for-the-badge)
 </div>
 
-> ⚠️ This is just a development branch, it **should not** be used for production.
+> **Warning**
+> This release is not fully stable and may subject to major changes in the future.  
+> Neutron is not ready for usage due to uncompleted features.
 
 ### Requirements
 
@@ -119,10 +121,8 @@
     // Whether to enable the Discord bot
     "token": "YOUR_DISCORD_BOT_TOKEN",
     // Your Discord bot token
-    "clientId": "YOUR_DISCORD_APP_CLIENT_ID",
+    "clientId": "YOUR_DISCORD_APP_CLIENT_ID"
     // Your Discord bot client id
-    "guildId": "YOUR_GUILD_ID",
-    // The guild Neutron should be working on
   }
 }
 ```
@@ -149,7 +149,7 @@
 
 - [NextJS](https://nextjs.org) (Framework)
 - [ReactJS](https://reactjs.org) (Front-end)
-- [NodeJS](https://nodejs.org) (Back-end)
+- [NodeJS](https://nodejs.org) (Back-end runtime)
 - [Mantine](https://mantine.dev) (UI library)
 - [Iron Session](https://www.npmjs.com/package/iron-session) (Authentication)
 - [Prisma](https://www.prisma.io) (ORM)

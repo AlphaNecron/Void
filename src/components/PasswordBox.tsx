@@ -1,6 +1,6 @@
-import {Box, PasswordInput, Popover, Progress, Text} from '@mantine/core';
-import {useState} from 'react';
-import {BiCheck, BiX} from 'react-icons/bi';
+import { Box, PasswordInput, Popover, Progress, Text } from '@mantine/core';
+import { useState } from 'react';
+import { BiCheck, BiX } from 'react-icons/bi';
 
 function PasswordRequirement({meets, label}: { meets: boolean; label: string }) {
   return (
@@ -40,7 +40,6 @@ export default function PasswordBox({value = '', ...props}) {
       opened={popoverOpened}
       position='bottom-start'
       withArrow
-      withinPortal
       trapFocus={false}
       transition='pop-top-left'
     >

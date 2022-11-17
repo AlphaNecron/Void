@@ -1,9 +1,9 @@
-import {ActionIcon, Center, Group, Slider, Stack, Title, Tooltip} from '@mantine/core';
+import { ActionIcon, Center, Group, Slider, Stack, Title, Tooltip } from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
-import prettyMilliseconds from 'pretty-ms';
-import {useRef, useState} from 'react';
-import {FiFastForward, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
-import {RiMusicFill} from 'react-icons/ri';
+import { useRef, useState } from 'react';
+import { FiFastForward, FiPause, FiPlay, FiRewind } from 'react-icons/fi';
+import { RiMusicFill } from 'react-icons/ri';
+import { prettySec } from 'lib/utils';
 
 export default function AudioPlayer({src, title, ...props}) {
   const ref = useRef<HTMLAudioElement>();
@@ -14,7 +14,10 @@ export default function AudioPlayer({src, title, ...props}) {
   const seek = (range: number) => {
     ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range;
   };
-  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, {colonNotation: true, secondsDecimalDigits: 0});
+  const s2m = (secs: number) => prettySec(secs * 1e3, {
+    withColon: true,
+    pad: true
+  });
   const onStateChanged = ({target}) => {
     setPlaying(!target.paused);
     setDura(target.duration);

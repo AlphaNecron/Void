@@ -1,6 +1,6 @@
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 import multer from 'multer';
-import type {NextApiRequest, NextApiResponse} from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 function run(middleware) {
   return (req, res) =>

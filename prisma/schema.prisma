@@ -19,7 +19,7 @@ model User {
   privateToken  String?        @unique
   roleName      String         @default("User")
   role          Role           @relation(fields: [roleName], references: [name], onDelete: Cascade)
-  domain        String?
+  domains       String[]
   files         File[]
   urls          Url[]
   referralCodes ReferralCode[]

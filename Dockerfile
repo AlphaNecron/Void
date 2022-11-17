@@ -6,7 +6,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY src ./src
 COPY prisma ./prisma
 
-COPY package.json yarn.lock next.config.js next-env.d.ts void-env.d.ts tsconfig.json .eslintrc.js ./
+COPY package.json yarn.lock next.config.mjse next-env.d.ts void-env.d.ts tsconfig.json .eslintrc.js index.ts ./
 
 RUN yarn install
 
@@ -19,6 +19,7 @@ WORKDIR /void
 
 COPY --from=builder /build/node_modules ./node_modules
 
+COPY --from=builder /build/void.ts ./index.ts
 COPY --from=builder /build/src ./src
 COPY --from=builder /build/prisma ./prisma
 COPY --from=builder /build/.next ./.next

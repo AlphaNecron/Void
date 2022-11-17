@@ -3,11 +3,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true'
 });
 
+/**
+ * @type {Partial<import('next').NextConfig>}
+ */
 const config = {
   reactStrictMode: true,
-  swcMinify: true,
-  env: {
-    voidVersion: `${name}@${version}`
+  publicRuntimeConfig: {
+    void: `${name}@${version}`
   }
 };
 

@@ -1,6 +1,6 @@
-import {ActionIcon, Anchor, Group, Text} from '@mantine/core';
-import {useState} from 'react';
-import {FiEye, FiEyeOff} from 'react-icons/fi';
+import { ActionIcon, Anchor, Group, Text } from '@mantine/core';
+import { useState } from 'react';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export default function Spoil({url, children, ...props}) {
   const [reveal, setReveal] = useState(false);

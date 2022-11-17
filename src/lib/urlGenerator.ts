@@ -1,4 +1,4 @@
-import {charsets} from './constants';
+import { charsets } from './constants';
 
 export default function generate(charset: 'alphanumeric' | 'emoji' | 'invisible', length: number): string {
   let rand = '', i: number;

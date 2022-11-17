@@ -1,8 +1,8 @@
-import {ActionIcon, Group, ScrollArea, TextInput} from '@mantine/core';
+import { ActionIcon, Group, ScrollArea, TextInput } from '@mantine/core';
 import useQuery from 'lib/hooks/useQuery';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import {ReactNode} from 'react';
-import {FiPlus, FiSearch} from 'react-icons/fi';
+import { ReactNode } from 'react';
+import { FiPlus, FiSearch } from 'react-icons/fi';
 
 export default function List({
   items,

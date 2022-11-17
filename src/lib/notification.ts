@@ -1,6 +1,6 @@
-import {MantineColor} from '@mantine/core';
-import {showNotification} from '@mantine/notifications';
-import type {ReactNode} from 'react';
+import { MantineColor } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import type { ReactNode } from 'react';
 
 export function notify({title, message, icon, color}: {
   title: ReactNode,

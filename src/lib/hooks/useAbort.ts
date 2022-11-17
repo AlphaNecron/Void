@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useAbort(): { renew: () => void, abort: () => void, signal: AbortSignal, onAbort(handler: () => void) } {
   const [controller, setController] = useState(new AbortController());

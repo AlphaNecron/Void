@@ -1,5 +1,5 @@
-import logger from 'lib/logger';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 export function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
@@ -9,7 +9,7 @@ export function handler(req: VoidRequest, res: VoidResponse) {
     return res.forbid('No ID');
   }
   if (reason.length <= 3) return res.forbid('Invalid reason.');
-  logger.info(`User reported file: ${id} for ${reason}`);
+  internal.logger.info(`User reported file: ${id} for ${reason}`);
   return res.success();
 }
 

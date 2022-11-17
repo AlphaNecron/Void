@@ -1,4 +1,4 @@
-import {NavLink, ThemeIcon} from '@mantine/core';
+import { NavLink, ThemeIcon } from '@mantine/core';
 
 export default function NavigationItem({
   highlight = false,

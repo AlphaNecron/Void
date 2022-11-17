@@ -10,17 +10,17 @@ import {
   Transition,
   useMantineColorScheme
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {NextLink} from '@mantine/next';
+import { useForm } from '@mantine/form';
+import NextLink from 'components/NextLink';
 import Container from 'components/Container';
 import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {showError, showSuccess} from 'lib/notification';
+import { showError, showSuccess } from 'lib/notification';
 import router from 'next/router';
-import {useEffect, useState} from 'react';
-import {FiChevronLeft, FiEdit, FiLock, FiLogIn, FiMoon, FiSun, FiUser} from 'react-icons/fi';
-import {RiCheckFill, RiErrorWarningFill} from 'react-icons/ri';
-import {SiDiscord} from 'react-icons/si';
+import { useEffect, useState } from 'react';
+import { FiChevronLeft, FiEdit, FiLock, FiLogIn, FiMoon, FiSun, FiUser } from 'react-icons/fi';
+import { RiCheckFill, RiErrorWarningFill } from 'react-icons/ri';
+import { SiDiscord } from 'react-icons/si';
 
 export default function LoginPage() {
   const [mount, setMount] = useState(false);

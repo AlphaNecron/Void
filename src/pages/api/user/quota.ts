@@ -1,5 +1,5 @@
-import {hasPermission, Permission} from 'lib/permission';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { hasPermission, Permission } from 'lib/permission';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();

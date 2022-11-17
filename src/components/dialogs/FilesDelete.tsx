@@ -1,4 +1,4 @@
-import {Text, Tooltip} from '@mantine/core';
+import { Text, Tooltip } from '@mantine/core';
 import List from 'components/List';
 
 export default function Dialog_FileDelete({files}: { files: string[] }) {

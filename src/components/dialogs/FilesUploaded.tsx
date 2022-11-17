@@ -1,6 +1,6 @@
-import {ActionIcon, CopyButton, Group, Text, Tooltip} from '@mantine/core';
+import { ActionIcon, CopyButton, Group, Text, Tooltip } from '@mantine/core';
 import List from 'components/List';
-import {FiCheck, FiClipboard, FiExternalLink, FiTrash} from 'react-icons/fi';
+import { FiCheck, FiClipboard, FiExternalLink, FiTrash } from 'react-icons/fi';
 
 export default function Dialog_FilesUploaded({files}: { files: { name: string, url: string, deletionUrl: string }[] }) {
   const LabelledAction = ({label, tooltipColor = '', ...props}) => (

@@ -1,5 +1,5 @@
-import {Button, ButtonProps} from '@mantine/core';
-import {useState} from 'react';
+import { Button, ButtonProps } from '@mantine/core';
+import { useState } from 'react';
 
 export default function ConfirmButton({onClick, children, ...props}: ButtonProps & { onClick: (e) => void }) {
   const [pending, setPending] = useState(false);

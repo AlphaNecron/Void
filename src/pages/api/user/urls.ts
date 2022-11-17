@@ -1,6 +1,6 @@
-import {hasPermission, Permission} from 'lib/permission';
-import prisma from 'lib/prisma';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { hasPermission, Permission } from 'lib/permission';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -8,7 +8,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (!hasPermission(user.role.permissions, Permission.SHORTEN)) return res.noPermission(Permission.SHORTEN);
   if (req.method === 'DELETE') {
     if (!req.body.id) return res.forbid('No URL ID.');
-    const url = await prisma.url.findUnique({
+    const url = await internal.prisma.url.findUnique({
       where: {
         id: req.body.id
       },
@@ -18,14 +18,14 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     });
     if (!url) return res.notFound('URL not found.');
     if (url.user.id !== user.id) return res.forbid('You are not allowed to delete this URL.');
-    await prisma.url.delete({
+    await internal.prisma.url.delete({
       where: {
         id: url.id
       }
     });
     return res.success();
   } else {
-    const urls = await prisma.url.findMany({
+    const urls = await internal.prisma.url.findMany({
       where: {
         userId: user.id
       },

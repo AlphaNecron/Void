@@ -1,15 +1,13 @@
-import {EmbedBuilder} from 'discord.js';
+import {EmbedBuilder, time} from 'discord.js';
 import type {NeutronCommand} from 'neutron/types';
 import {uptime} from 'os';
-import {neutronVersion, version} from 'packageInfo';
-import pretty from 'pretty-ms';
+import {getRelativeDate} from 'neutron/utils';
+import internal from 'void/internal';
 
 export default {
   name: 'system',
   description: 'View system info',
   execute: async function (context) {
-    const vUptime = pretty(process.uptime() * 1e3, {secondsDecimalDigits: 0});
-    const up = pretty(uptime() * 1e3, {secondsDecimalDigits: 0});
     const embed = new EmbedBuilder()
       .setColor('#7289DA')
       .addFields(
@@ -19,19 +17,19 @@ export default {
         },
         {
           name: 'Void version',
-          value: `v${version}`
+          value: `v${internal.server.version}`
         },
         {
           name: 'Neutron version',
-          value: `v${neutronVersion}`
+          value: `v${internal.neutron.version}`
         },
         {
           name: 'Void uptime',
-          value: vUptime
+          value: time(getRelativeDate(-process.uptime() * 1e3), 'R')
         },
         {
           name: 'System uptime',
-          value: up
+          value: time(getRelativeDate(-uptime() * 1e3), 'R')
         });
     await context.whisper({embeds: [embed]});
   }

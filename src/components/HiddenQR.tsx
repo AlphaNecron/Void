@@ -1,7 +1,7 @@
-import {Center, Paper, Text, Tooltip, useMantineTheme} from '@mantine/core';
+import { Center, Paper, Text, Tooltip, useMantineTheme } from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import {useState} from 'react';
-import {QRCode} from 'react-qrcode-logo';
+import { useState } from 'react';
+import { QRCode } from 'react-qrcode-logo';
 
 export default function HiddenQR({value, size = 96}: { value: string, size?: number }) {
   const [show, setShow] = useState(false);

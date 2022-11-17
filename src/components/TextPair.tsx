@@ -1,4 +1,4 @@
-import {Text} from '@mantine/core';
+import { Text } from '@mantine/core';
 import useThemeValue from 'lib/hooks/useThemeValue';
 
 export default function TextPair({label, value, ...props}) {

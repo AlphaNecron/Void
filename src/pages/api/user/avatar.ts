@@ -1,25 +1,25 @@
-import {IMAGE_MIME_TYPE} from '@mantine/dropzone';
-import {existsSync, readFileSync} from 'fs';
-import cfg from 'lib/config';
-import {isAdmin} from 'lib/permission';
-import {withMulter} from 'middleware/withMulter';
-import {VoidRequest, VoidResponse} from 'middleware/withVoid';
-import {resolve} from 'path';
+import { IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { existsSync, readFileSync } from 'fs';
+import internal from 'void/internal';
+import { isAdmin } from 'lib/permission';
+import { withMulter } from 'middleware/withMulter';
+import { VoidRequest, VoidResponse } from 'middleware/withVoid';
+import { resolve } from 'path';
 import sharp from 'sharp';
-import {rm} from 'fs/promises';
+import { rm } from 'fs/promises';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
   const {id} = req.query;
   if (id && isAdmin(user.role.permissions) && req.method === 'GET') {
-    const path = resolve(cfg.void.upload.outputDirectory, 'avatars', id.toString());
+    const path = resolve(internal.config.void.upload.outputDirectory, 'avatars', id.toString());
     if (existsSync(path)) {
       res.setHeader('Content-Type', 'image/webp');
       return res.end(readFileSync(path));
     } else return res.notFound('Avatar for provided user was not found.');
   }
-  const path = resolve(cfg.void.upload.outputDirectory, 'avatars', user.id);
+  const path = resolve(internal.config.void.upload.outputDirectory, 'avatars', user.id);
   switch (req.method) {
   case 'PATCH': {
     if (!req.file)
@@ -38,7 +38,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     return res.end(readFileSync(path));
   }
   case 'DELETE': {
-    await rm(resolve(cfg.void.upload.outputDirectory, 'avatars', user.id));
+    await rm(resolve(internal.config.void.upload.outputDirectory, 'avatars', user.id));
     return res.success();
   }
   default:

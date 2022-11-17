@@ -1,5 +1,5 @@
-import {Code, ScrollArea, ScrollAreaProps, useMantineTheme} from '@mantine/core';
-import {LogEntry} from 'lib/types';
+import { Code, ScrollArea, ScrollAreaProps, useMantineTheme } from '@mantine/core';
+import { LogEntry } from 'lib/types';
 
 type ConsoleProps = {
   entries: LogEntry[]
@@ -20,7 +20,9 @@ export default function Console({entries, ...props}: ConsoleProps) {
         {entries.map((entry, i) => (
           <p key={i}>
             <span style={{color: colors.gray[7]}}>
+              <>
                 [{entry.timestamp}] {entry.prefix} ›
+              </>
             </span>
             <span style={{color: colorize(entry.level)}}> {entry.level} </span>
             <span>{entry.message}</span>

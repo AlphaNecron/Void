@@ -1,17 +1,16 @@
-import {mkdirSync} from 'fs';
-import {writeFile} from 'fs/promises';
-import cfg from 'lib/config';
-import {VoidRequest, VoidResponse} from 'lib/middleware/withVoid';
-import {getMimetype, isType} from 'lib/mime';
-import {hasPermission, Permission} from 'lib/permission';
-import prisma from 'lib/prisma';
+import { mkdirSync } from 'fs';
+import { writeFile } from 'fs/promises';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse } from 'lib/middleware/withVoid';
+import { getMimetype, isType } from 'lib/mime';
+import { hasPermission, Permission } from 'lib/permission';
 import generate from 'lib/urlGenerator';
-import {withMulter} from 'middleware/withMulter';
-import {join, resolve} from 'path';
+import { withMulter } from 'middleware/withMulter';
+import { join, resolve } from 'path';
 import sharp from 'sharp';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
-  const baseUrl = `http${cfg.void.useHttps ? 's' : ''}://${req.headers.host}`;
+  const baseUrl = `http${internal.config.void.useHttps ? 's' : ''}://${req.headers.host}`;
   switch (req.method) {
   case 'GET': {
     const user = await req.getUser();
@@ -19,7 +18,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     const bypass = hasPermission(user.role.permissions, Permission.BYPASS_LIMIT);
     return res.json({
       bypass,
-      blacklistedExtensions: cfg.void.upload.blacklistedExtensions,
+      blacklistedExtensions: internal.config.void.upload.blacklistedExtensions,
       maxSize: Number(user.role.maxFileSize),
       maxFileCount: user.role.maxFileCount
     });
@@ -30,7 +29,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (!req.files || req.files.length === 0) return res.error('No files uploaded.');
     const quota = await req.getUserQuota(user);
     if (!hasPermission(user.role.permissions, Permission.BYPASS_LIMIT)) {
-      if (req.files.some(file => file.size > user.role.maxFileSize || cfg.void.upload.blacklistedExtensions.includes(file.originalname.split('.').pop())))
+      if (req.files.some(file => file.size > user.role.maxFileSize || internal.config.void.upload.blacklistedExtensions.includes(file.originalname.split('.').pop())))
         return res.forbid('Blacklisted extension or file size exceeds allowed.');
       if (req.files.length > user.role.maxFileCount)
         return res.forbid('File count exceeds maximum.');
@@ -39,12 +38,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     }
     const responses = [];
     for (const f of req.files) {
-      let slug = generate('alphanumeric', cfg.void.url.length);
+      let slug = generate('alphanumeric', internal.config.void.url.length);
       if (req.headers.url && ['emoji', 'invisible'].includes(req.headers.url.toString()))
-        slug = generate(req.headers.url.toString() as 'invisible' | 'emoji', cfg.void.url.length);
+        slug = generate(req.headers.url.toString() as 'invisible' | 'emoji', internal.config.void.url.length);
       const ext = f.originalname.split('.').pop();
       const mimetype = f.mimetype === 'application/octet-stream' ? getMimetype(ext) || f.mimetype : f.mimetype;
-      const file = await prisma.file.create({
+      const file = await internal.prisma.file.create({
         data: {
           slug,
           fileName: f.originalname,
@@ -57,7 +56,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           userId: user.id
         }
       });
-      const path = resolve(cfg.void.upload.outputDirectory, user.id);
+      const path = resolve(internal.config.void.upload.outputDirectory, user.id);
       mkdirSync(path, {recursive: true});
       await writeFile(join(path, file.id), f.buffer);
       if (isType('image', file.mimetype) && ['png', 'jpg', 'jpeg', 'tiff'].includes(ext))

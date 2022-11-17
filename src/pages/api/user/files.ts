@@ -1,11 +1,11 @@
-import prisma from 'lib/prisma';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
   if (req.method === 'GET') {
-    const total = await prisma.file.count({
+    const total = await internal.prisma.file.count({
       where: {
         userId: user.id
       }
@@ -21,7 +21,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (chunk < 1) return res.error('Invalid chunk.');
     const maxPage = Math.ceil(total / chunk);
     const page = Math.min(Math.max(1, +req.query.page || 1), maxPage);
-    const files = await prisma.file.findMany({
+    const files = await internal.prisma.file.findMany({
       ...(req.query.page && {skip: (page - 1) * chunk}),
       ...(req.query.chunk && {take: chunk}),
       where: {

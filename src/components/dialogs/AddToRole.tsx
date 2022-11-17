@@ -1,11 +1,11 @@
-import {Button, Checkbox, Group, ScrollArea, Stack, Text, TextInput} from '@mantine/core';
-import {closeModal} from '@mantine/modals';
+import { Button, Checkbox, Group, ScrollArea, Stack, Text, TextInput } from '@mantine/core';
+import { closeModal } from '@mantine/modals';
 import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useRequest from 'lib/hooks/useRequest';
-import {useState} from 'react';
-import {FiSearch} from 'react-icons/fi';
+import { useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
 
 export default function Dialog_AddToRole({id, callback}) {
   const {data} = useFetch(`/api/admin/roleUsers?id=${id}`, {

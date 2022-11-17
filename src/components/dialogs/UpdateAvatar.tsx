@@ -1,9 +1,9 @@
-import {Avatar, Button, Center, Group, Modal, ModalProps, Title} from '@mantine/core';
-import {Dropzone, IMAGE_MIME_TYPE} from '@mantine/dropzone';
+import { Avatar, Button, Center, Group, Modal, ModalProps, Title } from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import useAbort from 'lib/hooks/useAbort';
 import useRequest from 'lib/hooks/useRequest';
-import {useEffect, useState} from 'react';
-import {FiUploadCloud, FiX} from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import { FiUploadCloud, FiX } from 'react-icons/fi';
 
 export default function UpdateAvatar({onClose, onDone, ...props}: ModalProps & { onDone: () => void }) {
   const [file, setFile] = useState<File>(null);

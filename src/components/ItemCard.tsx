@@ -1,6 +1,6 @@
-import {ActionIcon, Card, CardProps, CopyButton, Group, MantineColor, Title, Tooltip} from '@mantine/core';
-import {ReactNode} from 'react';
-import {FiCheck} from 'react-icons/fi';
+import { ActionIcon, Card, CardProps, CopyButton, Group, MantineColor, Title, Tooltip } from '@mantine/core';
+import { ReactNode } from 'react';
+import { FiCheck } from 'react-icons/fi';
 
 type Action = {
   label: string;

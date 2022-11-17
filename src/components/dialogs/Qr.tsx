@@ -1,5 +1,5 @@
-import {Stack, Text} from '@mantine/core';
-import {ContextModalProps} from '@mantine/modals';
+import { Stack, Text } from '@mantine/core';
+import { ContextModalProps } from '@mantine/modals';
 import dynamic from 'next/dynamic';
 
 const ThemedQr = dynamic(() => import('components/ThemedQr'), {

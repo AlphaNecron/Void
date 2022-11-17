@@ -1,15 +1,14 @@
-import {readFileSync} from 'fs';
-import {rm} from 'fs/promises';
-import cfg from 'lib/config';
-import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
-import {isType} from 'lib/mime';
-import prisma from 'lib/prisma';
-import {resolve} from 'path';
+import { readFileSync } from 'fs';
+import { rm } from 'fs/promises';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse, withVoid } from 'lib/middleware/withVoid';
+import { isType } from 'lib/mime';
+import { resolve } from 'path';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const fileId = req.query.id.toString();
   if (!fileId || fileId.trim() === '') return;
-  const file = await prisma.file.findUnique({
+  const file = await internal.prisma.file.findUnique({
     where: {
       id: fileId
     },
@@ -40,7 +39,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (isType('image', file.mimetype) && req.query.preview === 'true') {
       let data;
       try {
-        data = readFileSync(resolve(cfg.void.upload.outputDirectory, file.user.id, `${file.id}.preview`));
+        data = readFileSync(resolve(internal.config.void.upload.outputDirectory, file.user.id, `${file.id}.preview`));
         if (data) {
           res.setHeader('Content-Type', 'image/webp');
           res.setHeader('Content-Disposition', `filename="${file.fileName}"`);
@@ -52,12 +51,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     res.setHeader('Content-Type', file.mimetype);
     let data;
     try {
-      data = readFileSync(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
+      data = readFileSync(resolve(internal.config.void.upload.outputDirectory, file.user.id, file.id));
       res.setHeader('Content-Length', Number(file.size));
       res.setHeader('Content-Disposition', `filename="${file.fileName}"`);
       if (file.isExploding && file.views > 0) {
-        const path = resolve(cfg.void.upload.outputDirectory, file.user.id, file.id);
-        await prisma.file.delete({
+        const path = resolve(internal.config.void.upload.outputDirectory, file.user.id, file.id);
+        await internal.prisma.file.delete({
           where: {
             id: file.id
           }

@@ -4,17 +4,15 @@ export enum Permission {
   INVITE_USERS = 8,
   VANITY = 16,
   BYPASS_LIMIT = 32,
-  ADMINISTRATION = 64,
-  OWNER = 128
+  ADMINISTRATION = 8192, // Adding space for further permissions
+  OWNER = 16384
 }
 
 export function isAdmin(permInt: number): boolean {
   return [Permission.ADMINISTRATION, Permission.OWNER].some(p => hasPermission(permInt, p, false));
 }
 
-export function maxed(): number {
-  return Permission.OWNER * 2 - Permission.SHORTEN;
-}
+export const maxed = Object.values(Permission).filter(p => typeof p === 'number').reduce((a: number, b: number) => a | b, 0) as Permission;
 
 export function getPermissions(permInt: number): Permission[] {
   return Object.values(Permission).filter(p => typeof p === 'number' && (permInt & p) !== 0) as Permission[];

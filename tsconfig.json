@@ -19,12 +19,6 @@
     "noEmit": true,
     "baseUrl": "src",
     "paths": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "components/*": [
-        "components/*"
-      ],
       "middleware/*": [
         "lib/middleware/*"
       ],
@@ -32,10 +26,19 @@
         "components/dialogs/*"
       ],
       "hooks/*": [
-        "hooks/*"
+        "lib/hooks/*"
+      ],
+      "neutron": [
+        "../server/neutron"
+      ],
+      "void": [
+        "../server/void"
       ],
       "neutron/*": [
-        "neutron/*"
+        "../server/neutron/*"
+      ],
+      "void/*": [
+        "../server/void/*"
       ],
       "packageInfo": [
         "../package.json"
@@ -45,14 +48,16 @@
     "incremental": true
   },
   "include": [
-    "next-env.d.ts",
-    "void-env.d.ts",
+    "../next-env.d.ts",
+    "../void-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
   ],
   "exclude": [
     "node_modules",
     "logs",
-    "uploads"
+    "uploads",
+    ".next",
+    "dist"
   ]
 }

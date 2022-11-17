@@ -14,14 +14,12 @@ import {
   Stack,
   Text,
   ThemeIcon,
-  Title,
   Tooltip,
   Transition
 } from '@mantine/core';
-import {useDisclosure, useWindowScroll} from '@mantine/hooks';
-import {openConfirmModal, openContextModal, openModal} from '@mantine/modals';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
+import { openConfirmModal, openContextModal, openModal } from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
-import Fallback from 'components/Fallback';
 import FileIndicator from 'components/FileIndicator';
 import ItemCard from 'components/ItemCard';
 import Dialog_FileDelete from 'dialogs/FilesDelete';
@@ -30,16 +28,15 @@ import useChecklist from 'lib/hooks/useChecklist';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useRequest from 'lib/hooks/useRequest';
-import {isType} from 'lib/mime';
-import {showError, showSuccess} from 'lib/notification';
-import {prettyBytes} from 'lib/utils';
-import prettyMilliseconds from 'pretty-ms';
-import {useEffect, useState} from 'react';
-import {FaBomb, FaLock} from 'react-icons/fa';
-import {FiClipboard, FiExternalLink, FiSearch, FiTrash, FiUpload, FiX} from 'react-icons/fi';
-import {ImQrcode} from 'react-icons/im';
-import {MdArrowUpward, MdChecklist, MdClearAll, MdDelete} from 'react-icons/md';
-import {RiDeleteBinFill, RiErrorWarningFill, RiHardDriveFill} from 'react-icons/ri';
+import { isType } from 'lib/mime';
+import { showError, showSuccess } from 'lib/notification';
+import { prettyBytes } from 'lib/utils';
+import { useEffect, useState } from 'react';
+import { FaBomb, FaLock } from 'react-icons/fa';
+import { FiClipboard, FiExternalLink, FiSearch, FiTrash, FiUpload, FiX } from 'react-icons/fi';
+import { ImQrcode } from 'react-icons/im';
+import { MdArrowUpward, MdChecklist, MdClearAll, MdDelete } from 'react-icons/md';
+import { RiDeleteBinFill, RiErrorWarningFill, RiHardDriveFill } from 'react-icons/ri';
 
 function FileCardInner({handler, checked, file, ...props}) {
   return (
@@ -127,143 +124,128 @@ export default function Page_Files() {
   };
   const [opened, dHandler] = useDisclosure(false);
   const [scroll, scrollTo] = useWindowScroll();
-  return data && data.error ? (
-    <Center style={{height: '90vh'}}>
-      <Stack align='center'>
-        <Title order={2}>
-          {data.error}
-        </Title>
-        <Title order={3}>
-          Rate limit resets
-          in {prettyMilliseconds(data.nextReset, {verbose: true, keepDecimalsOnWholeSeconds: false})}
-        </Title>
-      </Stack>
-    </Center>
-  ) : (
-    <Fallback loaded={data}>
-      {() => (
-        <>
-          <Upload opened={opened} onClose={dHandler.close} onUpload={mutate} />
-          <Affix zIndex={0} position={{
-            bottom: '2%',
-            right: '2%'
-          }}>
-            <Paper>
-              <Group spacing={4}>
-                <Transition transition='skew-up' mounted={size > 0}>
-                  {styles => (
-                    <Text size='xs' weight={700} style={styles} ml='sm'>
-                      Selected {size} files
-                    </Text>
-                  )}
-                </Transition>
-                <Transition transition='slide-up' duration={200} mounted={size < data.files.length}>
-                  {styles => (
-                    <ActionIcon style={styles}
-                      onClick={checkAll}
-                      color='green'
-                      variant='transparent'
-                      size='lg'>
-                      <MdChecklist />
-                    </ActionIcon>
-                  )}
-                </Transition>
-                <Transition transition='slide-left' duration={200} mounted={size > 0}>
-                  {styles => (
-                    <Group spacing={4} style={styles}>
-                      <ActionIcon onClick={uncheckAll} color='yellow'
-                        variant='transparent' size='lg'>
-                        <MdClearAll />
-                      </ActionIcon>
-                      <ActionIcon onClick={() => deleteFiles(...checkedItems)} loading={busy} variant='transparent'
-                        size='lg' color='red'>
-                        <MdDelete />
-                      </ActionIcon>
-                    </Group>
-                  )}
-                </Transition>
-                <Transition mounted={scroll.y > 0} transition='slide-left' duration={200}>
-                  {styles => (
-                    <ActionIcon variant='transparent' color='blue' size='lg' onClick={() => scrollTo({y: 0})}
-                      style={styles}>
-                      <MdArrowUpward />
-                    </ActionIcon>
-                  )}
-                </Transition>
-              </Group>
-            </Paper>
-          </Affix>
-          <Stack>
-            <div style={{display: 'flex'}}>
-              <Button leftIcon={<FiUpload />} onClick={dHandler.open}>Upload</Button>
-              <Autocomplete style={{flex: 1}} mx='xs' icon={<FiSearch />} placeholder='Search something' value={query}
-                onChange={qHandler.set}
-                data={(data && data.files) ? Array.from(new Set(data.files?.map(file => file.fileName))) : []} />
-              <Tooltip label='Items per page'>
-                <Select style={{width: 72}} data={['15', '30', '45']} value={chunk}
-                  onChange={setChunk} />
-              </Tooltip>
-            </div>
-            <CardGrid itemSize={300} maxItems={16}>
-              {data.files && qHandler.filterList(data.files, ['fileName']).map((file, i) => <ItemCard key={i}
-                title={file.fileName}
-                actions={[
-                  {
-                    label: 'Show QR code',
-                    color: 'yellow',
-                    action: () => openContextModal({
-                      modal: 'qr',
-                      innerProps: {
-                        value: `${window.location.origin}/${file.slug}`
-                      }
-                    }),
-                    icon:
-                                                                                                              <ImQrcode />
-                  }, {
-                    label: 'Open in new tab',
-                    color: 'blue',
-                    icon:
-                                                                                                              <FiExternalLink />,
-                    action: () => window?.open(`/${file.slug}`, '_blank')
-                  }, {
-                    label: 'Copy to clipboard',
-                    color: 'green',
-                    icon:
-                                                                                                              <FiClipboard />,
-                    value: `${window.location.origin}/${file.slug}`
-                  }, {
-                    label: 'Delete',
-                    busy,
-                    color: 'red',
-                    icon:
-                                                                                                              <FiTrash />,
-                    action: () => deleteFiles(file.id)
-                  }
-                ]}>
-                {isType('image', file.mimetype) ? (
-                  <BackgroundImage src={`/api/file/${file.id}?preview=true`}>
-                    <div style={{height: 125, padding: 8}}>
-                      <FileCardInner handler={toggle}
-                        checked={isChecked(file.id)} file={file} />
-                    </div>
-                  </BackgroundImage>
-                ) : (
-                  <Center
-                    sx={theme => ({height: 125, background: theme.colors.dark[theme.colorScheme === 'dark' ? 8 : 0]})}>
-                    <FileCardInner handler={toggle}
-                      checked={isChecked(file.id)} file={file}
-                      style={{position: 'absolute', top: 8, left: 8, right: 8}} />
-                    <FileIndicator size={64} mimetype={file.mimetype} />
-                  </Center>
-                )}
-              </ItemCard>
+  return (
+    <>
+      <Upload opened={opened} onClose={dHandler.close} onUpload={mutate} />
+      <Affix zIndex={0} position={{
+        bottom: '2%',
+        right: '2%'
+      }}>
+        <Paper>
+          <Group spacing={4}>
+            <Transition transition='skew-up' mounted={size > 0}>
+              {styles => (
+                <Text size='xs' weight={700} style={styles} ml='sm'>
+                  Selected {size} files
+                </Text>
               )}
-            </CardGrid>
-          </Stack>
-          <Pagination mt='xl' withEdges position='center' page={page} onChange={setPage}
-            total={data?.totalPages || 0} /></>
-      )}
-    </Fallback>
+            </Transition>
+            <Transition transition='slide-up' duration={200} mounted={size < data.files.length}>
+              {styles => (
+                <ActionIcon style={styles}
+                  onClick={checkAll}
+                  color='green'
+                  variant='transparent'
+                  size='lg'>
+                  <MdChecklist />
+                </ActionIcon>
+              )}
+            </Transition>
+            <Transition transition='slide-left' duration={200} mounted={size > 0}>
+              {styles => (
+                <Group spacing={4} style={styles}>
+                  <ActionIcon onClick={uncheckAll} color='yellow'
+                    variant='transparent' size='lg'>
+                    <MdClearAll />
+                  </ActionIcon>
+                  <ActionIcon onClick={() => deleteFiles(...checkedItems)} loading={busy} variant='transparent'
+                    size='lg' color='red'>
+                    <MdDelete />
+                  </ActionIcon>
+                </Group>
+              )}
+            </Transition>
+            <Transition mounted={scroll.y > 0} transition='slide-left' duration={200}>
+              {styles => (
+                <ActionIcon variant='transparent' color='blue' size='lg' onClick={() => scrollTo({y: 0})}
+                  style={styles}>
+                  <MdArrowUpward />
+                </ActionIcon>
+              )}
+            </Transition>
+          </Group>
+        </Paper>
+      </Affix>
+      <Stack>
+        <div style={{display: 'flex'}}>
+          <Button leftIcon={<FiUpload />} onClick={dHandler.open}>Upload</Button>
+          <Autocomplete style={{flex: 1}} mx='xs' icon={<FiSearch />} placeholder='Search something' value={query}
+            onChange={qHandler.set}
+            data={(data && data.files) ? Array.from(new Set(data.files?.map(file => file.fileName))) : []} />
+          <Tooltip label='Items per page'>
+            <Select style={{width: 72}} data={['15', '30', '45']} value={chunk}
+              onChange={setChunk} />
+          </Tooltip>
+        </div>
+        <CardGrid itemSize={300} maxItems={16}>
+          {data.files && qHandler.filterList(data.files, ['fileName']).map((file, i) => <ItemCard key={i}
+            title={file.fileName}
+            actions={[
+              {
+                label: 'Show QR code',
+                color: 'yellow',
+                action: () => openContextModal({
+                  modal: 'qr',
+                  innerProps: {
+                    value: `${window.location.origin}/${file.slug}`
+                  }
+                }),
+                icon:
+                                                                                                          <ImQrcode />
+              }, {
+                label: 'Open in new tab',
+                color: 'blue',
+                icon:
+                                                                                                          <FiExternalLink />,
+                action: () => window?.open(`/${file.slug}`, '_blank')
+              }, {
+                label: 'Copy to clipboard',
+                color: 'green',
+                icon:
+                                                                                                          <FiClipboard />,
+                value: `${window.location.origin}/${file.slug}`
+              }, {
+                label: 'Delete',
+                busy,
+                color: 'red',
+                icon:
+                                                                                                          <FiTrash />,
+                action: () => deleteFiles(file.id)
+              }
+            ]}>
+            {isType('image', file.mimetype) ? (
+              <BackgroundImage src={`/api/file/${file.id}?preview=true`}>
+                <div style={{height: 125, padding: 8}}>
+                  <FileCardInner handler={toggle}
+                    checked={isChecked(file.id)} file={file} />
+                </div>
+              </BackgroundImage>
+            ) : (
+              <Center
+                sx={theme => ({height: 125, background: theme.colors.dark[theme.colorScheme === 'dark' ? 8 : 0]})}>
+                <FileCardInner handler={toggle}
+                  checked={isChecked(file.id)} file={file}
+                  style={{position: 'absolute', top: 8, left: 8, right: 8}} />
+                <FileIndicator size={64} mimetype={file.mimetype} />
+              </Center>
+            )}
+          </ItemCard>
+          )}
+        </CardGrid>
+      </Stack>
+      <Pagination mt='xl' withEdges position='center' page={page} onChange={setPage}
+        total={data?.totalPages || 0} />
+    </>
   );
 }
 

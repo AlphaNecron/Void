@@ -1,4 +1,4 @@
-import {useDebouncedValue, useInputState} from '@mantine/hooks';
+import { useDebouncedValue, useInputState } from '@mantine/hooks';
 
 export default function useQuery(delay = 500) {
   const [query, setQuery] = useInputState('');

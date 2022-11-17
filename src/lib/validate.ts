@@ -1,6 +1,6 @@
-import {maxed} from 'lib/permission';
-import {Config} from 'lib/types';
-import {array as yupArray, bool as yupBool, number as yupNumber, object as yupObject, string as yupString} from 'yup';
+import { maxed } from 'lib/permission';
+import type { Config } from 'lib/types';
+import { array as yupArray, bool as yupBool, number as yupNumber, object as yupObject, string as yupString } from 'yup';
 
 export const colorRegex = /^#([\da-f]{3}|[\da-f]{6})$/i;
 const colorValidationMessage = {
@@ -33,8 +33,7 @@ const configSchema = yupObject({
   neutron: yupObject({
     enabled: yupBool().default(false),
     token: yupString().nullable(),
-    clientId: yupString().nullable(),
-    guildId: yupString().nullable()
+    clientId: yupString().nullable()
   }).notRequired()
 });
 
@@ -52,7 +51,7 @@ export const embedSchema = yupObject({
 export const roleSchema = yupObject({
   name: yupString().required(),
   color: yupString().matches(colorRegex, colorValidationMessage).required(),
-  permissions: yupNumber().min(0).max(maxed()).required(),
+  permissions: yupNumber().min(0).max(maxed).required(),
   maxFileSize: yupNumber().min(1048576).required(),
   maxFileCount: yupNumber().min(1).required(),
   storageQuota: yupNumber().min(1048576).required(),
@@ -71,7 +70,11 @@ export const userSchema = yupObject({
 
 export async function validateConfig(config): Promise<Config> {
   try {
-    return (await configSchema.validate(config, {abortEarly: false, strict: true})) as Config;
+    return (await configSchema.validate(config, {
+      abortEarly: false,
+      strict: true,
+      stripUnknown: true
+    })) as Config;
   } catch (e) {
     throw `${e.errors.length} error${e.errors.length > 1 ? 's' : ''} occurred\n${e.errors.map(x => '\t' + x).join('\n')}`;
   }

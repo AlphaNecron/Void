@@ -1,10 +1,8 @@
-import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
-import {rm} from 'fs/promises';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {resolve} from 'path';
-import cfg from '../../lib/config';
-import logger from '../../lib/logger';
-import prisma from '../../lib/prisma';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { rm } from 'fs/promises';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import { resolve } from 'path';
+import internal from 'void/internal';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method === 'DELETE') {
@@ -16,7 +14,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     const failed: string[] = [], deleted: { id: string, fileName: string }[] = [];
     try {
       for (const token of tokens) {
-        const file = await prisma.file.delete({
+        const file = await internal.prisma.file.delete({
           where: {
             deletionToken: token
           },
@@ -25,18 +23,18 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           }
         });
         if (file) {
-          await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
+          await rm(resolve(internal.config.void.upload.outputDirectory, file.user.id, file.id));
           deleted.push({id: file.id, fileName: file.fileName});
         } else failed.push(token);
       }
     } catch (e) {
-      logger.debug(e);
+      internal.logger.debug(e);
     }
     return res.json(failed.length > 0 ? ({success: false, failed, deleted}) : ({success: true, deleted}));
   } else {
     if (!req.query.token) return res.forbid('No deletion token provided');
     try {
-      const file = await prisma.file.delete({
+      const file = await internal.prisma.file.delete({
         where: {
           deletionToken: req.query.token as string
         },
@@ -44,7 +42,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
           user: true
         }
       });
-      await rm(resolve(cfg.void.upload.outputDirectory, file.user.id, file.id));
+      await rm(resolve(internal.config.void.upload.outputDirectory, file.user.id, file.id));
       return res.success({fileName: file.fileName});
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError)

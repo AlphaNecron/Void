@@ -1,14 +1,14 @@
-import {Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput} from '@mantine/core';
-import {useForm, yupResolver} from '@mantine/form';
-import {useClipboard} from '@mantine/hooks';
+import { Anchor, Button, Group, Modal, PasswordInput, Select, Stack, TextInput } from '@mantine/core';
+import { useForm, yupResolver } from '@mantine/form';
+import { useClipboard } from '@mantine/hooks';
 import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {showError, showSuccess} from 'lib/notification';
-import {hasPermission, Permission} from 'lib/permission';
-import {useEffect, useState} from 'react';
-import {FiScissors} from 'react-icons/fi';
-import {RiClipboardFill, RiErrorWarningFill} from 'react-icons/ri';
-import {object as yupObject, string as yupString} from 'yup';
+import { showError, showSuccess } from 'lib/notification';
+import { hasPermission, Permission } from 'lib/permission';
+import { useEffect, useState } from 'react';
+import { FiScissors } from 'react-icons/fi';
+import { RiClipboardFill, RiErrorWarningFill } from 'react-icons/ri';
+import { object as yupObject, string as yupString } from 'yup';
 
 export default function Dialog_Shorten({onClose, opened, onShorten, ...props}) {
   const schema = yupObject({

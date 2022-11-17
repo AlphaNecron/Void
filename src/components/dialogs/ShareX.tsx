@@ -1,8 +1,8 @@
-import {Button, Checkbox, Group, Modal, Select, Stack, TextInput, Transition, useMantineTheme} from '@mantine/core';
-import {useMediaQuery, useSetState} from '@mantine/hooks';
+import { Button, Checkbox, Group, Modal, Select, Stack, TextInput, Transition, useMantineTheme } from '@mantine/core';
+import { useMediaQuery, useSetState } from '@mantine/hooks';
 import useFetch from 'lib/hooks/useFetch';
 import dynamic from 'next/dynamic';
-import {FiDownload} from 'react-icons/fi';
+import { FiDownload } from 'react-icons/fi';
 
 const Preview = dynamic(() => import('components/ShareXPreview'));
 

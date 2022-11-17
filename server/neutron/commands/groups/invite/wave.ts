@@ -1,11 +1,12 @@
-import {addToDate} from 'lib/utils';
-import type {NeutronCommand} from 'neutron/types';
+import type { NeutronCommand } from 'neutron/types';
+import { addToDate } from 'lib/utils';
+import internal from 'void/internal';
 
 export default {
   name: 'wave',
   description: 'Create an invite wave',
   async execute(context) {
-    const users = await prisma.user.findMany({
+    const users = await internal.prisma.user.findMany({
       where: {
         role: {
           maxRefCodes: {
@@ -36,7 +37,7 @@ export default {
     const date = addToDate(current, 2592000);
     const eligible = users.filter(user => user.referralCodes.filter(ref => ref.expiresAt.getTime() > current.getTime()).length < user.role.maxRefCodes);
     for (const {id} of eligible) {
-      await prisma.user.update({
+      await internal.prisma.user.update({
         where: {
           id
         },

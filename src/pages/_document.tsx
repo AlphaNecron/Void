@@ -1,5 +1,5 @@
-import {createGetInitialProps} from '@mantine/next';
-import Document, {Head, Html, Main, NextScript} from 'next/document';
+import { createGetInitialProps } from '@mantine/next';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 
 export default class _Document extends Document {
   static getInitialProps = createGetInitialProps();
@@ -7,12 +7,7 @@ export default class _Document extends Document {
   render() {
     return (
       <Html>
-        <Head>
-          <link
-            href='https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=optional'
-            rel='stylesheet'
-          />
-        </Head>
+        <Head />
         <body>
           <Main />
           <NextScript />

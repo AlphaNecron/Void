@@ -14,30 +14,30 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import {useDisclosure, useInputState} from '@mantine/hooks';
-import {Prism} from '@mantine/prism';
+import { useDisclosure, useInputState } from '@mantine/hooks';
+import { Prism } from '@mantine/prism';
 import AudioPlayer from 'components/AudioPlayer';
 import Container from 'components/Container';
 import ResponsiveButton from 'components/ResponsiveButton';
 import VideoPlayer from 'components/VideoPlayer';
-import {format} from 'fecha';
-import {withIronSessionSsr} from 'iron-session/next';
-import {highlightLanguages} from 'lib/constants';
+import { format } from 'fecha';
+import { withIronSessionSsr } from 'iron-session/next';
+import { highlightLanguages } from 'lib/constants';
 import useRequest from 'lib/hooks/useRequest';
-import {isPreviewable, isType} from 'lib/mime';
-import {showError, showSuccess} from 'lib/notification';
-import prisma from 'lib/prisma';
-import {prettyBytes} from 'lib/utils';
-import {ironOptions} from 'middleware/withVoid';
-import {GetServerSideProps} from 'next';
+import { isPreviewable, isType } from 'lib/mime';
+import { showError, showSuccess } from 'lib/notification';
+import { prettyBytes } from 'lib/utils';
+import { ironOptions } from 'middleware/withVoid';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import {useRouter} from 'next/router';
-import {Language} from 'prism-react-renderer';
-import {useEffect, useState} from 'react';
-import {BiNavigation} from 'react-icons/bi';
-import {FiDownload, FiFlag, FiInfo, FiSend} from 'react-icons/fi';
-import {RiErrorWarningFill, RiFlag2Fill, RiNavigationFill} from 'react-icons/ri';
-import {VscWordWrap} from 'react-icons/vsc';
+import { useRouter } from 'next/router';
+import { Language } from 'prism-react-renderer';
+import { useEffect, useState } from 'react';
+import { BiNavigation } from 'react-icons/bi';
+import { FiDownload, FiFlag, FiInfo, FiSend } from 'react-icons/fi';
+import { RiErrorWarningFill, RiFlag2Fill, RiNavigationFill } from 'react-icons/ri';
+import { VscWordWrap } from 'react-icons/vsc';
+import internal from 'void/internal';
 
 export function Preview({data: {isPrivate = false, isExploding = false, properties, embed}}) {
   const [open, handler] = useDisclosure(false);
@@ -45,7 +45,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
   if (isPrivate) return (
     <>
       <Head>
-        <title>🔒 Private file</title>
+        <title>Private file</title>
       </Head>
       <Container>
         <Title m='xl' align='center' order={4}>This file is private, please log in to view.</Title>
@@ -100,9 +100,9 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
       style={fluid || !float ? ({}) : ({position: 'absolute', bottom: 24, right: 24, zIndex: 100})} spacing={4}>
       <ResponsiveButton color='blue' onClick={handler.open} icon={<FiInfo />} condition={fluid} label='Info' />
       {isExploding ||
-          <ResponsiveButton color='green' component='a' condition={fluid} href={src()}
-            download={properties['File name']}
-            label='Download' icon={<FiDownload />} />}
+        <ResponsiveButton color='green' component='a' condition={fluid} href={src()}
+          download={properties['File name']}
+          label='Download' icon={<FiDownload />} />}
       <ResponsiveButton onClick={dHandler.open} color='red' icon={<FiFlag />} label='Report' condition={fluid} />
     </Group>
   );
@@ -147,7 +147,13 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
                     {x}
                   </strong>
                 </td>
-                <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 200}}>{y}</td>
+                <td style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 200}}>
+                  <Tooltip label={y as string}>
+                    <span>
+                      {y as string}
+                    </span>
+                  </Tooltip>
+                </td>
               </tr>
             )}
           </tbody>
@@ -241,7 +247,7 @@ export function Preview({data: {isPrivate = false, isExploding = false, properti
 }
 
 export function Url({id}) {
-  const [password, setPassword] = useState<string>('');
+  const [password, setPassword] = useInputState<string>('');
   const router = useRouter();
   const {request} = useRequest();
   const validate = () =>
@@ -267,7 +273,7 @@ export function Url({id}) {
         <Title mb='xl' order={4}>This URL is password-protected, please enter a password to continue.</Title>
         <div style={{display: 'flex'}}>
           <PasswordInput onKeyDown={e => e.key === 'Enter' && validate()} value={password}
-            onChange={e => setPassword(e.target.value)} style={{flex: 1}} autoComplete='off' />
+            onChange={setPassword} style={{flex: 1}} autoComplete='off' />
           <ActionIcon type='submit' onClick={validate} variant='filled' size='lg' mt={1} color='green' ml={4}>
             <BiNavigation />
           </ActionIcon>
@@ -282,7 +288,7 @@ export default function Handler({type, data}) {
 }
 
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(async ({req, query}) => {
-  const file = await prisma.file.findUnique({
+  const file = await internal.prisma.file.findUnique({
     where: {
       slug: query.id.toString()
     },
@@ -295,7 +301,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
     }
   });
   if (!file) {
-    const url = await prisma.url.findUnique({
+    const url = await internal.prisma.url.findUnique({
       where: {
         short: query.id.toString()
       }
@@ -303,7 +309,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
     if (!url)
       return {notFound: true};
     if (!url.password) {
-      await prisma.url.update({
+      await internal.prisma.url.update({
         where: {
           id: url.id
         },
@@ -355,7 +361,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr<any>(as
         }
       };
   }
-  await prisma.file.update({
+  await internal.prisma.file.update({
     where: {
       id: file.id
     },

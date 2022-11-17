@@ -33,6 +33,12 @@ export const noop = () => {
 export const anoop = async () => {
 };
 
+export const timeUnits = [
+  ['h', 'hour'],
+  ['m', 'minute'],
+  ['s', 'second']
+];
+
 export const charsets = {
   alphanumeric: 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890',
   invisible: ['\u200B', '\u2060', '\u200C', '\u200D'],

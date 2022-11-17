@@ -1,5 +1,5 @@
-import {SimpleGrid} from '@mantine/core';
-import {useMemo} from 'react';
+import { SimpleGrid } from '@mantine/core';
+import { useMemo } from 'react';
 
 export default function CardGrid({children, itemSize, maxItems = 4}) {
   const breakpoints = useMemo(() => {

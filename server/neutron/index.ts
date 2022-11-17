@@ -3,29 +3,28 @@ import {REST} from '@discordjs/rest';
 import {ActivityType, GatewayIntentBits, Routes} from 'discord-api-types/v10';
 import {Client} from 'discord.js';
 import {readdirSync} from 'fs';
-import logger from 'lib/logger';
-import {NeutronCommand, NeutronModal} from 'neutron/types';
+import internal from 'void/internal';
+import {NeutronCommand, NeutronCommandGroup, NeutronModal} from 'neutron/types';
 import withNeutron from 'neutron/withNeutron';
-import {neutronVersion} from 'packageInfo';
-import {resolve} from 'path';
+import {join, resolve} from 'path';
+import {getVersion} from 'neutron/utils';
 
 export class Neutron {
   private _rest: REST;
   private _client: Client;
   private readonly _clientId: string;
-  private readonly _guildId: string;
 
   private _modalHandlers: Record<string, NeutronModal> = {};
   private _commands: Record<string, NeutronCommand> = {};
+  private _commandGroups: Record<string, NeutronCommandGroup> = {};
 
-  constructor(token: string, clientId: string, guildId: string) {
+  constructor(token: string, clientId: string) {
     this._client = new Client({intents: [GatewayIntentBits.Guilds]});
     this._client.login(token);
     this._clientId = clientId;
-    this._guildId = guildId;
     this._rest = new REST({version: '10'}).setToken(token);
     this._client.once('ready', () => {
-      logger.info(`Initialized neutron@${neutronVersion}.`, 'Neutron');
+      internal.logger.info(`Initialized neutron@${this.version}.`, 'Neutron');
       this.initPresenceStatus();
       this.initEvents();
       this.initCommands();
@@ -33,9 +32,13 @@ export class Neutron {
     });
   }
 
+  get version(): string {
+    return getVersion();
+  }
+
   private initPresenceStatus() {
     setInterval(() =>
-      prisma.user.count().then(c => this._client.user.setActivity({
+      internal.prisma.user.count().then(c => this._client.user.setActivity({
         name: `${c} user${c === 1 ? '' : 's'}.`,
         type: ActivityType.Watching
       })), 18e5);
@@ -43,31 +46,42 @@ export class Neutron {
 
   private initModalHandlers() {
     this._modalHandlers = {};
-    const basePath = resolve('src', 'neutron', 'modalHandlers');
+    const basePath = resolve('server', 'neutron', 'modalHandlers');
     const files = readdirSync(basePath).filter(file => file.endsWith('.ts'));
     for (const file of files) {
       const m: NeutronModal = require(resolve(basePath, file)).default;
       this._modalHandlers[m.id] = m;
     }
-    logger.info(`Successfully loaded ${files.length} modal handlers.`, 'Neutron');
+    internal.logger.info(`Successfully loaded ${files.length} modal handlers.`, 'Neutron');
   }
 
   private initCommands() {
     this._commands = {};
-    const basePath = resolve('src', 'neutron', 'commands');
-    const files = readdirSync(basePath).filter(file => file.endsWith('.ts'));
+    const basePath = resolve('server', 'neutron', 'commands');
+    const groupPath = join(basePath, 'groups');
+    const files = readdirSync(basePath).filter(f => f.endsWith('.ts'));
+    const groups = readdirSync(groupPath, {withFileTypes: true}).filter(f => f.isDirectory());
     const payload = [];
     for (const file of files) {
-      const m: NeutronCommand = require(resolve(basePath, file)).default;
+      const m: NeutronCommand = require(join(basePath, file)).default;
       this._commands[m.name] = m;
       payload.push(new SlashCommandBuilder().setName(m.name).setDescription(m.description));
+      m.name;
     }
+    /*for (const group of groups) {
+      const m: NeutronCommandGroup = require(join(groupPath, group.name)).default;
+      const grp = new SlashCommandSubcommandGroupBuilder().setName(m.name).setDescription(m.description);
+      for (const sub of m.commands)
+        grp.addSubcommand(b => b.setName(sub.name).setDescription(sub.description));
+      this._commandGroups[m.name] = m;
+      // payload.push(grp);
+    }*/
     if (payload.length === 0) return;
-    logger.info(`Successfully loaded ${files.length} commands.`, 'Neutron');
+    internal.logger.info(`Successfully loaded ${files.length} commands.`, 'Neutron');
     this._rest.put(
-      Routes.applicationGuildCommands(this._clientId, this._guildId),
+      Routes.applicationGuildCommands(this._clientId, '895986508786458675'),
       {body: payload}
-    ).then(() => logger.info('Successfully pushed slash command payloads to the server.', 'Neutron'));
+    ).catch(e => console.error(e)).then(() => internal.logger.info('Successfully pushed slash command payloads to the server.', 'Neutron'));
   }
 
   private initEvents() {
@@ -88,9 +102,4 @@ export class Neutron {
       }
     }));
   }
-}
-
-export function initNeutron(token: string, clientId: string, guildId: string) {
-  if (!(token && clientId && guildId)) return;
-  global.neutron = new Neutron(token, clientId, guildId);
 }

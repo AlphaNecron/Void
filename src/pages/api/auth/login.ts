@@ -1,12 +1,12 @@
-import {verify} from 'argon2';
-import {VoidRequest, VoidResponse, withVoid} from 'lib/middleware/withVoid';
-import prisma from 'lib/prisma';
+import { verify } from 'argon2';
+import { VoidRequest, VoidResponse, withVoid } from 'lib/middleware/withVoid';
+import internal from 'void/internal';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   if (req.method !== 'POST') return res.notAllowed();
   const {username, password} = req.body;
   if (!(username && password)) return res.forbid('Invalid credentials.');
-  const user = await prisma.user.findUnique({
+  const user = await internal.prisma.user.findUnique({
     where: {
       username
     },

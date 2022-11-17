@@ -1,11 +1,12 @@
-import {hash} from 'argon2';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { hash } from 'argon2';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import internal from 'void/internal';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const {referral, username, email, password} = req.body;
   if (!(referral && username && password))
     return res.forbid('Invalid credentials.');
-  const ref = await prisma.referralCode.findUnique({
+  const ref = await internal.prisma.referralCode.findUnique({
     where: {
       code: referral
     },
@@ -21,7 +22,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   if (ref.consumedBy) return res.forbid('This code is already consumed.');
   if (ref.expiresAt.getTime() <= new Date().getTime())
     return res.forbid('This referral code is already expired.');
-  const usr = await prisma.user.findFirst({
+  const usr = await internal.prisma.user.findFirst({
     where: {
       OR: [
         {
@@ -35,7 +36,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   });
   if (usr)
     return res.forbid(usr.username === username ? 'Username already exists.' : 'Email is already occupied.');
-  const user = await prisma.user.create({
+  const user = await internal.prisma.user.create({
     data: {
       username,
       email,
@@ -44,7 +45,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   });
   if (!user)
     return res.error('Failed to create a user.');
-  await prisma.referralCode.update({
+  await internal.prisma.referralCode.update({
     where: {
       code: ref.code
     },

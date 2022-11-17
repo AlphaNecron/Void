@@ -1,16 +1,11 @@
-import {Migrate} from '@prisma/migrate/dist/Migrate';
-import {ensureDatabaseExists} from '@prisma/migrate/dist/utils/ensureDatabaseExists';
-import {executeSeedCommand} from '@prisma/migrate/dist/utils/seed';
-import {existsSync, readFileSync} from 'fs';
-import logger from 'lib/logger';
-import type {Config} from 'lib/types';
-import {EOL} from 'os';
-import {resolve} from 'path';
-
-export function getStacktrace(err: Error): string {
-  if (!err.stack) return '';
-  return err.stack.split(EOL).slice(1).join(EOL);
-}
+import { Migrate } from '@prisma/migrate/dist/Migrate';
+import { ensureDatabaseExists } from '@prisma/migrate/dist/utils/ensureDatabaseExists';
+import { executeSeedCommand } from '@prisma/migrate/dist/utils/seed';
+import { resolve } from 'path';
+import voidPkg from 'packageInfo';
+import { bold, magenta } from 'picocolors';
+import { EOL } from 'os';
+import internal from 'void/internal';
 
 export async function prismaCheck() { // https://github.com/diced/zipline/blob/trunk/src/server/util.ts
   const schemaPath = resolve('prisma', 'schema.prisma');
@@ -21,11 +16,11 @@ export async function prismaCheck() { // https://github.com/diced/zipline/blob/t
   });
   if (diagnose.history?.diagnostic === 'databaseIsBehind')
     try {
-      logger.info('Applying Prisma migrations.');
+      internal.logger.info('Applying Prisma migrations.');
       await migrator.applyMigrations();
       await migrator.tryToRunGenerate();
       await executeSeedCommand('tsx prisma/seed.ts');
-      logger.info('Finished applying migrations.');
+      internal.logger.info('Finished applying migrations.');
     } catch (e) {
       throwAndExit(e);
     } finally {
@@ -35,18 +30,30 @@ export async function prismaCheck() { // https://github.com/diced/zipline/blob/t
 }
 
 export function throwAndExit(err: Error | string) {
-  logger.error(err);
+  internal.logger.error(err);
   process.exit(1);
 }
 
-export function readConfig(): Config | void {
-  if (!existsSync(resolve('config.json'))) {
-    return throwAndExit('Config file not found, please create one.');
-  } else {
-    logger.info('Reading config file');
-    const str = readFileSync(resolve('config.json'), 'utf8');
-    return JSON.parse(str);
+export function getVersion(): string {
+  return voidPkg.version;
+}
+
+export async function checkForUpdate() {
+  if (process.env.CHECK_FOR_UPDATE !== 'true') return;
+  try {
+    const res = await fetch('https://api.github.com/repos/AlphaNecron/Void/releases').then(r => r.json());
+    if (!res || res.length === 0) return;
+    const latest = res[0];
+    if (latest.tag_name !== getVersion())
+      internal.logger.info(`A new ${latest.prerelease ? 'prerelease' : 'release'} is available: ${bold(magenta(latest.name.length > 0 ? latest.name : latest.tag_name))}`);
+  } catch (e) {
+    internal.logger.error('Could not check for updates.');
   }
+}
+
+export function getStacktrace(err: Error): string {
+  if (!err.stack) return '';
+  return err.stack.split(EOL).slice(1).join(EOL);
 }
 
 export function isUnicodeSupported() { // from is-unicode-supported

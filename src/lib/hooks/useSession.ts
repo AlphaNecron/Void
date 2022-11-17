@@ -1,6 +1,6 @@
 import useFetch from 'lib/hooks/useFetch';
-import type {VoidUser} from 'middleware/withVoid';
-import {useEffect} from 'react';
+import type { VoidUser } from 'middleware/withVoid';
+import { useEffect } from 'react';
 
 type Session = {
   isReady: boolean;
@@ -16,7 +16,8 @@ export default function useSession(required = false, onUnauthenticated?: () => v
     mutate
   } = useFetch('/api/user', {
     refreshInterval: 6e4,
-    shouldRetryOnError: false
+    shouldRetryOnError: false,
+    suspense: false
   });
   useEffect(() => {
     if (error && required && onUnauthenticated)

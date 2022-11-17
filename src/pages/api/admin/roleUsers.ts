@@ -1,5 +1,6 @@
-import {highest, isAdmin} from 'lib/permission';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { highest, isAdmin } from 'lib/permission';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import internal from 'void/internal';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -7,7 +8,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   switch (req.method) {
   case 'GET': {
     const {id} = req.query;
-    const roles = await prisma.role.findMany({
+    const roles = await internal.prisma.role.findMany({
       select: {
         id: true,
         permissions: true,
@@ -31,7 +32,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   case 'PATCH': {
     const {id, users} = req.body;
     if (!(id || users || !Array.isArray(users))) return res.error('No ID.');
-    const target = await prisma.role.findUnique({
+    const target = await internal.prisma.role.findUnique({
       where: {
         id
       },
@@ -43,7 +44,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (!target) return res.notFound('Role not found.');
     if (highest(target.permissions) > highest(user.role.permissions))
       return res.forbid('You are not allowed to modify this user.');
-    await prisma.user.updateMany({
+    await internal.prisma.user.updateMany({
       where: {
         id: {
           in: users

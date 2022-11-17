@@ -5,6 +5,7 @@ module.exports = {
     '@typescript-eslint'
   ],
   'rules': {
+    'import/no-anonymous-default-export': 'off',
     'object-curly-spacing': ['warn', 'never'],
     'array-bracket-spacing': ['warn', 'never'],
     'indent': ['error', 2],

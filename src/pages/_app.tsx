@@ -6,28 +6,42 @@ import {
   Progress,
   Transition
 } from '@mantine/core';
-import {useInterval, useLocalStorage} from '@mantine/hooks';
-import {ModalsProvider} from '@mantine/modals';
-import {NotificationsProvider} from '@mantine/notifications';
+import { useInterval, useLocalStorage } from '@mantine/hooks';
+import { ModalsProvider } from '@mantine/modals';
+import { NotificationsProvider } from '@mantine/notifications';
 import Dialog_Qr from 'dialogs/Qr';
 import useSession from 'lib/hooks/useSession';
-import {hasPermission, isAdmin} from 'lib/permission';
-import {createTheme} from 'lib/theme';
+import { hasPermission, isAdmin, Permission } from 'lib/permission';
+import { createTheme } from 'lib/theme';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import {useEffect, useState} from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import ErrorBoundary from 'components/ErrorBoundary';
+import type { AppInitialProps } from 'next/app';
+import type { Router } from 'next/router';
+import { NextComponentType } from 'next';
 
 const cache = createEmotionCache({key: 'void'});
 
 const Layout = dynamic(() => import('components/Layout'));
 
-export default function Void({Component, pageProps, router}) {
+interface VoidAppProps extends AppInitialProps<Record<string, any>> {
+  Component: NextComponentType & {
+    title?: string,
+    authRequired?: boolean,
+    adminOnly?: boolean,
+    permission?: Permission
+  };
+  router?: Router;
+}
+
+
+export default function Void({Component, pageProps, router}: VoidAppProps) {
   const [progress, setProgress] = useState(0);
   const ticker = useInterval(() => setProgress(c => c <= 75 ? c + 1 : c), 250);
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: 'void-color-scheme',
-    defaultValue: 'dark',
-    getInitialValueInEffect: true
+    defaultValue: 'dark'
   });
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
@@ -50,11 +64,12 @@ export default function Void({Component, pageProps, router}) {
       router.events.off('routeChangeError', onDone);
     };
   }, []);
+  const title = useMemo(() => Component.title ? `Void - ${Component.title}` : 'Void', [Component.title]);
   return (
     <>
       <Head>
-        <title>Void - {Component.title}</title>
-        <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
+        <title>{title}</title>
+        <meta name='viewport' content='minimum-scale=0.75, initial-scale=1, width=device-width' />
       </Head>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider emotionCache={cache} withGlobalStyles withNormalizeCSS theme={createTheme(colorScheme)}>
@@ -62,23 +77,26 @@ export default function Void({Component, pageProps, router}) {
             exitDuration={500}>
             {styles => (
               <Progress size='xs' radius={0} value={progress}
-                style={{position: 'fixed', top: 0, left: 0, right: 0, background: 'transparent', ...styles}} />
+                style={{position: 'fixed', top: 0, left: 0, right: 0, ...styles}} />
             )}
           </Transition>
           <ModalsProvider modals={{
             qr: Dialog_Qr
-          }}
-          modalProps={{overlayBlur: 4, withCloseButton: true}}>
+          }} modalProps={{overlayBlur: 4, withCloseButton: true}}>
             <NotificationsProvider>
-              {(Component.authRequired || Component.adminOnly) ? (
-                <Auth adminOnly={Component.adminOnly} permission={Component.permission} router={router}>
-                  <Layout route={router.route}>
+              <ErrorBoundary back={() => router.replace('/dash').then(r => r && router.reload())}>
+                <Suspense>
+                  {(Component.authRequired || Component.adminOnly) ? (
+                    <Auth adminOnly={Component.adminOnly} permission={Component.permission} router={router}>
+                      <Layout route={router.route}>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </Auth>
+                  ) : (
                     <Component {...pageProps} />
-                  </Layout>
-                </Auth>
-              ) : (
-                <Component {...pageProps} />
-              )}
+                  )}
+                </Suspense>
+              </ErrorBoundary>
             </NotificationsProvider>
           </ModalsProvider>
         </MantineProvider>

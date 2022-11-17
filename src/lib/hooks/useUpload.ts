@@ -1,4 +1,4 @@
-import {useInterval} from '@mantine/hooks';
+import { useInterval } from '@mantine/hooks';
 import useAbort from 'lib/hooks/useAbort';
 
 export default function useUpload(endpoint: string, headers: Record<string, string>, onProgressChanged: ({

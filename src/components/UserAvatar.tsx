@@ -1,5 +1,5 @@
-import {Avatar} from '@mantine/core';
-import {validateHex} from 'lib/utils';
+import { Avatar } from '@mantine/core';
+import { validateHex } from 'lib/utils';
 
 export default function UserAvatar({user, ...props}) {
   const shorten = (name: string) => name.split(' ').map(x => x.toUpperCase()[0]).slice(0, 2);

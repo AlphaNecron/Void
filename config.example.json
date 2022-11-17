@@ -26,7 +26,6 @@
   "neutron": {
     "enabled": false,
     "token": "YOUR_DISCORD_BOT_TOKEN",
-    "clientId": "YOUR_DISCORD_BOT_APPLICATION_ID",
-    "guildId": "YOUR_GUILD_ID"
+    "clientId": "YOUR_DISCORD_BOT_APPLICATION_ID"
   }
 }

@@ -1,14 +1,14 @@
 import TTLCache from '@isaacs/ttlcache';
-import {format} from 'fecha';
-import {createWriteStream, mkdirSync, WriteStream} from 'fs';
-import type {LogEntry, LogLevel} from 'lib/types';
-import {EOL} from 'os';
-import {resolve} from 'path';
-import {blue, bold, gray, green, magenta, red, underline, yellow} from 'picocolors';
-import {fallbackSymbols, mainSymbols} from './constants';
-import {getStacktrace, isUnicodeSupported} from './serverUtils';
+import { format } from 'fecha';
+import { createWriteStream, mkdirSync, WriteStream } from 'fs';
+import type { LogEntry, LogLevel } from 'lib/types';
+import { EOL } from 'os';
+import { resolve } from 'path';
+import { blue, bold, gray, green, magenta, red, underline, yellow } from 'picocolors';
+import { fallbackSymbols, mainSymbols } from './constants';
+import { getStacktrace, isUnicodeSupported } from 'void/utils';
 
-class Logger {
+export class Logger {
   private readonly _defaultPrefix: string;
   private readonly _useFallback: boolean;
   private readonly _verbose: boolean;
@@ -82,7 +82,3 @@ class Logger {
     this.save(msg, level, prefix);
   }
 }
-
-if (!global.logger) global.logger = new Logger();
-
-export default global.logger as Logger;

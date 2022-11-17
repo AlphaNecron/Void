@@ -1,4 +1,4 @@
-import {Stack, Text, Title} from '@mantine/core';
+import { Stack, Text, Title } from '@mantine/core';
 import DashboardCard from 'components/DashboardCard';
 
 export default function StatCard({title, value, alt = '', ...props}) {

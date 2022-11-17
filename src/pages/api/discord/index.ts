@@ -1,13 +1,12 @@
-import oauth from 'lib/oauth';
-import prisma from 'lib/prisma';
-import {addToDate} from 'lib/utils';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import internal from 'void/internal';
+import { addToDate } from 'lib/utils';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
   if (!user) return res.unauthorized();
-  if (!oauth) return res.forbid('Discord OAuth is not enabled.');
-  const discord = await prisma.discord.findUnique({
+  if (!internal.oauth) return res.forbid('Discord OAuth is not enabled.');
+  const discord = await internal.prisma.discord.findUnique({
     where: {
       userId: user.id
     },
@@ -27,13 +26,13 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   case 'GET': {
     if (expired) {
       try {
-        const data = await oauth.tokenRequest({
+        const data = await internal.oauth.tokenRequest({
           refreshToken: discord.refreshToken,
           grantType: 'refresh_token',
           scope: ['identify']
         });
         const date = addToDate(new Date(), data.expires_in);
-        const r = await prisma.discord.update({
+        const r = await internal.prisma.discord.update({
           where: {
             id: discord.id
           },
@@ -61,11 +60,11 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   case 'DELETE': {
     if (!expired) {
       try {
-        await oauth.revokeToken(discord.accessToken);
+        await internal.oauth.revokeToken(discord.accessToken);
       } catch {
       }
     }
-    await prisma.discord.delete({
+    await internal.prisma.discord.delete({
       where: {
         id: discord.id
       }

@@ -1,4 +1,4 @@
-import {MantineColor, useMantineTheme} from '@mantine/core';
+import { MantineColor, useMantineTheme } from '@mantine/core';
 
 export default function useThemeValue() {
   const {colorScheme, colors, fn: {lighten: lightenColor}} = useMantineTheme();

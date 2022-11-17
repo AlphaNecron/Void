@@ -19,18 +19,18 @@ import {
   useMantineColorScheme,
   useMantineTheme
 } from '@mantine/core';
-import {useMediaQuery, useSetState} from '@mantine/hooks';
-import {NextLink} from '@mantine/next';
+import { useMediaQuery, useSetState } from '@mantine/hooks';
+import NextLink from 'components/NextLink';
 import NavigationItem from 'components/NavigationItem';
 import ShareXIcon from 'components/ShareXIcon';
 import UserAvatar from 'components/UserAvatar';
 import useFetch from 'lib/hooks/useFetch';
 import useSession from 'lib/hooks/useSession';
 import useThemeValue from 'lib/hooks/useThemeValue';
-import {hasPermission, isAdmin, Permission} from 'lib/permission';
-import {prettyBytes, validateHex} from 'lib/utils';
-import {useState} from 'react';
-import {FiLogOut, FiUser} from 'react-icons/fi';
+import { hasPermission, isAdmin, Permission } from 'lib/permission';
+import { prettyBytes, validateHex } from 'lib/utils';
+import { useState } from 'react';
+import { FiLogOut, FiUser } from 'react-icons/fi';
 import {
   RiArchiveFill,
   RiDashboard3Fill,
@@ -42,7 +42,7 @@ import {
   RiTeamFill,
   RiTerminalWindowFill
 } from 'react-icons/ri';
-import {SiGithub} from 'react-icons/si';
+import { SiGithub } from 'react-icons/si';
 import ShareX from './dialogs/ShareX';
 
 const routes = [
@@ -102,16 +102,16 @@ function NavigationBar({user, onCollapse, route, quota, ...props}) {
         <Navbar.Section grow component={ScrollArea} scrollbarSize={4}>
           {routes.map((x, i) =>
             (x.adminRequired && isAdmin(user.role.permissions) && x.items) ? (
-              <NavigationItem color={x.color} label={x.label} icon={x.icon}>
+              <NavigationItem color={x.color} key={i} label={x.label} icon={x.icon}>
                 {x.items.map(y => (
                   <NavigationItem component={NextLink} onClick={onCollapse} highlight={y.route === route} key={y.route}
                     href={y.route} color={y.color} label={y.label} icon={y.icon} />
                 ))}
               </NavigationItem>
             ) : ((x.permission ? hasPermission(user.role.permissions, x.permission) : true) && !x.items) &&
-                <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
-                  color={x.color}
-                  label={x.label} icon={x.icon} id={i} key={i} />
+              <NavigationItem onClick={onCollapse} highlight={x.route === route} component={NextLink} href={x.route}
+                color={x.color}
+                label={x.label} icon={x.icon} id={i} key={i} />
           )}
         </Navbar.Section>
         <Navbar.Section>

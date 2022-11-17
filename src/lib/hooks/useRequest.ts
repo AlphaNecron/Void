@@ -1,6 +1,6 @@
-import {noop} from 'lib/constants';
+import { noop } from 'lib/constants';
 import useBusy from 'lib/hooks/useBusy';
-import {HttpMethod} from 'undici/types/dispatcher';
+import { HttpMethod } from 'undici/types/dispatcher';
 
 interface FetchParameters {
   onStart?: () => void;

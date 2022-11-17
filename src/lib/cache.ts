@@ -1,18 +1,8 @@
-import TTLCache from '@isaacs/ttlcache';
 import {VoidResponse} from 'middleware/withVoid';
-
-function getCache(): TTLCache<string, number> {
-  if (!global.cache) global.cache = new TTLCache({
-    max: 100, // allow 1000 users concurrently
-    ttl: 60 * 60 * 1e3,
-    noUpdateTTL: true
-  });
-  return global.cache;
-}
+import internal from 'void/internal';
 
 export function rateLimitCheck(res: VoidResponse, limit: number, token: string): boolean {
-  const cache = getCache();
-  let usage = cache.get(token) || 0;
+  let usage = internal.cache.get(token) || 0;
   const exceeded = usage >= limit;
   if (!exceeded)
     usage++;
@@ -21,7 +11,7 @@ export function rateLimitCheck(res: VoidResponse, limit: number, token: string):
     'X-RateLimit-Remaining',
     exceeded ? 0 : limit - usage
   );
-  res.setHeader('X-RateLimit-Reset', Math.round(cache.getRemainingTTL(token)));
-  cache.set(token, usage);
+  res.setHeader('X-RateLimit-Reset', Math.round(internal.cache.getRemainingTTL(token)));
+  internal.cache.set(token, usage);
   return exceeded;
 }

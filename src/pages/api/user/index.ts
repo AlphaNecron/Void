@@ -1,9 +1,9 @@
-import {hash} from 'argon2';
-import prisma from 'lib/prisma';
-import {isEmpty} from 'lib/utils';
-import {embedSchema} from 'lib/validate';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {ValidationError} from 'yup';
+import { hash } from 'argon2';
+import internal from 'void/internal';
+import { isEmpty } from 'lib/utils';
+import { embedSchema } from 'lib/validate';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import { ValidationError } from 'yup';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -16,7 +16,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     }
     if (req.body.username) {
       if (req.body.username.toLowerCase() !== user.username.toLowerCase()) {
-        const existing = await prisma.user.findUnique({
+        const existing = await internal.prisma.user.findUnique({
           where: {
             username: req.body.username
           }
@@ -43,7 +43,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     }
     if (!isEmpty(data)) {
-      const updated = await prisma.user.update({
+      const updated = await internal.prisma.user.update({
         where: {
           id: user.id
         },

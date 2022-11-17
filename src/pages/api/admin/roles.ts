@@ -1,8 +1,8 @@
-import {hasPermission, highest, isAdmin, Permission} from 'lib/permission';
-import prisma from 'lib/prisma';
-import {roleSchema} from 'lib/validate';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {ValidationError} from 'yup';
+import { hasPermission, highest, isAdmin, Permission } from 'lib/permission';
+import internal from 'void/internal';
+import { roleSchema } from 'lib/validate';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import { ValidationError } from 'yup';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser();
@@ -11,11 +11,11 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   const perms = Object.values(Permission).filter(y => typeof y === 'number') as Permission[];
   switch (req.method) {
   case 'GET': {
-    const roles = await prisma.role.findMany({
+    const roles = await internal.prisma.role.findMany({
       orderBy:
-          {
-            permissions: 'desc'
-          },
+        {
+          permissions: 'desc'
+        },
       include: {
         users: {
           select: {
@@ -38,7 +38,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       const data = await roleSchema.validate(req.body, {
         stripUnknown: true
       });
-      const existing = await prisma.role.findFirst({
+      const existing = await internal.prisma.role.findFirst({
         where: {
           name: data.name
         }
@@ -49,7 +49,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       const cHighest = highest(user.role.permissions);
       if (dHighest >= cHighest)
         return res.forbid('Specified permissions exceeded maximum allowed.');
-      await prisma.role.create({
+      await internal.prisma.role.create({
         data
       });
       return res.success();
@@ -68,7 +68,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       });
       const cHighest = highest(user.role.permissions);
       const dHighest = highest(data.permissions);
-      const target = await prisma.role.findUnique({
+      const target = await internal.prisma.role.findUnique({
         where: {
           id
         }
@@ -79,7 +79,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       if (dHighest >= cHighest)
         return res.forbid('Specified permissions exceeded maximum allowed.');
       if (data.name && data.name !== target.name) {
-        const existing = await prisma.role.findFirst({
+        const existing = await internal.prisma.role.findFirst({
           where: {
             name: data.name
           },
@@ -90,7 +90,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
         if (existing && existing.id !== id)
           return res.forbid('Role name already exists.');
       }
-      await prisma.role.update({
+      await internal.prisma.role.update({
         where: {
           id
         },
@@ -106,7 +106,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
   case 'DELETE': {
     const {id} = req.body;
     if (!id) return res.error('No role ID.');
-    const target = await prisma.role.findUnique({
+    const target = await internal.prisma.role.findUnique({
       where: {
         id
       },
@@ -124,7 +124,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (tHighest >= cHighest)
       return res.forbid('You are not allowed to modify this role.');
     if (target._count.users > 0) return res.forbid('You are not allowed to delete this non-empty role.');
-    await prisma.role.delete({
+    await internal.prisma.role.delete({
       where: {
         id
       }

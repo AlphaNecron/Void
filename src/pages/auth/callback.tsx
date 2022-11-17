@@ -1,14 +1,13 @@
-import {Avatar, Button, Stack, Text, Tooltip} from '@mantine/core';
+import { Avatar, Button, Stack, Text, Tooltip } from '@mantine/core';
 import Container from 'components/Container';
-import {withIronSessionSsr} from 'iron-session/next';
-import oauth from 'lib/oauth';
-import prisma from 'lib/prisma';
-import {addToDate} from 'lib/utils';
-import {ironOptions} from 'middleware/withVoid';
-import {GetServerSideProps} from 'next';
-import {useRouter} from 'next/router';
-import {useEffect} from 'react';
-import {FiChevronLeft} from 'react-icons/fi';
+import { withIronSessionSsr } from 'iron-session/next';
+import internal from 'void/internal';
+import { addToDate } from 'lib/utils';
+import { ironOptions } from 'middleware/withVoid';
+import type { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
 
 export default function CallbackPage({id, username, tag, avatar, current}) {
   const router = useRouter();
@@ -42,6 +41,9 @@ export default function CallbackPage({id, username, tag, avatar, current}) {
 CallbackPage.title = 'Discord integration';
 
 export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async ({req, query}) => {
+  if (!internal.oauth) return {
+    notFound: true
+  };
   const {code, state} = query;
   const rUser = req.session.user;
   if (!(code && state)) return {
@@ -51,13 +53,13 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (
     }
   };
   try {
-    const data = await oauth.tokenRequest({
+    const data = await internal.oauth.tokenRequest({
       code: code.toString(),
       scope: ['identify'],
       grantType: 'authorization_code'
     });
-    const user = await oauth.getUser(data.access_token);
-    const dUser = await prisma.user.findFirst({
+    const user = await internal.oauth.getUser(data.access_token);
+    const dUser = await internal.prisma.user.findFirst({
       where: {
         discord: {
           id: user.id
@@ -94,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (
       refreshToken: data.refresh_token,
       expiresAt: addToDate(new Date(), data.expires_in)
     };
-    const r = await prisma.discord.upsert({
+    const r = await internal.prisma.discord.upsert({
       where: {
         id: user.id
       },

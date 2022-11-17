@@ -17,23 +17,23 @@ import {
   Title,
   useMantineTheme
 } from '@mantine/core';
-import {Dropzone} from '@mantine/dropzone';
-import {useClipboard, useListState, useSetState} from '@mantine/hooks';
-import {openModal} from '@mantine/modals';
+import { Dropzone } from '@mantine/dropzone';
+import { useClipboard, useListState, useSetState } from '@mantine/hooks';
+import { openModal } from '@mantine/modals';
 import FileIndicator from 'components/FileIndicator';
 import Dialog_FilesUploaded from 'dialogs/FilesUploaded';
-import {format} from 'fecha';
+import { format } from 'fecha';
+import useBusy from 'lib/hooks/useBusy';
 import useRequest from 'lib/hooks/useRequest';
 import useUpload from 'lib/hooks/useUpload';
-import {isType} from 'lib/mime';
-import {showError, showSuccess} from 'lib/notification';
-import {prettyBytes} from 'lib/utils';
-import prettyMilliseconds from 'pretty-ms';
-import {useEffect, useState} from 'react';
-import {FiExternalLink, FiFile, FiTrash, FiUpload, FiX} from 'react-icons/fi';
-import {GoSettings} from 'react-icons/go';
-import {RiFileWarningFill, RiSignalWifiErrorFill, RiUploadCloud2Fill} from 'react-icons/ri';
-import {VscClearAll, VscFiles} from 'react-icons/vsc';
+import { isType } from 'lib/mime';
+import { showError, showSuccess } from 'lib/notification';
+import { prettyBytes, prettySec } from 'lib/utils';
+import { useEffect, useState } from 'react';
+import { FiExternalLink, FiFile, FiTrash, FiUpload, FiX } from 'react-icons/fi';
+import { GoSettings } from 'react-icons/go';
+import { RiFileWarningFill, RiSignalWifiErrorFill, RiUploadCloud2Fill } from 'react-icons/ri';
+import { VscClearAll, VscFiles } from 'react-icons/vsc';
 
 function getIconColor(status, theme) {
   return status === 'accepted'
@@ -102,14 +102,14 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     previews.push({file: file.name, url});
     return url;
   };
-  const [busy, setBusy] = useState(false);
+  const {busy, set} = useBusy();
   const theme = useMantineTheme();
   const clip = useClipboard();
   const [prefs, setPrefs] = useSetState({exploding: false, url: 'alphanumeric', private: false});
   // handlers
   const errorHandler = (message: string) => {
     showError('Failed to upload the file(s).', <RiSignalWifiErrorFill />, message);
-    setBusy(false);
+    set(false);
   };
   const uploadedHandler = data => {
     const remaining = files.filter(x => !x.selected).map((x, i) => {
@@ -139,7 +139,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
       ));
       clip.copy(data[0].url);
     }
-    setBusy(false);
+    set(false);
     onClose();
     onUpload();
   };
@@ -147,12 +147,12 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
     e.preventDefault();
     const image = Array.from(e.clipboardData.items).find(x => isType('image', x.type));
     if (!image) return;
-    setBusy(true);
+    set(true);
     const file = image.getAsFile() as VoidFile;
     file.selected = true;
     fHandler.append(file);
     e.preventDefault();
-    setBusy(false);
+    set(false);
   };
   useEffect(() => {
     window.addEventListener('paste', pasteHandler);
@@ -165,7 +165,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
   }, setProgress, errorHandler, uploadedHandler);
   const uploadFiles = () => {
     if (selected.length < 1) return;
-    setBusy(true);
+    set(true);
     const body = new FormData();
     selected.forEach(f => body.append('files', f));
     upload(body);
@@ -205,9 +205,8 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
             <>
               <Title style={styles.text} order={5}>{progress.speed.toFixed(2)} Mbps
                 -
-                About {prettyMilliseconds(progress.estimated * 1e3, {
-                verbose: true,
-                secondsDecimalDigits: 0
+                About {prettySec(progress.estimated, {
+                verbose: true
               })} remaining.</Title>
               <Progress style={styles.bar} animate striped value={progress.progress} />
             </>
@@ -224,7 +223,7 @@ export default function Dialog_Upload({opened, onClose, onUpload, ...props}) {
               <ScrollArea mt={4} scrollbarSize={4} style={{height: 175, maxWidth: 200}}>
                 <Stack spacing={4}>
                   {files.map((x, i) => (
-                    <HoverCard key={i} withinPortal position='right'>
+                    <HoverCard key={i} position='right'>
                       <HoverCard.Target>
                         <Button style={{maxWidth: 200, position: 'relative'}} size='xs'
                           onClick={() => fHandler.setItem(i, (() => {

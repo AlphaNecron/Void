@@ -1,4 +1,4 @@
-import {mimetypes} from './constants';
+import { mimetypes } from './constants';
 
 export function getMimetype(extension: string): string {
   return mimetypes[`.${extension}`];

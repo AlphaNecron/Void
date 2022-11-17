@@ -1,10 +1,10 @@
-import prisma from 'lib/prisma';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import internal from 'void/internal';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 
 async function handler(req: VoidRequest, res: VoidResponse) {
   const user = await req.getUser(req.headers.authorization);
   if (!user) return res.unauthorized();
-  const users = await prisma.user.findMany({
+  const users = await internal.prisma.user.findMany({
     take: 10,
     select: {
       username: true,
@@ -17,16 +17,16 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     }
   });
-  const userCount = await prisma.user.count();
-  const domainCount = await prisma.domain.count();
-  const roleCount = await prisma.role.count();
-  const urlAgg = await prisma.url.aggregate({
+  const userCount = await internal.prisma.user.count();
+  const domainCount = await internal.prisma.domain.count();
+  const roleCount = await internal.prisma.role.count();
+  const urlAgg = await internal.prisma.url.aggregate({
     _sum: {
       clicks: true
     },
     _count: true
   });
-  const usr = await prisma.user.findUnique({
+  const usr = await internal.prisma.user.findUnique({
     where: {
       id: user.id
     },
@@ -39,7 +39,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
       }
     }
   });
-  const agg = await prisma.file.aggregate({
+  const agg = await internal.prisma.file.aggregate({
     _sum: {
       size: true,
       views: true

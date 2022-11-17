@@ -1,9 +1,8 @@
-import {rm} from 'fs/promises';
-import config from 'lib/config';
-import {hasPermission, highest, Permission} from 'lib/permission';
-import prisma from 'lib/prisma';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
-import {join, resolve} from 'path';
+import { rm } from 'fs/promises';
+import internal from 'void/internal';
+import { hasPermission, highest, Permission } from 'lib/permission';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
+import { join, resolve } from 'path';
 
 function maskEmail(email: string): string {
   if (!email) return null;
@@ -24,7 +23,7 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     const {id} = req.body;
     if (!id) return res.forbid('No ID.');
     if (id === user.id) return res.forbid('You can not delete your own user.');
-    const target = await prisma.user.findUnique({
+    const target = await internal.prisma.user.findUnique({
       where: {
         id
       },
@@ -36,12 +35,12 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     if (!target) return res.notFound('Target user not found.');
     if (highest(user.role.permissions) <= highest(target.role.permissions))
       return res.forbid('You are not allowed to delete this user.');
-    await prisma.user.delete({
+    await internal.prisma.user.delete({
       where: {
         id: target.id
       }
     });
-    const uploadDir = resolve(config.void.upload.outputDirectory);
+    const uploadDir = resolve(internal.config.void.upload.outputDirectory);
     await rm(join(uploadDir, 'avatars', target.id), {
       force: true
     });
@@ -51,13 +50,13 @@ async function handler(req: VoidRequest, res: VoidResponse) {
     return res.success();
   }
   case 'GET': {
-    const all = await prisma.user.findMany({
+    const all = await internal.prisma.user.findMany({
       orderBy:
-          {
-            role: {
-              permissions: 'desc'
-            }
-          },
+        {
+          role: {
+            permissions: 'desc'
+          }
+        },
       select: {
         username: true,
         name: true,

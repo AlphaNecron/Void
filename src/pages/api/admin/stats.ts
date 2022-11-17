@@ -1,5 +1,5 @@
-import {isAdmin, Permission} from 'lib/permission';
-import {VoidRequest, VoidResponse, withVoid} from 'middleware/withVoid';
+import { isAdmin, Permission } from 'lib/permission';
+import { VoidRequest, VoidResponse, withVoid } from 'middleware/withVoid';
 import sysInfo from 'systeminformation';
 
 async function handler(req: VoidRequest, res: VoidResponse) {

@@ -1,4 +1,4 @@
-import {ColorScheme, MantineThemeOverride} from '@mantine/core';
+import { ColorScheme, MantineThemeOverride } from '@mantine/core';
 
 export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
   {
@@ -59,6 +59,11 @@ export const createTheme = (colorScheme: ColorScheme): MantineThemeOverride => (
         })
       },
       Tooltip: {
+        defaultProps: {
+          withinPortal: true
+        }
+      },
+      Popover: {
         defaultProps: {
           withinPortal: true
         }

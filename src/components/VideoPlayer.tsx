@@ -12,10 +12,10 @@ import {
 } from '@mantine/core';
 import VolumeIndicator from 'components/VolumeIndicator';
 import useBusy from 'lib/hooks/useBusy';
-import prettyMilliseconds from 'pretty-ms';
-import {useRef, useState} from 'react';
-import {FiDownload, FiFastForward, FiFlag, FiInfo, FiMoreHorizontal, FiPause, FiPlay, FiRewind} from 'react-icons/fi';
-import {TbPin, TbPinnedOff} from 'react-icons/tb';
+import { useRef, useState } from 'react';
+import { FiDownload, FiFastForward, FiFlag, FiInfo, FiMoreHorizontal, FiPause, FiPlay, FiRewind } from 'react-icons/fi';
+import { TbPin, TbPinnedOff } from 'react-icons/tb';
+import { prettySec } from 'lib/utils';
 
 export default function VideoPlayer({src, canDownload, fileName, onInfo, onReport, ...props}) {
   const ref = useRef<HTMLVideoElement>();
@@ -34,7 +34,10 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
       setDura(duration);
   };
   const toggle = () => ref.current[playing ? 'pause' : 'play']();
-  const s2m = (secs: number) => prettyMilliseconds(secs * 1e3, {colonNotation: true, secondsDecimalDigits: 0});
+  const s2m = (secs: number) => prettySec(secs, {
+    withColon: true,
+    pad: true
+  });
   const seek = (range: number) => {
     ref.current.fastSeek ? ref.current.fastSeek(ref.current.currentTime + range) : ref.current.currentTime += range;
   };
@@ -94,15 +97,15 @@ export default function VideoPlayer({src, canDownload, fileName, onInfo, onRepor
                 <Action icon={pin ? <TbPinnedOff /> : <TbPin />} label={pin ? 'Unpin' : 'Pin'}
                   onClick={() => setPin(p => !p)} />
                 <Menu>
-                  <Tooltip label='More'>
-                    <Menu.Target>
+                  <Menu.Target>
+                    <Tooltip label='More'>
                       <ActionIcon variant='transparent' size='lg'>
                         <FiMoreHorizontal />
                       </ActionIcon>
-                    </Menu.Target>
-                  </Tooltip>
+                    </Tooltip>
+                  </Menu.Target>
                   <Menu.Dropdown>
-                    <Menu.Label>Playback rate</Menu.Label>
+                    <Menu.Label>Playback speed</Menu.Label>
                     <SegmentedControl mb={4} value={rate.toString()} fullWidth onChange={v => {
                       const r = Number(v);
                       ref.current.playbackRate = r;

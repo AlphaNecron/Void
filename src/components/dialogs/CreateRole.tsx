@@ -1,13 +1,13 @@
-import type {SelectItem} from '@mantine/core';
-import {Badge, Button, ColorInput, Modal, MultiSelect, NumberInput, Stack, TextInput} from '@mantine/core';
-import {useForm, yupResolver} from '@mantine/form';
+import type { SelectItem } from '@mantine/core';
+import { Badge, Button, ColorInput, Modal, MultiSelect, NumberInput, Stack, TextInput } from '@mantine/core';
+import { useForm, yupResolver } from '@mantine/form';
 import useRequest from 'lib/hooks/useRequest';
-import {showError} from 'lib/notification';
-import {getPermissions, Permission} from 'lib/permission';
-import {prettyBytes} from 'lib/utils';
-import {roleSchema} from 'lib/validate';
-import {useMemo} from 'react';
-import {RiErrorWarningFill} from 'react-icons/ri';
+import { showError } from 'lib/notification';
+import { getPermissions, Permission } from 'lib/permission';
+import { prettyBytes } from 'lib/utils';
+import { roleSchema } from 'lib/validate';
+import { useMemo } from 'react';
+import { RiErrorWarningFill } from 'react-icons/ri';
 
 export default function Dialog_CreateRole({opened, onClose, highestPerm, callback}) {
   const {busy, request} = useRequest();

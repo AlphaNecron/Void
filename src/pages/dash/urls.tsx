@@ -1,6 +1,6 @@
-import {Button, Stack, Text, TextInput} from '@mantine/core';
-import {useDisclosure} from '@mantine/hooks';
-import {openContextModal} from '@mantine/modals';
+import { Button, Stack, Text, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { openContextModal } from '@mantine/modals';
 import CardGrid from 'components/CardGrid';
 import ItemCard from 'components/ItemCard';
 import Spoil from 'components/Spoil';
@@ -8,12 +8,12 @@ import ShortenDialog from 'dialogs/Shorten';
 import useFetch from 'lib/hooks/useFetch';
 import useQuery from 'lib/hooks/useQuery';
 import useRequest from 'lib/hooks/useRequest';
-import {showError, showSuccess} from 'lib/notification';
-import {Permission} from 'lib/permission';
+import { showError, showSuccess } from 'lib/notification';
+import { Permission } from 'lib/permission';
 import dynamic from 'next/dynamic';
-import {FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash} from 'react-icons/fi';
-import {ImQrcode} from 'react-icons/im';
-import {RiDeleteBinFill, RiErrorWarningFill} from 'react-icons/ri';
+import { FiClipboard, FiExternalLink, FiScissors, FiSearch, FiTrash } from 'react-icons/fi';
+import { ImQrcode } from 'react-icons/im';
+import { RiDeleteBinFill, RiErrorWarningFill } from 'react-icons/ri';
 
 const HiddenQR = dynamic(() => import('components/HiddenQR'));
 

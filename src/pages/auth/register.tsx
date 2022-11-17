@@ -1,15 +1,15 @@
-import {ActionIcon, Button, Divider, Stack, Text, TextInput, Tooltip} from '@mantine/core';
-import {useForm, yupResolver} from '@mantine/form';
-import {NextLink} from '@mantine/next';
+import { ActionIcon, Button, Divider, Stack, Text, TextInput, Tooltip } from '@mantine/core';
+import { useForm, yupResolver } from '@mantine/form';
+import NextLink from 'components/NextLink';
 import Container from 'components/Container';
 import PasswordBox from 'components/PasswordBox';
 import useRequest from 'lib/hooks/useRequest';
 import useSession from 'lib/hooks/useSession';
-import {showError, showSuccess} from 'lib/notification';
-import {useRouter} from 'next/router';
-import {FiChevronLeft, FiLock, FiMail, FiSend, FiStar, FiUser} from 'react-icons/fi';
-import {RiCheckFill, RiErrorWarningFill} from 'react-icons/ri';
-import {object as yupObject, string as yupString} from 'yup';
+import { showError, showSuccess } from 'lib/notification';
+import { useRouter } from 'next/router';
+import { FiChevronLeft, FiLock, FiMail, FiSend, FiStar, FiUser } from 'react-icons/fi';
+import { RiCheckFill, RiErrorWarningFill } from 'react-icons/ri';
+import { object as yupObject, string as yupString } from 'yup';
 
 export default function RegisterPage() {
   const router = useRouter();
