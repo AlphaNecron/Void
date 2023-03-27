@@ -9,6 +9,8 @@
   ![Last commit](https://img.shields.io/github/last-commit/AlphaNecron/Void/dev?color=%234FD1C5&logo=github&style=for-the-badge)
 </div>
 
+>## I'm currently very busy so there's hardly any spare time for me to develop Void. As an alternative, try out [Zipline](https://github.com/diced/zipline), an actively developed file hosting service.
+
 ### Requirements
   - `node` >= 14
   - PostgreSQL
